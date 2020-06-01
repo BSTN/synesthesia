@@ -1,0 +1,58 @@
+.transit(@name, @open, @close) {
+
+  .@{name}-enter-active,
+  .@{name}-leave-active {
+    @open()
+  }
+
+  .@{name}-enter,
+  .@{name}-leave-to {
+    @close();
+  }
+
+}
+
+.transit(symbol, {
+    transition: all .25s @easeOutExpo;
+    opacity: 1;
+    transform: scaleX(1);
+  }
+
+  , {
+    opacity: 0;
+    pointer-events: none;
+    transform: scaleX(0);
+    transition: all .25s @easeOutExpo;
+  }
+
+);
+
+.transit(page, {
+    transition: all .25s @easeOutExpo;
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  , {
+    opacity: 0;
+    pointer-events: none;
+    transform: translateX(-100vw);
+    transition: all .25s @easeOutExpo;
+  }
+
+);
+
+// clipright
+.transit(clipright, {
+    transition: all .5s @easeOutSine;
+    clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%);
+    transform: translateX(0rem);
+  }
+
+  , {
+    clip-path: polygon(100% 0%, 100% 0%, 100% 100%, 100% 100%);
+    transition: all .5s @easeOutExpo;
+    transform: translateX(-10rem);
+  }
+
+);

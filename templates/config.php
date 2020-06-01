@@ -1,0 +1,10 @@
+<?php
+
+$MYSQL_USERNAME = "<%= MYSQL_USERNAME %>";
+$MYSQL_PASSWORD = "<%= MYSQL_PASSWORD %>";
+$MYSQL_PORT = "<%= MYSQL_PORT %>";
+$MYSQL_HOST = "<%= MYSQL_HOST %>";
+$MYSQL_DBNAME = "<%= MYSQL_DBNAME %>";
+$BASE = "<%= BASE %>";
+
+?>

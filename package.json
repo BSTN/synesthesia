@@ -1,0 +1,54 @@
+{
+  "name": "synesthesia",
+  "version": "1.0.0",
+  "main": "app/index.js",
+  "author": "BSTN",
+  "license": "MIT",
+  "private": false,
+  "scripts": {
+    "dev": "NODE_ENV=development gulp dev",
+    "build": "NODE_ENV=production gulp build"
+  },
+  "postcss": {
+    "plugins": {
+      "autoprefixer": {}
+    }
+  },
+  "browserslist": [
+    "last 3 versions",
+    "> 1%"
+  ],
+  "dependencies": {
+    "autoprefixer": "^9.8.0",
+    "axios": "^0.19.2",
+    "browser-sync": "^2.26.7",
+    "color": "^3.1.2",
+    "css-loader": "^3.5.3",
+    "dotenv": "^8.2.0",
+    "file-loader": "^6.0.0",
+    "gulp": "^4.0.2",
+    "gulp-template": "^5.0.0",
+    "html-loader": "^1.1.0",
+    "less": "^3.11.1",
+    "less-loader": "^6.1.0",
+    "lodash": "^4.17.15",
+    "markdown-loader": "^5.1.0",
+    "postcss-loader": "^3.0.0",
+    "raw-loader": "^4.0.1",
+    "style-loader": "^1.2.1",
+    "text-transform-loader": "^2.0.0",
+    "vue": "^2.6.11",
+    "vue-loader": "^15.9.2",
+    "vue-router": "^3.3.1",
+    "vue-slider-component": "^3.1.4",
+    "vue-style-loader": "^4.1.2",
+    "vue-template-compiler": "^2.6.11",
+    "vuex": "^3.4.0",
+    "webpack": "^4.43.0",
+    "webpack-cli": "^3.3.11",
+    "webpack-stream": "^5.2.1"
+  },
+  "devDependencies": {
+    "webpack-dev-server": "^3.11.0"
+  }
+}
