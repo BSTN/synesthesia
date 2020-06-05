@@ -44,15 +44,17 @@
 
 // clipright
 .transit(clipright, {
-    transition: all .5s @easeOutSine;
-    clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%);
-    transform: translateX(0rem);
+    transition: all .25s @easeOutSine;
+    opacity: 1;
+    // clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%);
+    // transform: translateX(0rem);
   }
 
   , {
-    clip-path: polygon(100% 0%, 100% 0%, 100% 100%, 100% 100%);
-    transition: all .5s @easeOutExpo;
-    transform: translateX(-10rem);
+    transition: all .25s @easeOutExpo;
+    opacity: 0;
+    // clip-path: polygon(100% 0%, 100% 0%, 100% 100%, 100% 100%);
+    // transform: translateX(2rem);
   }
 
 );

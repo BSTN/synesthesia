@@ -22,11 +22,16 @@
         ref="slider"
         v-model="lightness"
         v-bind="sliderOptions"
+        @change="setColor"
       ></vue-slider>
+      <div id="labels">
+        <label>Darker</label>
+        <label>Lighter</label>
+      </div>
     </div>
     <div id="nocolor">
       <button
-        @click="$store.dispatch('test/setValue', { color: 'nocolor' })"
+        @click="toggleNocolor()"
         :class="{ active: q.color === 'nocolor' }"
       >
         no color
@@ -43,8 +48,8 @@ export default {
       lightness: 0.5,
       mousedown: false,
       dragging: false,
-      posx: 0.5,
-      posy: 0.5,
+      posx: null,
+      posy: null,
       sliderOptions: {
         dotSize: 14,
         width: "auto",
@@ -57,7 +62,7 @@ export default {
         interval: 0.001,
         disabled: false,
         clickable: true,
-        duration: 0.1,
+        duration: 0.01,
         adsorb: false,
         lazy: false,
         tooltip: "none",
@@ -101,6 +106,11 @@ export default {
     selectorColor() {
       return this.lightness <= 0.75 ? "#ffffff" : "#333333";
     },
+    clicks() {
+      return parseInt(
+        this.$store.state.test.questions[this.$store.state.test.position].clicks
+      );
+    },
   },
   watch: {
     "$store.state.test.position": function(val) {
@@ -113,26 +123,52 @@ export default {
       this.posx = Math.random();
       this.posy = Math.random();
     },
+    setColor(val) {
+      let c, h, s;
+      h = this.posx * 360;
+      s = (1 - this.posy) * 100;
+      let hex = color.hsl(h, s, val * 100).hex();
+      this.$store.dispatch("test/setValue", { color: hex });
+    },
+    toggleNocolor() {
+      if (this.q.color !== "nocolor") {
+        this.$store.dispatch("test/setValue", { color: "nocolor" });
+      } else {
+        let h, s, l;
+        h = this.posx * 360;
+        s = (1 - this.posy) * 100;
+        l = this.lightness;
+        let hex = color.hsl(h, s, l * 100).hex();
+        this.$store.dispatch("test/setValue", { color: hex });
+      }
+    },
   },
   mounted() {
     let hueel = this.$refs.hue;
     let mousedown = false;
     const huepos = (ev) => {
-      if (ev.type === "mousedown") mousedown = true;
-      let coor = hueel.getBoundingClientRect();
-      let x = clamp((ev.pageX - coor.x) / coor.width, 0, 1);
-      let y = clamp((ev.pageY - coor.y) / coor.height, 0, 1);
-      let hex = color.hsl(x * 360, (1 - y) * 100, this.lightness * 100).hex();
+      if (ev.type === "mousedown") {
+        this.$store.dispatch("test/setValue", { clicks: this.clicks + 1 });
+        mousedown = true;
+      }
+      if (ev.type === "touchstart") {
+        this.$store.dispatch("test/setValue", { clicks: this.clicks + 1 });
+        mousedown = true;
+      }
       if (mousedown) {
-        this.posx = x;
-        this.posy = y;
+        let coor = hueel.getBoundingClientRect();
+        this.posx = clamp((ev.clientX - coor.x) / coor.width, 0, 1);
+        this.posy = clamp((ev.clientY - coor.y) / coor.height, 0, 1);
+        let hex = color
+          .hsl(this.posx * 360, (1 - this.posy) * 100, this.lightness * 100)
+          .hex();
         this.$store.dispatch("test/setValue", { color: hex });
       }
       if (ev.type === "mouseup") mousedown = false;
     };
     hueel.addEventListener("mousedown", huepos);
-    window.addEventListener("mousemove", huepos);
-    hueel.addEventListener("mouseup", huepos);
+    // window.addEventListener("mousemove", huepos);
+    // hueel.addEventListener("mouseup", huepos);
     this.randomPos();
   },
 };
@@ -142,15 +178,19 @@ export default {
   width: 100%;
   display: flex;
   flex-direction: column;
+  border: 1.5rem solid transparent;
+  border-left: 0;
   #hue {
-    padding-top: 75%;
+    padding-top: 66%;
     position: relative;
+    max-height: 2rem;
+    overflow: hidden;
     #hueframe {
       position: absolute;
-      top: 1rem;
-      left: 1rem;
-      width: calc(100% - 2rem);
-      height: calc(100% - 2rem);
+      top: 0;
+      left: 0;
+      width: calc(100%);
+      height: calc(100%);
       border-radius: 0.25em;
       #huebg {
         position: absolute;
@@ -178,11 +218,27 @@ export default {
   #slider {
     min-height: 2rem;
     position: relative;
-    border: 1rem solid transparent;
-    border-width: 0 1rem;
+    // see vue-slider.less for slider layout
+    padding-top: 1rem;
+    margin-bottom: 0.5rem;
+    .vue-slider {
+      margin-bottom: 0;
+    }
+    #labels {
+      line-height: 1em;
+      label {
+        color: @fg2;
+        font-size: 0.5em;
+        display: inline-block;
+        // text-transform: uppercase;
+        &:nth-child(2) {
+          float: right;
+        }
+      }
+    }
   }
   #nocolor {
-    min-height: 3rem;
+    // min-height: 2.5rem;
     text-align: center;
     button {
       background: @bg3;
@@ -190,6 +246,7 @@ export default {
       border-radius: 0.25em;
       opacity: 0.5;
       border: 1px solid @bg2;
+      margin: 0;
       &:hover {
         opacity: 1;
       }

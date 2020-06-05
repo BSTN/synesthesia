@@ -2,13 +2,14 @@ html,
 body {
   padding: 0;
   margin: 0;
-  background: @bg2;
+  background: @bg;
   color: @fg;
 }
 
 button {
   border: 0;
   background: transparent;
+  color: inherit;
 }
 
 div,
@@ -16,9 +17,17 @@ button {
   box-sizing: border-box;
 }
 
+label {
+  display: block;
+  opacity: 0.5;
+  font-size: 0.75em;
+  line-height: 1.25em;
+}
+
 p {
-  text-indent: 2rem;
-  // margin-bottom: 2rem;
+  // text-indent: 2rem;
+  line-height: 1.5em;
+  margin-bottom: 1.5em;
 }
 
 a {
@@ -32,7 +41,6 @@ a {
 
 h1 {
   // color: @fg2;
-  margin-bottom: 1rem;
   font-size: 1.5em;
   line-height: 1em;
 }

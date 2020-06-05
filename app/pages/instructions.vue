@@ -1,7 +1,9 @@
 <template>
   <div id="instructions" class="textwrap">
     <div class="wrap">
-      <h1>Instruktioner</h1>
+      <div class="top">
+        <h1>Instruktioner</h1>
+      </div>
       <div class="section">
         <p>
           Här undersöker vi sekvens-färg-synestesi. Det är ett fenomen där man

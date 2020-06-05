@@ -5,10 +5,16 @@ import App from "./index.vue";
 import home from "./home.vue";
 import axios from "axios";
 import vueSlider from 'vue-slider-component';
+import VRuntimeTemplate from "v-runtime-template";
 
 Vue.prototype.$axios = axios;
 
 Vue.component("vue-slider", vueSlider);
+Vue.component("vrt", VRuntimeTemplate);
+
+Vue.component('mdc', {
+  template: "#markdowncontact"
+})
 
 // Vue.directive('bgimg', bgimg)
 // Vue.component('loadimg', loadimg)

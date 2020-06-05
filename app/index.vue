@@ -17,6 +17,18 @@ export default {
       });
     }
   },
+  watch: {
+    $route() {
+      setTimeout(() => {
+        window.scrollTo(0, 0);
+      }, 250);
+    },
+  },
+  mounted() {
+    // window.onbeforeunload = function(e) {
+    //   return "Please press the Logout button to logout.";
+    // };
+  },
 };
 </script>
 <style lang="less">

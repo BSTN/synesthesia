@@ -2,13 +2,17 @@
   <div id="testframe">
     <div id="frame">
       <div id="top">
+        <div class="flex"></div>
+        <button>help</button>
+      </div>
+      <div id="mid">
         <transition name="symbol" mode="out-in">
           <div id="symbol" :key="$store.state.test.position">
-            <div id="symbolframe" :style="{ background: background }">
-              <!-- <div id="info">
-              Försök att så instinktivt som möjligt välja den färg du förknippar
-              med, eller känner passar bäst ihop med:
-            </div> -->
+            <div
+              id="symbolframe"
+              :style="{ background: background }"
+              :class="{ nocolor: q.color === 'nocolor' }"
+            >
               <div id="sym">
                 <div>{{ q.symbol }}</div>
               </div>
@@ -20,17 +24,15 @@
         </div>
       </div>
       <div id="bottom">
-        <button id="helpbutton">help</button>
-        <div class="flex"></div>
-        <button id="midbutton" class="inactive" v-if="q.color === null">
-          Försök att så instinktivt som möjligt välja den färg du förknippar
-          med, eller känner passar bäst ihop med: {{ q.symbol }}
+        <!-- <button id="helpbutton">help</button> -->
+        <button id="midbutton" class="inactive">
+          Try to instinctively choose the color you associate, or feel fits best
+          with the character/word/image/sound above.
         </button>
-        <button id="midbutton" @click="next()" v-if="q.color !== null">
+        <div class="flex"></div>
+        <button id="nextbutton" @click="next()" :disabled="disabled">
           next
         </button>
-        <div class="flex"></div>
-        <div id="count">{{ position + 1 }}/49</div>
       </div>
     </div>
   </div>
@@ -49,9 +51,15 @@ export default {
       else if (this.q.color === "nocolor") return "url('assets/nocolor.png')";
       else return this.q.color;
     },
+    disabled() {
+      return this.q.color === null;
+    },
   },
   methods: {
     next() {
+      // set timing
+      //
+      window.scrollTo(0, 0);
       if (
         Object.keys(this.$store.state.test.questions).length - 1 ==
         this.position
@@ -92,15 +100,27 @@ export default {
       // border: 1px solid @bg2;
     }
     #top {
+      background: @bg3;
+      font-size: 0.75em;
+      color: @fg2;
+      padding: 0.5em 0.5em;
+      display: flex;
+      button {
+        opacity: 0.5;
+        &:hover {
+          opacity: 1;
+          color: @fg1;
+        }
+      }
+    }
+    #mid {
       display: flex;
       flex-direction: row;
       min-height: 100%;
       flex-grow: 1;
       flex-shrink: 1;
       align-items: stretch;
-      @media (orientation: portrait) {
-        flex-direction: column;
-      }
+
       > * {
         position: relative;
         // height: 100%;
@@ -113,25 +133,21 @@ export default {
         justify-content: center;
       }
       #symbol {
+        // outline: 1px solid #000;
         #symbolframe {
-          width: calc(100% - 2rem);
-          height: calc(100% - 2rem);
+          width: calc(100% - 3rem);
+          height: calc(100% - 3rem);
           display: flex;
           align-content: center;
           align-items: center;
           justify-content: center;
           // background: @bg3;
           border-radius: 0.25rem;
-          #info {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            padding: 1rem;
-            font-size: 0.7em;
-            line-height: 1.25em;
-            text-align: center;
-            color: @fg2;
+          &.nocolor {
+            border: 1px solid #ddd;
+            #sym {
+              border: 1px solid #ddd;
+            }
           }
           #sym {
             font-size: 4rem;
@@ -149,6 +165,7 @@ export default {
         }
       }
       #color {
+        // outline: 1px solid #000;
       }
     }
     #bottom {
@@ -159,10 +176,15 @@ export default {
       align-content: center;
       align-items: center;
       justify-content: flex-end;
-      padding: 0 1em;
+      padding: 0 1.5em;
       background: @bg3;
 
       button {
+        &[disabled="disabled"] {
+          opacity: 0.5;
+          font-style: italic;
+          pointer-events: none;
+        }
         &:hover {
           text-decoration: underline;
         }
@@ -175,12 +197,45 @@ export default {
             opacity: 0.5;
             white-space: normal;
             min-width: 60%;
+            padding: 0;
+            text-align: left;
           }
         }
       }
       #helpbutton,
       #count {
         color: @fg2;
+      }
+    }
+  }
+}
+
+@media (max-width: 800px) {
+  #testframe {
+    #frame {
+      #mid {
+        flex-direction: column;
+        #symbol {
+          #symbolframe {
+            border: 0;
+            margin: 1rem 1rem 0 1rem;
+            width: 100%;
+            height: 100%;
+          }
+        }
+        #color {
+          /deep/ #colorpicker {
+            border: 1rem solid transparent !important;
+          }
+        }
+      }
+      #bottom {
+        flex-direction: column;
+        padding: 1rem;
+        #nextbutton {
+          margin-top: 1rem;
+          padding: 1rem;
+        }
       }
     }
   }

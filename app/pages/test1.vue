@@ -14,5 +14,11 @@ export default {};
   display: flex;
   align-content: center;
   align-items: center;
+  @media (max-width: 600px) {
+    padding: 0;
+    #testframe {
+      border-radius: 0;
+    }
+  }
 }
 </style>
