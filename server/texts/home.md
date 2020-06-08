@@ -1,11 +1,11 @@
-Welkom bij de synesthesie test, waarin wetenschappers uit Nijmegen onderzoek doen naar Taal en Waarneming.
-
 Ben jij ook benieuwd hoe jouw zintuigen samenwerken?
+<router-link to="/instructions" class="big">Doe de test</router-link>
 
-□ contribute to our research
-<label>You agree with our general terms of use.</label>
+<!-- □ ik doe mee aan het onderzoek
+<label>Ik ga daarmee akkoord dat mijn testdata wordt opgeslagen. Lees hier meer over wat we doen met de data.</label>
 
-□ stay anonymous
-<label>The data stays with you and will not be stored on our servers. Your data will not contribute to any (future) academic research.</label>
+□ ik blijf liever anoniem
+<label>The data stays with you and will not be stored on our servers. Your data will not contribute to any (future) academic research.</label> -->
 
-<router-link to="/instructions" class="big">Start the test</router-link>
+Heb je de test eerder al afgerond en je resultaten opgeslagen? Bekijk je resultaten dan hier en vergelijk eventueel met anderen.
+<router-link to="/results" class="big">Bekijk & Vergelijk</router-link>

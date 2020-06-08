@@ -2,35 +2,34 @@
   <div id="instructions" class="textwrap">
     <div class="wrap">
       <div class="top">
-        <h1>Instruktioner</h1>
+        <h1>Instructies</h1>
       </div>
       <div class="section">
         <p>
-          Här undersöker vi sekvens-färg-synestesi. Det är ett fenomen där man
-          automatiskt kopplar ihop t. ex. bokstäver, siffror, eller veckodagar
-          med olika färger - även när de är i svart tryck. För personer med den
-          här typen av synestesi är en viss bokstav, siffra eller veckodag
-          alltid förknippad med samma färg. Hur är det för dig?
+          Hier onderzoeken we sequentie-kleursynthese. Het is een fenomeen
+          waarbij je bijvoorbeeld automatisch verbinding maakt. letters, cijfers
+          of weekdagen met verschillende kleuren - zelfs in zwarte opdruk. Voor
+          mensen met dit type synesthesie wordt altijd een bepaalde letter,
+          nummer of dag van de week geassocieerd met dezelfde kleur. Hoe is dat
+          voor jou?
         </p>
 
         <p>
-          För varje bokstav, siffra och veckodag som dyker upp på skärmen ska du
-          välja färgen du förknippar med den, eller färgen du känner passar bäst
-          ihop med bokstaven/siffran/veckodagen. Försök att välja så instinktivt
-          som möjligt - det finns inget rätt eller fel svar.
+          Kies voor elke letter, nummer en weekdag die op het scherm verschijnt,
+          de kleur die u eraan associeert, of de kleur die u het beste kent,
+          komt overeen met de letter / nummer / dag van de week. Probeer zo
+          instinctief mogelijk te kiezen - er is geen goed of fout antwoord.
         </p>
 
         <p>
-          Om du har frågor eller stöter på några problem under testet vänligen
-          kontakta forskningsassistenten Lowe Wilsson på KIND:
-          Lowe.Wilsson@ki.se. Om du vill ha muntlig information, kontakta oss
-          gärna på telefonnummer 08-514 52710 (vi är vanligtvis nåbara på dagtid
-          veckodagar, om vi inte kan svara kommer vi att ringa upp dig så snart
-          som möjligt).
+          Als u vragen heeft of problemen ondervindt tijdens de test, neem dan
+          contact op met Research Assistant Lowe Wilsson via KIND:
+          Lowe.Wilsson@ki.se. Als u mondelinge informatie wenst, neem dan
+          contact met ons op via telefoonnummer 08-514 52710 (we zijn meestal
+          overdag bereikbaar op weekdagen, als we niet kunnen antwoorden, bellen
+          we u zo snel mogelijk).
         </p>
-      </div>
-      <div class="button">
-        <router-link to="/test1">ok</router-link>
+        <router-link class="big" to="/test1">ok</router-link>
       </div>
     </div>
   </div>

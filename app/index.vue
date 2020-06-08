@@ -1,5 +1,6 @@
 <template>
   <div id="index">
+    <!-- <div id="overlay"></div> -->
     <transition name="clipright" mode="out-in">
       <router-view class="view"></router-view>
     </transition>
@@ -28,6 +29,10 @@ export default {
     // window.onbeforeunload = function(e) {
     //   return "Please press the Logout button to logout.";
     // };
+    // window.syncolor = getComputedStyle(document.body).getPropertyValue("--syn");
+    // document.addEventListener("scroll", (ev) => {
+    //   window.connectionRadius = window.scrollY;
+    // });
   },
 };
 </script>
@@ -36,7 +41,27 @@ export default {
 </style>
 
 <style lang="less" scoped>
+#index {
+  position: relative;
+  z-index: 1;
+  #overlay {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    pointer-events: none;
+    background: linear-gradient(-45deg, #fffadf, #dbdbdb);
+    background: linear-gradient(-45deg, #fffadf, #f8f8f8);
+    // background: linear-gradient(-45deg, #252523, #1e1f27);
+    // mix-blend-mode: soft-light;
+    opacity: 1;
+  }
+}
 .view {
+  position: relative;
+  z-index: 2;
 }
 #footer {
   text-align: center;

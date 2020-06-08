@@ -12,5 +12,18 @@
     </div>
     <script src="<%= SRCV %>"></script>
     <script src="<%= SRC %>"></script>
+    <script src="assets/paper.js"></script>
+    <script type="text/paperscript" canvas="canvas-1" src="assets/connected.js?<?= time();?>"></script>
+    <canvas resize="true" id="canvas-1" ></canvas>
+
+    <?php
+    require_once __DIR__ .  "/vendor/autoload.php";
+    use Symfony\Component\Yaml\Yaml;
+    $value = Yaml::parse("foo: bar");
+    print_r($value);
+
+    use Michelf\Markdown;
+    echo Markdown::defaultTransform('#hello');
+    ?>
   </body>
 </html>

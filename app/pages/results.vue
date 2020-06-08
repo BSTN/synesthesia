@@ -9,5 +9,7 @@ export default {};
 </script>
 <style lang="less" scoped>
 #results {
+  max-width: 40rem;
+  margin: 2rem auto;
 }
 </style>

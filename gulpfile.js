@@ -1,4 +1,4 @@
-const path = require('path');
+const path = require("path");
 const gulp = require("gulp");
 const template = require("gulp-template");
 const dotenv = require("dotenv").config();
@@ -8,14 +8,20 @@ const webpackStream = require("webpack-stream");
 const webpackDevServer = require("webpack-dev-server");
 const webpackConfig = require("./webpack.config.js");
 
+var rsync = require("gulp-rsync");
+
 let production = process.env.NODE_ENV === "production";
 
 // templates
 
 gulp.task("templates", function() {
   let templateVars = {
-    SRCV: production ? "js/vendors.js" : "http://localhost:" + process.env.DEV_HOTPORT + "/vendors.js",
-    SRC: production ? "js/main.js" : "http://localhost:" + process.env.DEV_HOTPORT + "/main.js",
+    SRCV: production
+      ? "js/vendors.js"
+      : "http://localhost:" + process.env.DEV_HOTPORT + "/vendors.js",
+    SRC: production
+      ? "js/main.js"
+      : "http://localhost:" + process.env.DEV_HOTPORT + "/main.js",
     BASE: production ? process.env.LIVE_BASE : process.env.DEV_BASE,
     MYSQL_USERNAME: production
       ? process.env.LIVE_MYSQL_USERNAME
@@ -84,9 +90,26 @@ gulp.task("webpackBuild", async () => {
   return gulp
     .src("app/index.js")
     .pipe(webpackStream(webpackConfig))
-    .pipe(gulp.dest(path.join(process.env.LIVE_BUILD_PATH, 'js')));
+    .pipe(gulp.dest(path.join(process.env.LIVE_BUILD_PATH, "js")));
 });
+
+// access via package.json
 
 gulp.task("dev", gulp.series(["copyfolder", "templates", watcher]));
 
 gulp.task("build", gulp.series(["copyfolder", "templates", "webpackBuild"]));
+
+gulp.task("upload", function() {
+  return gulp.src("live/**").pipe(
+    rsync({
+      root: "live/",
+      hostname: process.env.SSH_HOST,
+      port: process.env.SSH_PORT,
+      destination: process.env.SSH_PATH,
+      progress: false,
+      silent: false,
+      compress: true,
+      update: true,
+    })
+  );
+});

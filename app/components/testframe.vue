@@ -86,10 +86,12 @@ export default {
   margin: 0 auto;
   position: relative;
   background: @bg;
+  background: #eee;
   display: block;
   border-radius: 0.5em;
   overflow: hidden;
   user-select: none;
+  // box-shadow: 0 0 0.25em rgba(#000, 0.2);
   #frame {
     position: relative;
     display: flex;
@@ -101,6 +103,7 @@ export default {
     }
     #top {
       background: @bg3;
+      background: #e9e9e9;
       font-size: 0.75em;
       color: @fg2;
       padding: 0.5em 0.5em;
@@ -157,6 +160,7 @@ export default {
             justify-content: center;
             padding: 0.5em 1rem;
             background: @bg;
+            background: #eee;
             margin: 2rem;
             min-width: calc(100% - 8rem);
             min-height: calc(100% - 8rem);
@@ -178,7 +182,7 @@ export default {
       justify-content: flex-end;
       padding: 0 1.5em;
       background: @bg3;
-
+      background: #e9e9e9;
       button {
         &[disabled="disabled"] {
           opacity: 0.5;

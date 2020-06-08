@@ -7,7 +7,8 @@
   "private": false,
   "scripts": {
     "dev": "NODE_ENV=development gulp dev",
-    "build": "NODE_ENV=production gulp build"
+    "build": "NODE_ENV=production gulp build",
+    "upload": "gulp upload"
   },
   "postcss": {
     "plugins": {
@@ -27,6 +28,7 @@
     "dotenv": "^8.2.0",
     "file-loader": "^6.0.0",
     "gulp": "^4.0.2",
+    "gulp-rsync": "^0.0.9",
     "gulp-template": "^5.0.0",
     "html-loader": "^1.1.0",
     "less": "^3.11.1",
@@ -34,6 +36,7 @@
     "lodash": "^4.17.15",
     "markdown-loader": "^5.1.0",
     "marked": "^1.1.0",
+    "paper": "^0.12.8",
     "postcss-loader": "^3.0.0",
     "raw-loader": "^4.0.1",
     "style-loader": "^1.2.1",

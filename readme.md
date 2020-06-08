@@ -1,3 +1,9 @@
+# dev dependencies
+
+gulp
+
+# environment setup
+
 `.env:`
 
 ```
@@ -17,4 +23,19 @@ LIVE_MYSQL_PASSWORD=
 LIVE_MYSQL_PORT=
 LIVE_MYSQL_HOST=
 LIVE_MYSQL_DBNAME=
+
+SSH_HOST=
+SSH_PORT=
+SSH_USERNAME=
+SSH_PRIVATEKEYPATH=
+SSH_PATH=
+
+```
+
+# Server-side installation
+
+Install composer components:
+
+```
+composer install
 ```
