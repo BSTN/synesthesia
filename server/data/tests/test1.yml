@@ -1,0 +1,13 @@
+active: yes
+name: test nummer 1
+duration: 10
+description: hello
+postquestions: yes
+prequestions: no
+introduction: yes
+type: colorpicker
+sets:
+  set1: ["A", "B", "C", "D", "E"]
+  set2: ["I", "O", "A", "B", "Q"]
+  set3: ["O", "T", "N", "T", "F"]
+  set4: ["K", "U", "M", "G", "E"]

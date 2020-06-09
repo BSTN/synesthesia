@@ -12,7 +12,7 @@ export default {
   created() {
     let symbols = symbols1.split("\n");
     for (let k in symbols) {
-      this.$store.dispatch("test/appendQuestion", {
+      this.$store.dispatch("tests/appendQuestion", {
         qnr: k,
         symbol: symbols[k],
       });
@@ -26,13 +26,7 @@ export default {
     },
   },
   mounted() {
-    // window.onbeforeunload = function(e) {
-    //   return "Please press the Logout button to logout.";
-    // };
-    // window.syncolor = getComputedStyle(document.body).getPropertyValue("--syn");
-    // document.addEventListener("scroll", (ev) => {
-    //   window.connectionRadius = window.scrollY;
-    // });
+    console.log(this.$config);
   },
 };
 </script>

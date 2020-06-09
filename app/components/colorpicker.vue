@@ -92,7 +92,9 @@ export default {
   },
   computed: {
     q() {
-      return this.$store.state.test.questions[this.$store.state.test.position];
+      return this.$store.state.tests.questions[
+        this.$store.state.tests.position
+      ];
     },
     lightnessBackgroundColor() {
       let L = parseInt(this.lightness * 256);
@@ -108,12 +110,12 @@ export default {
     },
     clicks() {
       return parseInt(
-        this.$store.state.test.questions[this.$store.state.test.position].clicks
+        this.$store.state.testsquestions[this.$store.state.testsposition].clicks
       );
     },
   },
   watch: {
-    "$store.state.test.position": function(val) {
+    "$store.state.testsposition": function(val) {
       this.lightness = 0.5;
       this.randomPos();
     },
@@ -128,18 +130,18 @@ export default {
       h = this.posx * 360;
       s = (1 - this.posy) * 100;
       let hex = color.hsl(h, s, val * 100).hex();
-      this.$store.dispatch("test/setValue", { color: hex });
+      this.$store.dispatch("tests/setValue", { color: hex });
     },
     toggleNocolor() {
       if (this.q.color !== "nocolor") {
-        this.$store.dispatch("test/setValue", { color: "nocolor" });
+        this.$store.dispatch("tests/setValue", { color: "nocolor" });
       } else {
         let h, s, l;
         h = this.posx * 360;
         s = (1 - this.posy) * 100;
         l = this.lightness;
         let hex = color.hsl(h, s, l * 100).hex();
-        this.$store.dispatch("test/setValue", { color: hex });
+        this.$store.dispatch("tests/setValue", { color: hex });
       }
     },
   },
@@ -148,11 +150,11 @@ export default {
     let mousedown = false;
     const huepos = (ev) => {
       if (ev.type === "mousedown") {
-        this.$store.dispatch("test/setValue", { clicks: this.clicks + 1 });
+        this.$store.dispatch("tests/setValue", { clicks: this.clicks + 1 });
         mousedown = true;
       }
       if (ev.type === "touchstart") {
-        this.$store.dispatch("test/setValue", { clicks: this.clicks + 1 });
+        this.$store.dispatch("tests/setValue", { clicks: this.clicks + 1 });
         mousedown = true;
       }
       if (mousedown) {
@@ -162,7 +164,7 @@ export default {
         let hex = color
           .hsl(this.posx * 360, (1 - this.posy) * 100, this.lightness * 100)
           .hex();
-        this.$store.dispatch("test/setValue", { color: hex });
+        this.$store.dispatch("tests/setValue", { color: hex });
       }
       if (ev.type === "mouseup") mousedown = false;
     };

@@ -7,7 +7,7 @@
       </div>
       <div id="mid">
         <transition name="symbol" mode="out-in">
-          <div id="symbol" :key="$store.state.test.position">
+          <div id="symbol" :key="$store.state.testsposition">
             <div
               id="symbolframe"
               :style="{ background: background }"
@@ -41,10 +41,10 @@
 export default {
   computed: {
     position() {
-      return this.$store.state.test.position;
+      return this.$store.state.testsposition;
     },
     q() {
-      return this.$store.state.test.questions[this.position];
+      return this.$store.state.testsquestions[this.position];
     },
     background() {
       if (this.q.color === null) return "none";
@@ -61,12 +61,12 @@ export default {
       //
       window.scrollTo(0, 0);
       if (
-        Object.keys(this.$store.state.test.questions).length - 1 ==
+        Object.keys(this.$store.state.testsquestions).length - 1 ==
         this.position
       ) {
         this.$router.push({ path: "/results" });
       } else {
-        this.$store.dispatch("test/next");
+        this.$store.dispatch("tests/next");
       }
     },
   },

@@ -1,7 +1,7 @@
 <template>
   <div id="results">
     RESULTS
-    <pre>{{ $store.state.test.questions }}</pre>
+    <pre>{{ $store.state.testsquestions }}</pre>
   </div>
 </template>
 <script>

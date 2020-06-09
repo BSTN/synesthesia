@@ -1,16 +1,12 @@
 <template>
   <div id="home">
-    <div id="links">
-      <div id="top">
-        <div id="name">Synesthesie Test</div>
-        <div id="line"></div>
-        <div id="year">NL EN SE</div>
-      </div>
-      <md id="text" class="section" md="intro"></md>
+    <div id="top">
+      <div id="name">Synesthesie Test</div>
+      <div id="line"></div>
+      <languages></languages>
     </div>
-    <div id="rechts">
-      <md id="text" class="section" md="home"></md>
-    </div>
+    <md id="introtext" class="section" md="intro"></md>
+    <md id="hometext" class="section" md="home"></md>
   </div>
 </template>
 <script>
@@ -27,58 +23,74 @@ export default {
 </script>
 <style lang="less" scoped>
 #home {
-  padding: 1rem 0;
-
-  > * {
-    width: 100%;
-    padding: 0 2rem;
-    font-size: 1.75rem;
+  padding: 1rem 2rem;
+  // > * {
+  //   background: #fafafa;
+  //   margin-bottom: 0.5rem;
+  // }
+  #top {
+    font-size: 0.75rem;
+    display: flex;
+    text-transform: uppercase;
+    font-weight: 400;
+    > * {
+      flex-shrink: 0;
+      flex-grow: 0;
+    }
+    #line {
+      width: 100%;
+      flex-shrink: 1;
+      flex-grow: 1;
+      margin: 0 0.5em;
+      &:after {
+        content: "";
+        border-top: 2px solid @fg;
+        width: 100%;
+        display: inline-block;
+        height: 0.25em;
+      }
+    }
+  }
+  #introtext {
+    padding: 0 0;
+    font-family: "Victor Serif Trial";
+    // font-family: "Stabil Grotesk Trial";
+    // font-family: "Reckless Neue TRIAL";
+    font-weight: 300;
+    max-width: 15em;
+    font-size: 4vw;
+    font-size: 3rem;
     @media (max-width: 800px) {
-      padding: 0 0.5rem;
+      font-size: 1.5rem;
     }
-    &:nth-child(2) {
-      // border-left: 2px solid @fg;
+    line-height: 1em;
+    letter-spacing: -0.025em;
+    animation-name: line;
+    animation-duration: 2s;
+    animation-timing-function: @easeInOutExpo;
+    animation-delay: 0.5s;
+    animation-fill-mode: forwards;
+    transform-origin: top left;
+    .clip(left);
+    @keyframes line {
+      0% {
+        // line-height: 1.3em;
+        // opacity: 0;
+        // transform: scaleX(0.3);
+        .clip(left);
+      }
+      100% {
+        // line-height: 1em;
+        // opacity: 1;
+        // transform: scaleX(1);
+        .clip();
+      }
     }
-  }
-  #links {
-    #text {
-      padding: 0 0;
-      font-family: "Victor Serif Trial";
-      // font-family: "Reckless Neue TRIAL";
-      font-weight: 300;
-      max-width: 15em;
-      font-size: 4vw;
-      font-size: 2rem;
-      @media (max-width: 800px) {
-        font-size: 1.5rem;
-      }
-      line-height: 1em;
-      letter-spacing: -0.025em;
-      // max-width: 12em;
-      // font-size: 3rem;
-      // letter-spacing: -0.025em;
-      animation-name: line;
-      animation-duration: 3s;
-      animation-timing-function: @easeInOutExpo;
-      animation-delay: 0.5s;
-      animation-fill-mode: forwards;
-      opacity: 0;
-      @keyframes line {
-        0% {
-          line-height: 1.3em;
-          opacity: 0;
-        }
-        100% {
-          line-height: 1em;
-          opacity: 1;
-        }
-      }
-      /deep/ p {
-        line-height: inherit;
-      }
+    /deep/ p {
+      line-height: inherit;
     }
   }
-  #rechts {
+  #hometext {
     min-height: 300vh;
     font-family: helvetica;
     font-weight: 400;
@@ -103,30 +115,6 @@ export default {
         height: 70%;
         background: linear-gradient(#005, @syn, #fee, #fafafa);
         z-index: -1;
-      }
-    }
-  }
-  #top {
-    font-size: 0.75rem;
-    margin-bottom: 0.5rem;
-    display: flex;
-    text-transform: uppercase;
-    font-weight: 400;
-    > * {
-      flex-shrink: 0;
-      flex-grow: 0;
-    }
-    #line {
-      width: 100%;
-      flex-shrink: 1;
-      flex-grow: 1;
-      margin: 0 0.5em;
-      &:after {
-        content: "";
-        border-top: 2px solid @fg;
-        width: 100%;
-        display: inline-block;
-        height: 0.25em;
       }
     }
   }
