@@ -1,7 +1,8 @@
 // Ported from original Metaball script by SATO Hiroyuki
 // http://park12.wakwak.com/~shp/lc/et/en_aics_script.html
 project.currentStyle = {
-  fillColor: '#eeffc6',
+  fillColor: "#eeffc6",
+  // fillColor: "#20395a",
 };
 
 var columns = 8;
@@ -17,9 +18,13 @@ var points = rows * columns;
 for (var i = 0; i < points; i++) {
   var ix = i % columns;
   var iy = parseInt(i / rows);
-  var x = ix * (window.innerWidth / (columns - 1)) + ((Math.random() - 0.5) * randomPosition);
-  var y = iy * (window.innerHeight / (rows + 1)) + ((Math.random() - 0.5) * randomPosition);
-  ballPositions.push([x, y])
+  var x =
+    ix * (window.innerWidth / (columns - 1)) +
+    (Math.random() - 0.5) * randomPosition;
+  var y =
+    iy * (window.innerHeight / (rows + 1)) +
+    (Math.random() - 0.5) * randomPosition;
+  ballPositions.push([x, y]);
 }
 
 var handle_len_rate = 2.4;
@@ -28,18 +33,19 @@ var radius = 50;
 for (var i = 0, l = ballPositions.length; i < l; i++) {
   var circlePath = new Path.Circle({
     center: ballPositions[i],
-    radius: dotSize
+    radius: dotSize,
+    fillColor: "#ccc",
   });
   circlePaths.push(circlePath);
 }
 
 var largeCircle = new Path.Circle({
   center: [676, 433],
-  radius: mouseDotSize
+  radius: mouseDotSize,
 });
 circlePaths.push(largeCircle);
 
-var mousePosition = [0, 0]
+var mousePosition = [0, 0];
 
 function onMouseMove(event) {
   largeCircle.position = event.point;
@@ -56,8 +62,19 @@ function generateConnections(paths) {
   for (var i = 0, l = paths.length; i < l; i++) {
     for (var j = i - 1; j >= 0; j--) {
       // only connect to mouse
-      if ((paths[i].position.x === mousePosition.x && paths[i].position.y === mousePosition.y) || (paths[j].position.x === mousePosition.x && paths[j].position.y === mousePosition.y)) {
-        var path = metaball(paths[i], paths[j], 0.5, handle_len_rate, connectionRadius);
+      if (
+        (paths[i].position.x === mousePosition.x &&
+          paths[i].position.y === mousePosition.y) ||
+        (paths[j].position.x === mousePosition.x &&
+          paths[j].position.y === mousePosition.y)
+      ) {
+        var path = metaball(
+          paths[i],
+          paths[j],
+          0.5,
+          handle_len_rate,
+          connectionRadius
+        );
         if (path) {
           connections.appendTop(path);
           path.removeOnMove();
@@ -79,16 +96,18 @@ function metaball(ball1, ball2, v, handle_len_rate, maxDistance) {
   var d = center1.getDistance(center2);
   var u1, u2;
 
-  if (radius1 == 0 || radius2 == 0)
-    return;
+  if (radius1 == 0 || radius2 == 0) return;
 
   if (d > maxDistance || d <= Math.abs(radius1 - radius2)) {
     return;
-  } else if (d < radius1 + radius2) { // case circles are overlapping
-    u1 = Math.acos((radius1 * radius1 + d * d - radius2 * radius2) /
-      (2 * radius1 * d));
-    u2 = Math.acos((radius2 * radius2 + d * d - radius1 * radius1) /
-      (2 * radius2 * d));
+  } else if (d < radius1 + radius2) {
+    // case circles are overlapping
+    u1 = Math.acos(
+      (radius1 * radius1 + d * d - radius2 * radius2) / (2 * radius1 * d)
+    );
+    u2 = Math.acos(
+      (radius2 * radius2 + d * d - radius1 * radius1) / (2 * radius2 * d)
+    );
   } else {
     u1 = 0;
     u2 = 0;
@@ -107,11 +126,11 @@ function metaball(ball1, ball2, v, handle_len_rate, maxDistance) {
 
   // define handle length by the distance between
   // both ends of the curve to draw
-  var totalRadius = (radius1 + radius2);
+  var totalRadius = radius1 + radius2;
   var d2 = Math.min(v * handle_len_rate, (p1a - p2a).length / totalRadius);
 
   // case circles are overlapping:
-  d2 *= Math.min(1, d * 2 / (radius1 + radius2));
+  d2 *= Math.min(1, (d * 2) / (radius1 + radius2));
 
   radius1 *= d2;
   radius2 *= d2;
@@ -119,7 +138,7 @@ function metaball(ball1, ball2, v, handle_len_rate, maxDistance) {
   var path = new Path({
     segments: [p1a, p2a, p2b, p1b],
     style: ball1.style,
-    closed: true
+    closed: true,
   });
   var segments = path.segments;
   segments[0].handleOut = getVector(angle1a - pi2, radius1);
@@ -133,7 +152,7 @@ function metaball(ball1, ball2, v, handle_len_rate, maxDistance) {
 function getVector(radians, length) {
   return new Point({
     // Convert radians to degrees:
-    angle: radians * 180 / Math.PI,
-    length: length
+    angle: (radians * 180) / Math.PI,
+    length: length,
   });
 }

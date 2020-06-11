@@ -1,5 +1,7 @@
 const path = require("path");
+const fs = require("fs");
 const gulp = require("gulp");
+const _ = require("lodash");
 const template = require("gulp-template");
 const dotenv = require("dotenv").config();
 
@@ -14,7 +16,7 @@ let production = process.env.NODE_ENV === "production";
 
 // templates
 
-gulp.task("templates", function() {
+gulp.task("templates", function(cb) {
   let templateVars = {
     SRCV: production
       ? "js/vendors.js"
@@ -39,14 +41,18 @@ gulp.task("templates", function() {
       ? process.env.LIVE_MYSQL_DBNAME
       : process.env.DEV_MYSQL_DBNAME,
   };
-  return gulp
-    .src("templates/*.php") // Get source files with gulp.src
-    .pipe(template(templateVars)) // Sends it through a gulp plugin
-    .pipe(
-      gulp.dest(
-        production ? process.env.LIVE_BUILD_PATH : process.env.DEV_BUILD_PATH
-      )
-    ); // Outputs the file in the destination folder
+
+  // define path
+  let pad = production
+    ? process.env.LIVE_BUILD_PATH
+    : process.env.DEV_BUILD_PATH;
+  pad = path.join(pad, "config.php");
+  // compile string
+  let filestring = "<?php\n";
+  _.each(templateVars, (v, k) => {
+    filestring += `define("${k}", "${v}");\n`;
+  });
+  fs.writeFile(pad, filestring, cb);
 });
 
 gulp.task("copyfolder", () => {

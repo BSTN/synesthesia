@@ -3,6 +3,7 @@ import Vuex from "vuex";
 import VueRouter from "vue-router";
 import App from "./index.vue";
 import home from "./home.vue";
+import testpage from "./testpage.vue";
 import axios from "axios";
 import vueSlider from "vue-slider-component";
 import VRuntimeTemplate from "v-runtime-template";
@@ -35,6 +36,11 @@ routes.push({
   path: "/",
   component: home,
 });
+
+routes.push({
+  path: "/test/:testname",
+  component: testpage
+})
 
 // import all pages as routes
 const pages = require.context("./pages", true, /\.vue$/);

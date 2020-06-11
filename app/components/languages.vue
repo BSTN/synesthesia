@@ -31,8 +31,9 @@ export default {
 #languages {
   button {
     text-transform: uppercase;
+    font-weight: 100;
     &.active {
-      text-decoration: underline;
+      font-weight: normal;
     }
   }
 }

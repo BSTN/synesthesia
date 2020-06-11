@@ -1,9 +1,10 @@
+<?php require('./config.php');?>
 <!doctype html>
 <html>
   <head>
     <meta charset="utf-8" />
     <title>Synesthesia test</title>
-    <base href="<%= BASE %>">
+    <base href="<?= BASE ?>">
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="icon" type="image/png" href="assets/icon.png" />
   </head>
@@ -40,8 +41,8 @@
     }
     ?>
     
-    <script src="<%= SRCV %>"></script>
-    <script src="<%= SRC %>"></script>
+    <script src="<?= SRCV ?>"></script>
+    <script src="<?= SRC ?>"></script>
     <script src="assets/paper.js"></script>
     <script type="text/paperscript" canvas="canvas-1" src="assets/connected.js?<?= time();?>"></script>
     <canvas resize="true" id="canvas-1" ></canvas>

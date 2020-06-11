@@ -1,7 +1,7 @@
 <template>
   <div id="home">
     <div id="top">
-      <div id="name">Synesthesie Test</div>
+      <div id="name">Synesthesia</div>
       <div id="line"></div>
       <languages></languages>
     </div>
@@ -23,16 +23,27 @@ export default {
 </script>
 <style lang="less" scoped>
 #home {
-  padding: 1rem 2rem;
+  border: 0.25rem solid @fg;
+  // border-width: 0.25rem 0 0 0;
+  // border-left-width: 40vw;
+  padding: 0.25rem 0.75rem;
+  min-height: 100vh;
+  @media (max-width: 600px) {
+    padding: 0.5rem;
+  }
   // > * {
   //   background: #fafafa;
   //   margin-bottom: 0.5rem;
   // }
   #top {
-    font-size: 0.75rem;
+    font-size: 0.65rem;
     display: flex;
     text-transform: uppercase;
     font-weight: 400;
+    margin-bottom: 1rem;
+    margin-bottom: 8rem;
+    position: sticky;
+    top: 0.5rem;
     > * {
       flex-shrink: 0;
       flex-grow: 0;
@@ -41,7 +52,22 @@ export default {
       width: 100%;
       flex-shrink: 1;
       flex-grow: 1;
-      margin: 0 0.5em;
+      margin: 0 1.5em;
+      animation-name: klip;
+      animation-duration: 2s;
+      animation-timing-function: @easeInOutExpo;
+      animation-delay: 0.5s;
+      animation-fill-mode: forwards;
+      transform-origin: top left;
+      .clip(left);
+      @keyframes klip {
+        0% {
+          .clip(left);
+        }
+        100% {
+          .clip();
+        }
+      }
       &:after {
         content: "";
         border-top: 2px solid @fg;
@@ -56,33 +82,39 @@ export default {
     font-family: "Victor Serif Trial";
     // font-family: "Stabil Grotesk Trial";
     // font-family: "Reckless Neue TRIAL";
-    font-weight: 300;
+    font-weight: 100;
     max-width: 15em;
+    max-width: 9em;
     font-size: 4vw;
-    font-size: 3rem;
-    @media (max-width: 800px) {
-      font-size: 1.5rem;
-    }
+    font-size: 4rem;
     line-height: 1em;
+    margin-left: 30vw;
+    @media (max-width: 1200px) {
+      margin-left: 0.25rem;
+    }
+    @media (max-width: 800px) {
+      font-size: 2rem;
+    }
     letter-spacing: -0.025em;
+    // letter-spacing: -0.05em;
+    // word-spacing: 0.2em;
     animation-name: line;
-    animation-duration: 2s;
+    animation-duration: 3s;
     animation-timing-function: @easeInOutExpo;
-    animation-delay: 0.5s;
+    animation-delay: 1s;
     animation-fill-mode: forwards;
     transform-origin: top left;
-    .clip(left);
+    // .clip(left);
+    opacity: 0;
     @keyframes line {
       0% {
         // line-height: 1.3em;
-        // opacity: 0;
-        // transform: scaleX(0.3);
-        .clip(left);
+        opacity: 0;
+        .clip(top);
       }
       100% {
         // line-height: 1em;
-        // opacity: 1;
-        // transform: scaleX(1);
+        opacity: 1;
         .clip();
       }
     }
@@ -98,7 +130,7 @@ export default {
     /deep/ p {
       display: inline-block;
       max-width: 14em;
-      margin: 30vh 4em 10vh 4em;
+      margin: 0vh 4em 10vh 4em;
       background: #fafafa;
       line-height: 1.2em;
       // min-height: 22em;
@@ -106,6 +138,7 @@ export default {
       opacity: 0.85;
       position: relative;
       font-size: 24px;
+
       &:after {
         content: "";
         position: absolute;
@@ -115,6 +148,13 @@ export default {
         height: 70%;
         background: linear-gradient(#005, @syn, #fee, #fafafa);
         z-index: -1;
+        opacity: 1;
+        transition: 5s;
+      }
+      &:hover {
+        &:after {
+          opacity: 1;
+        }
       }
     }
   }

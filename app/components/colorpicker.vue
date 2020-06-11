@@ -32,7 +32,7 @@
     <div id="nocolor">
       <button
         @click="toggleNocolor()"
-        :class="{ active: q.color === 'nocolor' }"
+        :class="{ active: q.value === 'nocolor' }"
       >
         no color
       </button>
@@ -42,6 +42,7 @@
 <script>
 import color from "color";
 import { clamp } from "lodash";
+import { mapGetters } from "vuex";
 export default {
   data() {
     return {
@@ -91,11 +92,10 @@ export default {
     };
   },
   computed: {
-    q() {
-      return this.$store.state.tests.questions[
-        this.$store.state.tests.position
-      ];
-    },
+    ...mapGetters({
+      testdata: "tests/testdata",
+      q: "tests/q",
+    }),
     lightnessBackgroundColor() {
       let L = parseInt(this.lightness * 256);
       return "rgb(" + L + "," + L + "," + L + ")";
@@ -109,9 +109,7 @@ export default {
       return this.lightness <= 0.75 ? "#ffffff" : "#333333";
     },
     clicks() {
-      return parseInt(
-        this.$store.state.testsquestions[this.$store.state.testsposition].clicks
-      );
+      return parseInt(this.q.clicks);
     },
   },
   watch: {
@@ -125,23 +123,23 @@ export default {
       this.posx = Math.random();
       this.posy = Math.random();
     },
-    setColor(val) {
+    async setColor(val) {
       let c, h, s;
       h = this.posx * 360;
       s = (1 - this.posy) * 100;
       let hex = color.hsl(h, s, val * 100).hex();
-      this.$store.dispatch("tests/setValue", { color: hex });
+      await this.$store.dispatch("tests/setValue", { value: hex });
     },
     toggleNocolor() {
       if (this.q.color !== "nocolor") {
-        this.$store.dispatch("tests/setValue", { color: "nocolor" });
+        this.$store.dispatch("tests/setValue", { value: "nocolor" });
       } else {
         let h, s, l;
         h = this.posx * 360;
         s = (1 - this.posy) * 100;
         l = this.lightness;
         let hex = color.hsl(h, s, l * 100).hex();
-        this.$store.dispatch("tests/setValue", { color: hex });
+        this.$store.dispatch("tests/setValue", { value: hex });
       }
     },
   },
@@ -164,7 +162,7 @@ export default {
         let hex = color
           .hsl(this.posx * 360, (1 - this.posy) * 100, this.lightness * 100)
           .hex();
-        this.$store.dispatch("tests/setValue", { color: hex });
+        this.$store.dispatch("tests/setValue", { value: hex });
       }
       if (ev.type === "mouseup") mousedown = false;
     };

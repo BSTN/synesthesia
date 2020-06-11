@@ -7,11 +7,11 @@
       </div>
       <div id="mid">
         <transition name="symbol" mode="out-in">
-          <div id="symbol" :key="$store.state.testsposition">
+          <div id="symbol" :key="testdata.position">
             <div
               id="symbolframe"
               :style="{ background: background }"
-              :class="{ nocolor: q.color === 'nocolor' }"
+              :class="{ nocolor: q.value === 'nocolor' }"
             >
               <div id="sym">
                 <div>{{ q.symbol }}</div>
@@ -38,32 +38,37 @@
   </div>
 </template>
 <script>
+import { mapGetters } from "vuex";
 export default {
   computed: {
-    position() {
-      return this.$store.state.testsposition;
+    ...mapGetters({
+      testdata: "tests/testdata",
+      q: "tests/q",
+    }),
+    testname() {
+      return this.$route.params.testname;
     },
-    q() {
-      return this.$store.state.testsquestions[this.position];
+    position() {
+      return this.testdata.position;
     },
     background() {
-      if (this.q.color === null) return "none";
-      else if (this.q.color === "nocolor") return "url('assets/nocolor.png')";
-      else return this.q.color;
+      if (this.q.value === null) return "none";
+      else if (this.q.value === "nocolor") return "url('assets/nocolor.png')";
+      else return this.q.value;
     },
     disabled() {
-      return this.q.color === null;
+      return this.q.value === null;
     },
   },
   methods: {
-    next() {
+    async next() {
       // set timing
-      //
+      // scroll to top (for mobile)
       window.scrollTo(0, 0);
-      if (
-        Object.keys(this.$store.state.testsquestions).length - 1 ==
-        this.position
-      ) {
+      if (Object.keys(this.testdata.questions).length - 1 == this.position) {
+        // set finished to true
+        await this.$store.dispatch("tests/setFinished");
+        // go to results
         this.$router.push({ path: "/results" });
       } else {
         this.$store.dispatch("tests/next");
@@ -72,7 +77,7 @@ export default {
   },
   mounted() {
     window.addEventListener("keydown", (ev) => {
-      if (ev.keyCode === 13 && this.q.color !== null) this.next();
+      if (ev.keyCode === 13 && this.q.value !== null) this.next();
     });
   },
 };

@@ -1,6 +1,5 @@
 <template>
   <div id="md">
-    <div id="loading" v-if="loading"></div>
     <vrt :template="template" v-if="template"></vrt>
   </div>
 </template>
@@ -15,18 +14,25 @@ export default {
   },
   methods: {
     load() {
-      this.loading = true;
-      if (this.$cache && this.$cache[this.md])
-        this.template = this.$cache[this.md];
-      else {
-        let template = document.getElementById(`template${this.md}`);
-        if (!template) console.warn("Missing template:", this.md);
-        else {
-          template = template.innerHTML;
-          this.$cache[this.md] = template;
-          this.template = template;
-        }
+      let name = this.md;
+      if (this.$store.state.profile.language !== this.$config.defaultlanguage) {
+        name = name + "." + this.$store.state.profile.language;
       }
+      let template = document.getElementById(`template${name}`);
+      // otherwise get default
+      if (!template) template = document.getElementById(`template${this.md}`);
+      // otherwise or give error
+      if (!template) console.warn("Missing template:", this.md);
+      else {
+        template = template.innerHTML;
+        this.$cache[this.md] = template;
+        this.template = template;
+      }
+    },
+  },
+  watch: {
+    "$store.state.profile.language": function() {
+      this.load();
     },
   },
   mounted() {

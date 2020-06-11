@@ -36,10 +36,11 @@ p {
 }
 
 a {
-  color: @link;
   text-decoration: none;
+  color: inherit;
 
   &:hover {
+    color: @link;
     text-decoration: underline;
   }
 }
@@ -60,6 +61,7 @@ canvas {
   background: transparent;
   opacity: 1;
   pointer-events: none;
+  border: 0.25rem solid @fg;
 }
 
 hr {
