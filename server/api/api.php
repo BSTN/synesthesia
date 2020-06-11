@@ -40,32 +40,74 @@ if($PATH === "/store") {
   if (!key_exists("UID", $postdata)) error("Missing UID.");
   if (!key_exists("data", $postdata)) error("Missing data.");
   if (!key_exists("table", $postdata)) error("Missing table.");
-  if (!key_exists("type", $postdata)) error("Missing type.");
 
   // the data object
   $data = (array) $postdata['data'];
   
-  // include IP
-  $data['IP'] = get_ip_address();
-
-  // prepare
+  // prepare insert data
   $insertdata = array();
-  foreach($data as $k => $v) {
-    $insertdata[":$k"] = $v;
+  foreach($data as $k => $v) { 
+    $insertdata[":$k"] = $v; 
   }
+  $insertdata[':IP'] = get_ip_address();
   $insertdata[':UID'] = $postdata['UID'];
 
-  $prep = $dbc->prepare("
-    INSERT INTO profile SET 
-    IP=SHA2(:IP,256), 
-    language=:language, 
-    UID=:UID
-  ;");
-  $prep->execute($insertdata);
+  if ($postdata['table'] === 'profile') {
+
+    // upsert?
+    $prep = $dbc->prepare("
+      INSERT INTO profile SET 
+        IP=SHA2(:IP,256), 
+        language=:language, 
+        UID=:UID
+      ON DUPLICATE KEY UPDATE
+        IP=SHA2(:IP,256), 
+        language=:language, 
+        UID=:UID
+    ;");
+    $prep->execute($insertdata);
+
+  } elseif ($postdata['table'] === 'questions') {
+    $prep = $dbc->prepare("
+      INSERT INTO profile SET 
+      IP=SHA2(:IP,256), 
+      UID=:UID,
+      testname=:testname,
+      setname=:setname,
+      symbol=:symbol,
+      value=:value,
+      clicks=:clicks,
+      clicksslider=:clicksslider,
+      timing=:timing,
+      qnr=:qnr,
+      interrupted=:interrupted,
+    ;");
+    $prep->execute($insertdata);
+
+  } elseif ($postdata['table'] === 'extraquestions') {
+    $values = $insertdata[':values'];
+    unset($insertdata[':values']);
+    $prep = $dbc->prepare("
+      SET @current := (SELECT data FROM extraquestions WHERE UID=:UID);
+      INSERT INTO extraquestions SET 
+        IP=SHA2(:IP,256), 
+        UID=:UID,
+        data=JSON_SET('{}', :key, :value)
+      ON DUPLICATE KEY UPDATE
+        IP=SHA2(:IP,256),
+        data=JSON_SET(@current, :key, :value)
+    ;");
+    foreach($values as $k => $v) {
+      $n = $insertdata;
+      $n[":key"] = "$." . $k;
+      $n[":value"] = $v;
+      $prep->execute($n);
+    }
+
+  }
+  
 
   pjson($data);
 }
 
 pjson(array("error_message" => "Path does not exist."));
-
-?>

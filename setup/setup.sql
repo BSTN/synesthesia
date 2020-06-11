@@ -4,7 +4,7 @@ SET time_zone = '+00:00';
 CREATE TABLE `profile` (
   `created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `UID` varchar(64) NOT NULL,
+  `UID` varchar(64) NOT NULL PRIMARY KEY,
   `IP` varchar(256) DEFAULT NULL,
   `language` varchar(2) DEFAULT NULL,
   `USERID` varchar(256) DEFAULT NULL,
@@ -13,6 +13,7 @@ CREATE TABLE `profile` (
 
 
 CREATE TABLE `questions` (
+  `ID` INT AUTO_INCREMENT PRIMARY KEY,
   `created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `IP` varchar(256) DEFAULT NULL,
@@ -32,6 +33,7 @@ CREATE TABLE `extraquestions` (
   `created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `IP` varchar(256) DEFAULT NULL,
-  `UID` varchar(64) NOT NULL,
-  `values` json NOT NULL
+  `UID` varchar(64) NOT NULL PRIMARY KEY,
+  `data` json NOT NULL,
+  CONSTRAINT UIDUNIQUE UNIQUE(UID)
 ) ENGINE=InnoDB DEFAULT CHARSET=UTF8MB4;

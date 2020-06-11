@@ -3,3 +3,4 @@ dev
 live
 .env
 server/vendor
+.DS_STORE
