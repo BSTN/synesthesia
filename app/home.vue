@@ -1,12 +1,14 @@
 <template>
   <div id="home">
     <div id="top">
-      <div id="name">Synesthesia</div>
-      <div id="line"></div>
       <languages></languages>
+      <div id="line"></div>
+      <div id="name">about</div>
     </div>
-    <md id="introtext" class="section" md="intro"></md>
-    <md id="hometext" class="section" md="home"></md>
+    <div id="content">
+      <md id="introtext" class="section" md="intro"></md>
+      <md id="hometext" class="section" md="home"></md>
+    </div>
   </div>
 </template>
 <script>
@@ -28,6 +30,8 @@ export default {
   // border-left-width: 40vw;
   padding: 0.25rem 0.75rem;
   min-height: 100vh;
+  border-color: #f0f;
+  border-width: 0;
   @media (max-width: 600px) {
     padding: 0.5rem;
   }
@@ -40,8 +44,6 @@ export default {
     display: flex;
     text-transform: uppercase;
     font-weight: 400;
-    margin-bottom: 1rem;
-    margin-bottom: 8rem;
     position: sticky;
     top: 0.5rem;
     > * {
@@ -52,7 +54,7 @@ export default {
       width: 100%;
       flex-shrink: 1;
       flex-grow: 1;
-      margin: 0 1.5em;
+      margin: 0 1.5em 0 0;
       animation-name: klip;
       animation-duration: 2s;
       animation-timing-function: @easeInOutExpo;
@@ -77,18 +79,32 @@ export default {
       }
     }
   }
+
+  #content {
+    display: flex;
+    // font-size: 1.5rem;
+    align-items: center;
+    > * {
+      height: auto;
+    }
+    /deep/ p {
+      max-width: 18em;
+    }
+  }
   #introtext {
     padding: 0 0;
     font-family: "Victor Serif Trial";
     // font-family: "Stabil Grotesk Trial";
     // font-family: "Reckless Neue TRIAL";
-    font-weight: 100;
+    font-weight: 300;
     max-width: 15em;
-    max-width: 9em;
+    max-width: 8em;
     font-size: 4vw;
     font-size: 4rem;
     line-height: 1em;
-    margin-left: 30vw;
+    // margin-left: 20vw;
+    margin-top: 0;
+    margin-top: 16rem;
     @media (max-width: 1200px) {
       margin-left: 0.25rem;
     }
@@ -100,8 +116,10 @@ export default {
     // word-spacing: 0.2em;
     animation-name: line;
     animation-duration: 3s;
-    animation-timing-function: @easeInOutExpo;
     animation-delay: 1s;
+    // animation-delay: 0s;
+    // animation-duration: 0s;
+    animation-timing-function: @easeInOutExpo;
     animation-fill-mode: forwards;
     transform-origin: top left;
     // .clip(left);
@@ -120,43 +138,83 @@ export default {
     }
     /deep/ p {
       line-height: inherit;
+      font-size: 1.5rem;
+      letter-spacing: 0;
+      word-spacing: 0;
+      line-height: 1em;
+      max-width: 18em;
+      &:nth-child(1) {
+        font-size: 3rem;
+        letter-spacing: -0.025em;
+      }
     }
   }
   #hometext {
-    min-height: 300vh;
+    font-weight: 300;
     font-family: helvetica;
-    font-weight: 400;
-    // font-size: 24px;
+    padding-left: 2rem;
     /deep/ p {
-      display: inline-block;
-      max-width: 14em;
-      margin: 0vh 4em 10vh 4em;
-      background: #fafafa;
-      line-height: 1.2em;
-      // min-height: 22em;
-      padding: 12em 0.5em 0.5em;
-      opacity: 0.85;
-      position: relative;
-      font-size: 24px;
-
-      &:after {
-        content: "";
-        position: absolute;
-        left: 0;
-        top: 0;
-        width: 100%;
-        height: 70%;
-        background: linear-gradient(#005, @syn, #fee, #fafafa);
-        z-index: -1;
-        opacity: 1;
-        transition: 5s;
-      }
-      &:hover {
-        &:after {
+      animation-name: pin;
+      animation-duration: 3s;
+      animation-delay: 1s;
+      // animation-delay: 0s;
+      // animation-duration: 0s;
+      animation-timing-function: @easeInOutExpo;
+      animation-fill-mode: forwards;
+      transform-origin: top left;
+      // .clip(left);
+      opacity: 0;
+      @keyframes pin {
+        0% {
+          opacity: 0;
+          transform: translateY(2em);
+        }
+        100% {
           opacity: 1;
+          transform: translateY(0em);
         }
       }
+      .loop(@counter) when (@counter > 0) {
+        .loop((@counter - 1)); // next iteration
+        &:nth-child(@{counter}) {
+          animation-delay: 2 + @counter * 0.125s;
+        }
+      }
+      .loop(10);
     }
+    // margin-top: 18rem;
+    // font-family: "Victor Serif Trial";
+    // font-size: 24px;
+    // /deep/ p {
+    //   display: inline-block;
+    //   max-width: 14em;
+    //   margin: 0vh 4em 10vh 4em;
+    //   background: #fafafa;
+    //   line-height: 1.2em;
+    //   // min-height: 22em;
+    //   padding: 12em 0.5em 0.5em;
+    //   opacity: 0.85;
+    //   position: relative;
+    //   font-size: 24px;
+
+    //   &:after {
+    //     content: "";
+    //     position: absolute;
+    //     left: 0;
+    //     top: 0;
+    //     width: 100%;
+    //     height: 70%;
+    //     background: linear-gradient(#005, @syn, #fee, #fafafa);
+    //     z-index: -1;
+    //     opacity: 1;
+    //     transition: 5s;
+    //   }
+    //   &:hover {
+    //     &:after {
+    //       opacity: 1;
+    //     }
+    //   }
+    // }
   }
 }
 </style>

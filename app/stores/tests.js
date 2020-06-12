@@ -1,5 +1,9 @@
 import Vue from "vue";
-import _ from "lodash";
+import {
+  each,
+  clone,
+  cloneDeep
+} from "lodash";
 
 // defaults
 const emptyTest = {
@@ -27,13 +31,13 @@ export const state = () => ({
 export const mutations = {
   set(state, content) {
     let key = Object.keys(content)[0];
-    Vue.set(state, key, _.cloneDeep(Object.values(content)[0]));
+    Vue.set(state, key, cloneDeep(Object.values(content)[0]));
   },
   setActive(state, name) {
     state.active = name;
   },
   setTest(state, name) {
-    Vue.set(state.tests, name, _.cloneDeep(emptyTest));
+    Vue.set(state.tests, name, cloneDeep(emptyTest));
   },
   setFinished(state, name) {
     Vue.set(state.tests[name], "finished", true);
@@ -42,10 +46,11 @@ export const mutations = {
     Vue.set(state.tests[content.name], "setname", content.setname);
   },
   setQuestions(state, content) {
-    _.each(content.questions, (v, k) => {
-      var notempty = _.cloneDeep(emptyItem);
+    each(content.questions, (v, k) => {
+      var notempty = cloneDeep(emptyItem);
       let item = {};
-      item.symbol = _.clone(v);
+      item.symbol = clone(v);
+      item.qnr = k
       Vue.set(
         state.tests[content.name].questions,
         k,
@@ -54,7 +59,7 @@ export const mutations = {
     });
   },
   appendQuestion(state, content) {
-    var notempty = _.cloneDeep(emptyItem);
+    var notempty = cloneDeep(emptyItem);
     Vue.set(state.questions, content.qnr, Object.assign(notempty, content));
   },
   next(state, content) {
@@ -99,7 +104,10 @@ export const actions = {
   },
   setValue(store, content) {
     if (store.state.active === null) return false;
-    store.commit("setValue", { name: store.state.active, values: content });
+    store.commit("setValue", {
+      name: store.state.active,
+      values: content
+    });
   },
 };
 

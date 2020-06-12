@@ -72,16 +72,28 @@ a.big {
 
 .readmore {
   display: block;
-  font-size: 1rem;
+  font-size: inherit;
   // max-width: 10em;
   font-family: Helvetica, sans-serif;
   letter-spacing: 0;
   padding: 0 0;
   line-height: 2em;
+  margin-bottom: 3em;
   cursor: pointer;
 
+  border: 1px solid @fg;
+  padding: 0.125em 1.5em 0.125em 0.75em;
+  display: inline-block;
+  border-radius: 0.25em;
+  background: @bg;
+  transition: all 0.3s;
+
   &:hover {
-    background: @syn;
+    background: @fg;
+    background: @connected;
+    border-color: @connected;
+    color: @bg;
+    text-decoration: none;
   }
 
   &:before {

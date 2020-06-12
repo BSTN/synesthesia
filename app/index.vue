@@ -53,12 +53,13 @@ export default {
     top: 0;
     width: 100%;
     height: 100%;
-    z-index: 0;
+    z-index: 2;
     pointer-events: none;
     background: linear-gradient(-45deg, #fffadf, #dbdbdb);
     background: linear-gradient(-45deg, #fffadf, #f8f8f8);
+    // background: linear-gradient(-45deg, #ff0000, #ffff00);
     // background: linear-gradient(-45deg, #252523, #1e1f27);
-    // mix-blend-mode: overlay;
+    // mix-blend-mode: soft-light;
     opacity: 0.5;
   }
 }

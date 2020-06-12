@@ -1,8 +1,9 @@
 // Ported from original Metaball script by SATO Hiroyuki
 // http://park12.wakwak.com/~shp/lc/et/en_aics_script.html
+var maincolor = "#fff";
+
 project.currentStyle = {
   fillColor: "#eeffc6",
-  // fillColor: "#20395a",
 };
 
 var columns = 8;
@@ -22,8 +23,7 @@ for (var i = 0; i < points; i++) {
     ix * (window.innerWidth / (columns - 1)) +
     (Math.random() - 0.5) * randomPosition;
   var y =
-    iy * (window.innerHeight / (rows + 1)) +
-    (Math.random() - 0.5) * randomPosition;
+    iy * (window.innerHeight / rows) + (Math.random() - 0.5) * randomPosition;
   ballPositions.push([x, y]);
 }
 
@@ -34,7 +34,7 @@ for (var i = 0, l = ballPositions.length; i < l; i++) {
   var circlePath = new Path.Circle({
     center: ballPositions[i],
     radius: dotSize,
-    fillColor: "#ccc",
+    fillColor: maincolor,
   });
   circlePaths.push(circlePath);
 }
@@ -48,6 +48,17 @@ circlePaths.push(largeCircle);
 var mousePosition = [0, 0];
 
 function onMouseMove(event) {
+  var color = window
+    .getComputedStyle(document.getElementById("connected"))
+    .getPropertyValue("background-color");
+
+  maincolor = color;
+  largeCircle.fillColor = color;
+
+  for (var cp in circlePaths) {
+    circlePaths[cp].fillColor = color;
+  }
+
   largeCircle.position = event.point;
   mousePosition = event.point;
   generateConnections(circlePaths);
@@ -139,6 +150,7 @@ function metaball(ball1, ball2, v, handle_len_rate, maxDistance) {
     segments: [p1a, p2a, p2b, p1b],
     style: ball1.style,
     closed: true,
+    fillColor: maincolor,
   });
   var segments = path.segments;
   segments[0].handleOut = getVector(angle1a - pi2, radius1);

@@ -1,6 +1,7 @@
 <template>
   <div id="testpage">
-    <testframe v-if="exists"></testframe>
+    <testframe v-if="exists && $store.state.profile.UID"></testframe>
+    <div v-if="errormessage">Error: {{ errormessage }}</div>
   </div>
 </template>
 <script>
@@ -8,7 +9,13 @@ export default {
   data() {
     return {
       exists: false,
+      errormessage: null,
     };
+  },
+  methods: {
+    error(message) {
+      this.errormessage = message;
+    },
   },
   mounted() {
     if (
@@ -21,13 +28,25 @@ export default {
       this.exists = true;
       this.$store.commit("tests/setActive", this.$route.params.testname);
     }
+    if (this.$store.state.profile.UID === false) {
+      this.$axios
+        .get("./api/uid")
+        .then((x) => {
+          if (x.data.UID)
+            this.$store.dispatch("profile/set", { UID: x.data.UID });
+          else this.error("Did not receive UID.");
+        })
+        .catch((err) => {
+          this.error(err);
+        });
+    }
   },
 };
 </script>
 <style lang="less" scoped>
 #testpage {
   padding: 0.5rem;
-  background: @bg2;
+  background: @bg;
   min-height: 100vh;
   display: flex;
   align-content: center;

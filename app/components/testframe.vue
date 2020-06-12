@@ -48,6 +48,9 @@ export default {
     testname() {
       return this.$route.params.testname;
     },
+    setname() {
+      return this.$store.state.tests.tests[this.testname].setname;
+    },
     position() {
       return this.testdata.position;
     },
@@ -63,6 +66,17 @@ export default {
   methods: {
     async next() {
       // set timing
+      // tralalala
+
+      // send data to server
+      let data = JSON.parse(JSON.stringify(this.q));
+      data.testname = this.testname;
+      data.setname = this.setname;
+      await this.$axios.post("./api/store", {
+        table: "questions",
+        UID: this.$store.state.profile.UID,
+        data: data,
+      });
       // scroll to top (for mobile)
       window.scrollTo(0, 0);
       if (Object.keys(this.testdata.questions).length - 1 == this.position) {
@@ -84,14 +98,16 @@ export default {
 </script>
 <style lang="less" scoped>
 #testframe {
+  background: @bg;
+  background: #eee;
+  color: #000;
+
   height: auto;
   // min-height: 25rem;
   max-width: 40rem;
   width: 100%;
   margin: 0 auto;
   position: relative;
-  background: @bg;
-  background: #eee;
   display: block;
   border-radius: 0.5em;
   overflow: hidden;

@@ -6,7 +6,7 @@
       v-active="short === current"
       @click="setLanguage(short)"
     >
-      {{ short }}
+      {{ language }}
     </button>
   </div>
 </template>
@@ -32,8 +32,14 @@ export default {
   button {
     text-transform: uppercase;
     font-weight: 100;
+    opacity: 0.5;
+    transition: all 0.3s;
+    padding: 0 1em 0 0;
+    &:hover {
+      opacity: 1;
+    }
     &.active {
-      font-weight: normal;
+      opacity: 1;
     }
   }
 }
