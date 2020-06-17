@@ -6,12 +6,15 @@ body {
   color: @fg;
 }
 
+:root {
+  --vh: 1vh;
+}
+
 #connected {
   background-color: @connected;
 }
 
 ::selection {
-  // background: rgba(@c1, 0.9);
   // color: @bg;
   background: #8ef7ffb2;
 }
@@ -51,9 +54,15 @@ a {
 }
 
 h1 {
-  // color: @fg2;
   font-size: 1.5em;
   line-height: 1em;
+}
+
+input[type="text"] {
+  border: 1px solid @fg;
+  padding: 0.5em 0.5em;
+  background: transparent;
+  color: inherit;
 }
 
 canvas {
@@ -66,6 +75,7 @@ canvas {
   background: transparent;
   opacity: 1;
   pointer-events: none;
+  z-index: 999;
   // border: 0.25rem solid @fg;
 }
 

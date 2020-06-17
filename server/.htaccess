@@ -7,6 +7,10 @@
   AddOutputFilterByType DEFLATE text/css application/x-javascript text/x-component text/html text/plain text/xml application/javascript
 </IfModule>
 
+<IfModule mod_headers.c>    
+    Header set Access-Control-Allow-Origin *
+</IfModule>
+
 <IfModule mod_rewrite.c>
   RewriteEngine On
   RewriteCond %{REQUEST_FILENAME} !-d

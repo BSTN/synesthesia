@@ -1,32 +1,32 @@
 <template>
   <div id="index">
-    <div id="overlay"></div>
+    <paperjs></paperjs>
     <transition name="clipright" mode="out-in">
       <router-view class="view"></router-view>
     </transition>
   </div>
 </template>
 <script>
-// import symbols1 from "../setup/symbols1.txt";
-import _ from "lodash";
+import { each, sample, debounce, isEmpty } from "lodash";
 export default {
   created() {
-    _.each(this.$tests, (v, name) => {
-      // pick a set randomly
-      let setname = _.sample(Object.keys(v.sets));
+    if (!isEmpty(this.$route.query)) {
+      if (this.$route.query.id)
+        this.$store.dispatch("profile/set", { USERID: this.$route.query.id });
+      if (this.$route.query.lang)
+        this.$store.dispatch("profile/set", {
+          language: this.$route.query.lang,
+        });
+    }
+    // pick a set randomly and prepare store with questions
+    each(this.$tests, (v, name) => {
+      let setname = sample(Object.keys(v.sets));
       this.$store.dispatch("tests/setQuestions", {
         name: name,
         setname: setname,
         questions: v.sets[setname],
       });
     });
-    // let symbols = symbols1.split("\n");
-    // for (let k in symbols) {
-    //   this.$store.dispatch("tests/appendQuestion", {
-    //     qnr: k,
-    //     symbol: symbols[k],
-    //   });
-    // }
   },
   watch: {
     $route() {
@@ -35,7 +35,19 @@ export default {
       }, 250);
     },
   },
-  mounted() {},
+  mounted() {
+    // VH fix for mobile
+    let vh = window.innerHeight * 0.01;
+    document.documentElement.style.setProperty("--vh", `${vh}px`);
+    window.addEventListener(
+      "resize",
+      debounce(() => {
+        let vh = window.innerHeight * 0.01;
+        document.documentElement.style.setProperty("--vh", `${vh}px`);
+      }),
+      500
+    );
+  },
 };
 </script>
 <style lang="less">
@@ -46,26 +58,12 @@ export default {
 #index {
   position: relative;
   z-index: 1;
-  #overlay {
-    display: none;
-    position: fixed;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 2;
-    pointer-events: none;
-    background: linear-gradient(-45deg, #fffadf, #dbdbdb);
-    background: linear-gradient(-45deg, #fffadf, #f8f8f8);
-    // background: linear-gradient(-45deg, #ff0000, #ffff00);
-    // background: linear-gradient(-45deg, #252523, #1e1f27);
-    // mix-blend-mode: soft-light;
-    opacity: 0.5;
-  }
 }
 .view {
   position: relative;
   z-index: 2;
+  max-width: 1440px;
+  margin: 0 auto;
 }
 #footer {
   text-align: center;

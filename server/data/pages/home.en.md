@@ -4,7 +4,7 @@ An international team of scientists is conducting research into Language and Per
 
 Are you also curious how your senses work together?
 
-<router-link to="/test/letters" class="readmore">Take the tests</router-link>
+<router-link to="/test/graphemes" class="readmore">Take the tests</router-link>
 
 Have you done any of the test before and saved the data? View and compare your results here:
 

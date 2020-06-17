@@ -4,3 +4,5 @@ live
 .env
 server/vendor
 .DS_STORE
+**/*.otf
+todo.md

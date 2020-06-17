@@ -1,4 +1,5 @@
 import Vue from "vue";
+import color from 'color';
 import {
   each,
   clone,
@@ -109,6 +110,14 @@ export const actions = {
       values: content
     });
   },
+  fill(store, testname) {
+    each(store.state.tests, test => {
+      each(test.questions, q => {
+        if (Math.random() > 0.9) q.value = 'nocolor';
+        else q.value = color.rgb(Math.random() * 256, Math.random() * 256, Math.random() * 256).hex().replace("#", "")
+      })
+    })
+  }
 };
 
 export const getters = {

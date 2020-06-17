@@ -6,7 +6,14 @@
         :style="{ backgroundColor: lightnessBackgroundColor }"
         ref="hue"
       >
-        <div id="huebg" :style="{ opacity: lightnessOpacity }"></div>
+        <div
+          id="huebg"
+          ref="huebg"
+          :style="{
+            opacity: lightnessOpacity,
+            backgroundPosition: huebgpos,
+          }"
+        ></div>
         <div
           id="huehandle"
           :style="{
@@ -51,6 +58,7 @@ export default {
       dragging: false,
       posx: null,
       posy: null,
+      offset: null,
       sliderOptions: {
         dotSize: 14,
         width: "auto",
@@ -111,23 +119,32 @@ export default {
     clicks() {
       return parseInt(this.q.clicks);
     },
+    huebgpos() {
+      let w = 0;
+      if (this.$refs["huebg"]) w = this.$refs["huebg"].clientWidth;
+      return `${this.offset * w}px 0px`;
+    },
   },
   watch: {
-    "$store.state.testsposition": function(val) {
+    "q.qnr": function(val) {
       this.lightness = 0.5;
       this.randomPos();
     },
   },
   methods: {
     randomPos() {
+      this.offset = Math.random();
       this.posx = Math.random();
       this.posy = Math.random();
     },
     async setColor(val) {
       let c, h, s;
-      h = this.posx * 360;
+      h = (this.posx * 360 + (1 - this.offset) * 360) % 360;
       s = (1 - this.posy) * 100;
-      let hex = color.hsl(h, s, val * 100).hex();
+      let hex = color
+        .hsl(h, s, val * 100)
+        .hex()
+        .replace("#", "");
       await this.$store.dispatch("tests/setValue", { value: hex });
     },
     toggleNocolor() {
@@ -135,10 +152,13 @@ export default {
         this.$store.dispatch("tests/setValue", { value: "nocolor" });
       } else {
         let h, s, l;
-        h = this.posx * 360;
+        h = (this.posx * 360 + (1 - this.offset) * 360) % 360;
         s = (1 - this.posy) * 100;
         l = this.lightness;
-        let hex = color.hsl(h, s, l * 100).hex();
+        let hex = color
+          .hsl(h, s, l * 100)
+          .hex()
+          .replace("#", "");
         this.$store.dispatch("tests/setValue", { value: hex });
       }
     },
@@ -160,8 +180,13 @@ export default {
         this.posx = clamp((ev.clientX - coor.x) / coor.width, 0, 1);
         this.posy = clamp((ev.clientY - coor.y) / coor.height, 0, 1);
         let hex = color
-          .hsl(this.posx * 360, (1 - this.posy) * 100, this.lightness * 100)
-          .hex();
+          .hsl(
+            (this.posx * 360 + (1 - this.offset) * 360) % 360,
+            (1 - this.posy) * 100,
+            this.lightness * 100
+          )
+          .hex()
+          .replace("#", "");
         this.$store.dispatch("tests/setValue", { value: hex });
       }
       if (ev.type === "mouseup") mousedown = false;
@@ -199,9 +224,11 @@ export default {
         width: 100%;
         height: 100%;
         background-image: url("~assets/hue.png");
-        background-position: center;
         background-size: 100% 100%;
+        background-position: left 30px top 0;
+        background-repeat: repeat;
         border-radius: 0.25em;
+        transition: background-position 0.2s;
       }
       #huehandle {
         position: absolute;
@@ -227,7 +254,7 @@ export default {
     #labels {
       line-height: 1em;
       label {
-        color: @fg2;
+        opacity: 0.5;
         font-size: 0.5em;
         display: inline-block;
         // text-transform: uppercase;
@@ -241,11 +268,11 @@ export default {
     // min-height: 2.5rem;
     text-align: center;
     button {
-      background: @bg3;
+      background: #d6d6d6;
       padding: 0.25em 1em;
       border-radius: 0.25em;
       opacity: 0.5;
-      border: 1px solid @bg2;
+      border: 1px solid #ccc;
       margin: 0;
       &:hover {
         opacity: 1;

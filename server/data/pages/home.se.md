@@ -4,7 +4,7 @@ Ett internationellt team av forskare forskar om språk och perception med hjälp
 
 Är du också nyfiken på hur dina sinnen fungerar tillsammans?
 
-<router-link to="/test/letters" class="readmore">Ta testerna</router-link>
+<router-link to="/test/graphemes" class="readmore">Ta testerna</router-link>
 
 Har du gjort något av testet tidigare och sparat data? Visa och jämför dina resultat här:
 

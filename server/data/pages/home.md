@@ -8,7 +8,7 @@ Met behulp van aantal tests doet een internationaal team wetenschappers onderzoe
 
 Ben jij ook benieuwd hoe jouw zintuigen samenwerken?
 
-<router-link to="/test/letters" class="readmore">Doe de tests</router-link>
+<router-link to="/test/graphemes" class="readmore">Doe de tests</router-link>
 
 Heb je een van de test al eerder gedaan en de gegevens opgeslagen? Bekijk en vergelijk je resultaten dan hier:
 

@@ -22,9 +22,32 @@ try {
  * API Start 
  */
 
-if ($PATH === "/uid") {
-    $data = array("UID" => getUid(64));
-    pjson($data);
+if ($PATH === "/create") {
+
+    $input = file_get_contents('php://input');
+    if (!$input) {
+        error("Missing Post data.");
+    };
+
+    $data = (array) json_decode($input);
+    /* add UID */
+    $data['UID'] = getUid(64);
+    $data['IP'] = get_ip_address();
+
+    $insertdata = array();
+    foreach ($data as $k => $v) {
+        $insertdata[":" . $k] = $v;
+    }
+
+    $prep = $dbc->prepare(
+        "INSERT INTO profile SET 
+            IP=SHA2(:IP,256), 
+            language=:language, 
+            UID=:UID"
+    );
+    $prep->execute($insertdata);
+
+    pjson(array("UID" => $data['UID']));
 }
 
 if ($PATH === "/store") {
@@ -109,29 +132,30 @@ if ($PATH === "/store") {
         );
 
         $prep->execute($insertdata);
-    } elseif ($postdata['table'] === 'extraquestions') {
+    } elseif ($postdata['table'] === 'extra') {
         $values = $insertdata[':values'];
         unset($insertdata[':values']);
-        $prep = $dbc->prepare(
-            "SET @current := (SELECT data FROM extraquestions WHERE UID=:UID);
-            INSERT INTO extraquestions SET 
-              IP=SHA2(:IP,256), 
-              UID=:UID,
-              data=JSON_SET('{}', :key, :value)
-            ON DUPLICATE KEY UPDATE
-              IP=SHA2(:IP,256),
-              data=JSON_SET(@current, :key, :value);"
-        );
-        foreach ($values as $k => $v) {
-            $n = $insertdata;
-            $n[":key"] = "$." . $k;
-            $n[":value"] = $v;
-            $prep->execute($n);
-        }
+
+        // get current values (JSON)
+
+
+        // $prep = $dbc->prepare(
+        //     "SET @current := (SELECT data FROM extra WHERE UID=:UID);
+        //     INSERT INTO extra SET 
+        //       IP=SHA2(:IP,256), 
+        //       UID=:UID,
+        //       data=JSON_SET('{}', :key, :value)
+        //     ON DUPLICATE KEY UPDATE
+        //       IP=SHA2(:IP,256),
+        //       data=:data;"
+        // );
+
+        $data = json_encode($values);
+        $prep->execute(array(":data" => $data));
     }
 
 
     pjson($data);
 }
 
-pjson(array("error_message" => "Sorry, path does not exist."));
+error("Sorry, path does not exist.");

@@ -25,13 +25,13 @@
       </div>
       <div id="bottom">
         <!-- <button id="helpbutton">help</button> -->
-        <button id="midbutton" class="inactive">
+        <div id="help">
           Try to instinctively choose the color you associate, or feel fits best
           with the character/word/image/sound above.
-        </button>
+        </div>
         <div class="flex"></div>
         <button id="nextbutton" @click="next()" :disabled="disabled">
-          next
+          {{ $t("next") }}
         </button>
       </div>
     </div>
@@ -57,7 +57,7 @@ export default {
     background() {
       if (this.q.value === null) return "none";
       else if (this.q.value === "nocolor") return "url('assets/nocolor.png')";
-      else return this.q.value;
+      else return "#" + this.q.value;
     },
     disabled() {
       return this.q.value === null;
@@ -72,11 +72,20 @@ export default {
       let data = JSON.parse(JSON.stringify(this.q));
       data.testname = this.testname;
       data.setname = this.setname;
-      await this.$axios.post("./api/store", {
-        table: "questions",
-        UID: this.$store.state.profile.UID,
-        data: data,
-      });
+      let err = await this.$axios
+        .post("./api/store", {
+          table: "questions",
+          UID: this.$store.state.profile.UID,
+          data: data,
+        })
+        .catch((err) => {
+          return "error";
+        });
+
+      if (err === "error") {
+        console.warn("Could not store data");
+        return false;
+      }
       // scroll to top (for mobile)
       window.scrollTo(0, 0);
       if (Object.keys(this.testdata.questions).length - 1 == this.position) {
@@ -119,21 +128,16 @@ export default {
     flex-direction: column;
     min-height: 100%;
     width: 100%;
-    > * {
-      // border: 1px solid @bg2;
-    }
     #top {
-      background: @bg3;
+      background: #d6d6d6;
       background: #e9e9e9;
       font-size: 0.75em;
-      color: @fg2;
       padding: 0.5em 0.5em;
       display: flex;
       button {
         opacity: 0.5;
         &:hover {
           opacity: 1;
-          color: @fg1;
         }
       }
     }
@@ -165,7 +169,7 @@ export default {
           align-content: center;
           align-items: center;
           justify-content: center;
-          // background: @bg3;
+          // background: #d6d6d6;
           border-radius: 0.25rem;
           &.nocolor {
             border: 1px solid #ddd;
@@ -202,34 +206,38 @@ export default {
       align-items: center;
       justify-content: flex-end;
       padding: 0 1.5em;
-      background: @bg3;
+      background: #d6d6d6;
       background: #e9e9e9;
+      #help {
+        opacity: 0.25;
+        font-style: italic;
+        pointer-events: none;
+        line-height: 1em;
+        font-size: 0.75em;
+      }
       button {
-        &[disabled="disabled"] {
-          opacity: 0.5;
-          font-style: italic;
+        color: #999;
+        border: 1px solid #ddd;
+        padding: 0.5em 1em 0.35em;
+        border-radius: 0.25em;
+        text-transform: uppercase;
+        cursor: pointer;
+        &.inactive {
           pointer-events: none;
+          font-size: 0.75em;
+          opacity: 0.5;
+          white-space: normal;
+          min-width: 60%;
+          padding: 0;
+          text-align: left;
         }
         &:hover {
-          text-decoration: underline;
-        }
-        &#midbutton {
-          white-space: nowrap;
-          &.inactive {
-            color: @fg2;
-            pointer-events: none;
-            font-size: 0.75em;
-            opacity: 0.5;
-            white-space: normal;
-            min-width: 60%;
-            padding: 0;
-            text-align: left;
-          }
+          background: #999;
+          color: #eee;
         }
       }
       #helpbutton,
       #count {
-        color: @fg2;
       }
     }
   }

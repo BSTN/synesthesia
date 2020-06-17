@@ -19,13 +19,12 @@
   margin: 0 auto;
   max-width: 1000px;
 
-  > * {
+  >* {
     padding: 1rem 0;
   }
 }
 
 .top {
-  // background: @bg3;
   padding-top: 2rem;
 }
 
@@ -37,30 +36,12 @@
   font-size: 0.75em;
 
   a {
-    border-bottom: 2px solid @link;
     margin-right: 2em;
     display: inline-block;
 
     &:hover {
-      color: @c1;
-      border-color: @c1;
       text-decoration: none;
     }
-  }
-}
-
-a.big {
-  // font-size: 1.5em;
-  border-bottom: 0.15em solid @link;
-  transition: all 0.25s;
-  margin-top: 1em;
-  // margin-bottom: 2em;
-  display: block;
-
-  &:hover {
-    text-decoration: none;
-    color: @c1;
-    border-color: @c1;
   }
 }
 
@@ -82,7 +63,8 @@ a.big {
   cursor: pointer;
 
   border: 1px solid @fg;
-  padding: 0.125em 1.5em 0.125em 0.75em;
+  padding: 0.65em 1.5em 0.65em 0.75em;
+  line-height: 1em;
   display: inline-block;
   border-radius: 0.25em;
   background: @bg;
@@ -90,8 +72,8 @@ a.big {
 
   &:hover {
     background: @fg;
-    background: @connected;
-    border-color: @connected;
+    // background: @connected;
+    // border-color: @connected;
     color: @bg;
     text-decoration: none;
   }

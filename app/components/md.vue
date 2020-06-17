@@ -15,13 +15,13 @@ export default {
   methods: {
     load() {
       let name = this.md;
-      if (this.$store.state.profile.language !== this.$config.defaultlanguage) {
+      if (this.$store.state.profile.language !== this.$config.defaultLanguage) {
         name = name + "." + this.$store.state.profile.language;
       }
       let template = document.getElementById(`template${name}`);
       // otherwise get default
       if (!template) template = document.getElementById(`template${this.md}`);
-      // otherwise or give error
+      // or give error
       if (!template) console.warn("Missing template:", this.md);
       else {
         template = template.innerHTML;

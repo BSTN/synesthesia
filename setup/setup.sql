@@ -29,7 +29,7 @@ CREATE TABLE `questions` (
   `interrupted` binary(1) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=UTF8MB4;
 
-CREATE TABLE `extraquestions` (
+CREATE TABLE `extra` (
   `created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `IP` varchar(256) DEFAULT NULL,

@@ -4,9 +4,12 @@ import VueRouter from "vue-router";
 import App from "./index.vue";
 import home from "./home.vue";
 import testpage from "./testpage.vue";
+import textpage from "./textpage.vue";
 import axios from "axios";
 import vueSlider from "vue-slider-component";
 import VRuntimeTemplate from "v-runtime-template";
+import storePlugin from "./utils/storePlugin";
+import { i18n } from "./utils/i18n";
 
 Vue.prototype.$axios = axios;
 Vue.prototype.$cache = {};
@@ -15,6 +18,7 @@ Vue.prototype.$cache = {};
 Vue.prototype.$config = JSON.parse(
   document.getElementById("bootload-config").innerText
 );
+
 // load tests
 Vue.prototype.$tests = JSON.parse(
   document.getElementById("bootload-tests").innerText
@@ -39,8 +43,13 @@ routes.push({
 
 routes.push({
   path: "/test/:testname",
-  component: testpage
-})
+  component: testpage,
+});
+
+routes.push({
+  path: "/page/:textname",
+  component: textpage,
+});
 
 // import all pages as routes
 const pages = require.context("./pages", true, /\.vue$/);
@@ -77,7 +86,7 @@ Vue.use(VueRouter);
 // stores
 Vue.use(Vuex);
 
-const allstores = ["profile", "tests"];
+const allstores = ["profile", "tests", "extra"];
 let storelist = {};
 allstores.forEach((k, v) => {
   let storeFile = require("./stores/" + k);
@@ -87,13 +96,14 @@ allstores.forEach((k, v) => {
 
 let store = new Vuex.Store({
   modules: storelist,
-  plugins: [],
+  plugins: [storePlugin],
 });
 
 var app = new Vue({
   el: "#container",
   router,
   store,
+  i18n,
   render: function(h) {
     return h(App);
   },

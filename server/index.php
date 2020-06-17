@@ -21,10 +21,15 @@
   use Symfony\Component\Yaml\Yaml;
   use Michelf\Markdown;
 
-  // load yaml settings
+  // load yaml configuration
   $raw = file_get_contents('./data/config.yml');
   $config = Yaml::parse($raw);
   echo "<script type=\"application/json\" id=\"bootload-config\">" . json_encode($config) . "</script>\n\t";
+
+  // load yaml translations
+  $raw = file_get_contents('./data/translations.yml');
+  $config = Yaml::parse($raw);
+  echo "<script type=\"application/json\" id=\"bootload-translations\">" . json_encode($config) . "</script>\n\t";
 
   // load yaml tests
   $tests = array();
@@ -37,7 +42,7 @@
   echo "<script type=\"application/json\" id=\"bootload-tests\">" . json_encode($tests) . "</script>\n\t";
 
   // load all markdown
-  foreach (glob("./data/texts/*.md") as $filename) {
+  foreach (glob("./data/pages/*.md") as $filename) {
     $raw = file_get_contents($filename);
     $md = Markdown::defaultTransform($raw);
     $name = pathinfo($filename, PATHINFO_FILENAME);
@@ -47,9 +52,9 @@
 
   <script src="<?= SRCV ?>"></script>
   <script src="<?= SRC ?>"></script>
-  <script src="assets/paper.js"></script>
+  <!-- <script src="assets/paper.js"></script>
   <script type="text/paperscript" canvas="canvas-1" src="assets/connected.js?<?= time(); ?>"></script>
-  <canvas resize="true" id="canvas-1"></canvas>
+  <canvas resize="true" id="canvas-1"></canvas> -->
 
 </body>
 

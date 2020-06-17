@@ -52,7 +52,7 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /\.(png|jpe?g|gif)$/i,
+        test: /\.(png|jpe?g|gif|otf)$/i,
         loader: "file-loader",
         options: {
           name(resourcePath, resourceQuery) {

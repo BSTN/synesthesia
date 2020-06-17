@@ -1,13 +1,23 @@
 <template>
   <div id="home">
-    <div id="top">
-      <languages></languages>
-      <div id="line"></div>
-      <div id="name">about</div>
-    </div>
+    <topbar>
+      <template #left>
+        <languages></languages>
+      </template>
+      <template #right>
+        <router-link to="/page/postquestions" id="name">
+          postquestions
+        </router-link>
+        <router-link to="/about" id="name">
+          about
+        </router-link>
+      </template>
+    </topbar>
     <div id="content">
-      <md id="introtext" class="section" md="intro"></md>
-      <md id="hometext" class="section" md="home"></md>
+      <div id="introtext" class="section" md="intro">
+        <div id="md">{{ $t("intro") }}</div>
+      </div>
+      <md id="hometext" class="section" md="home" v-if="delayed"></md>
     </div>
   </div>
 </template>
@@ -18,72 +28,26 @@ export default {
     return {
       homemd: false,
       contactmd: false,
+      delayed: false,
     };
   },
-  mounted() {},
+  mounted() {
+    setTimeout(() => {
+      this.delayed = true;
+    }, 2000);
+  },
 };
 </script>
 <style lang="less" scoped>
 #home {
-  border: 0.25rem solid @fg;
-  // border-width: 0.25rem 0 0 0;
-  // border-left-width: 40vw;
-  padding: 0.25rem 0.75rem;
   min-height: 100vh;
-  border-color: #f0f;
+  min-height: calc(var(--vh, 1vh) * 100);
   border-width: 0;
-  @media (max-width: 600px) {
-    padding: 0.5rem;
-  }
-  // > * {
-  //   background: #fafafa;
-  //   margin-bottom: 0.5rem;
-  // }
-  #top {
-    font-size: 0.65rem;
-    display: flex;
-    text-transform: uppercase;
-    font-weight: 400;
-    position: sticky;
-    top: 0.5rem;
-    > * {
-      flex-shrink: 0;
-      flex-grow: 0;
-    }
-    #line {
-      width: 100%;
-      flex-shrink: 1;
-      flex-grow: 1;
-      margin: 0 1.5em 0 0;
-      animation-name: klip;
-      animation-duration: 2s;
-      animation-timing-function: @easeInOutExpo;
-      animation-delay: 0.5s;
-      animation-fill-mode: forwards;
-      transform-origin: top left;
-      .clip(left);
-      @keyframes klip {
-        0% {
-          .clip(left);
-        }
-        100% {
-          .clip();
-        }
-      }
-      &:after {
-        content: "";
-        border-top: 2px solid @fg;
-        width: 100%;
-        display: inline-block;
-        height: 0.25em;
-      }
-    }
-  }
 
   #content {
-    display: flex;
-    // font-size: 1.5rem;
-    align-items: center;
+    min-height: calc(100vh - 2rem);
+    min-height: calc(var(--vh, 1vh) * 100 - 2rem);
+
     > * {
       height: auto;
     }
@@ -92,77 +56,73 @@ export default {
     }
   }
   #introtext {
+    position: fixed;
+    bottom: 1rem;
+    left: 1rem;
+
     padding: 0 0;
-    font-family: "Victor Serif Trial";
-    // font-family: "Stabil Grotesk Trial";
-    // font-family: "Reckless Neue TRIAL";
+    font-family: "Victor";
     font-weight: 300;
-    max-width: 15em;
-    max-width: 8em;
-    font-size: 4vw;
-    font-size: 4rem;
+
+    font-size: 5vw;
     line-height: 1em;
-    // margin-left: 20vw;
-    margin-top: 0;
-    margin-top: 16rem;
-    @media (max-width: 1200px) {
-      margin-left: 0.25rem;
-    }
-    @media (max-width: 800px) {
-      font-size: 2rem;
-    }
+    width: 50vw;
     letter-spacing: -0.025em;
-    // letter-spacing: -0.05em;
-    // word-spacing: 0.2em;
     animation-name: line;
-    animation-duration: 3s;
+    animation-duration: 2s;
     animation-delay: 1s;
-    // animation-delay: 0s;
-    // animation-duration: 0s;
     animation-timing-function: @easeInOutExpo;
     animation-fill-mode: forwards;
     transform-origin: top left;
-    // .clip(left);
     opacity: 0;
     @keyframes line {
       0% {
-        // line-height: 1.3em;
         opacity: 0;
-        .clip(top);
+        .clip(left);
       }
-      100% {
-        // line-height: 1em;
+      99% {
         opacity: 1;
         .clip();
       }
-    }
-    /deep/ p {
-      line-height: inherit;
-      font-size: 1.5rem;
-      letter-spacing: 0;
-      word-spacing: 0;
-      line-height: 1em;
-      max-width: 18em;
-      &:nth-child(1) {
-        font-size: 3rem;
-        letter-spacing: -0.025em;
+      100% {
+        opacity: 1;
+        clip-path: none;
       }
+    }
+    #md {
+      line-height: inherit;
+      max-width: 15em;
+      margin: 0;
     }
   }
   #hometext {
-    font-weight: 300;
-    font-family: helvetica;
-    padding-left: 2rem;
+    margin-right: 1rem;
+    padding: 2rem 4rem 0 2rem;
+
+    // min-height: calc(100vh - 3rem);
+    min-height: calc(var(--vh, 1vh) * 100 - 3rem);
+    border-left: 1px solid @fg;
+    float: right;
+    width: 100%;
+    max-width: 40vw;
+
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    /deep/ #md {
+      align-self: center;
+      margin: 0;
+    }
+
     /deep/ p {
       animation-name: pin;
-      animation-duration: 3s;
+      animation-duration: 2s;
       animation-delay: 1s;
       // animation-delay: 0s;
       // animation-duration: 0s;
-      animation-timing-function: @easeInOutExpo;
+      animation-timing-function: @easeOutExpo;
       animation-fill-mode: forwards;
       transform-origin: top left;
-      // .clip(left);
       opacity: 0;
       @keyframes pin {
         0% {
@@ -177,44 +137,68 @@ export default {
       .loop(@counter) when (@counter > 0) {
         .loop((@counter - 1)); // next iteration
         &:nth-child(@{counter}) {
-          animation-delay: 2 + @counter * 0.125s;
+          animation-delay: 0 + @counter * 0.125s;
         }
       }
       .loop(10);
     }
-    // margin-top: 18rem;
-    // font-family: "Victor Serif Trial";
-    // font-size: 24px;
-    // /deep/ p {
-    //   display: inline-block;
-    //   max-width: 14em;
-    //   margin: 0vh 4em 10vh 4em;
-    //   background: #fafafa;
-    //   line-height: 1.2em;
-    //   // min-height: 22em;
-    //   padding: 12em 0.5em 0.5em;
-    //   opacity: 0.85;
-    //   position: relative;
-    //   font-size: 24px;
-
-    //   &:after {
-    //     content: "";
-    //     position: absolute;
-    //     left: 0;
-    //     top: 0;
-    //     width: 100%;
-    //     height: 70%;
-    //     background: linear-gradient(#005, @syn, #fee, #fafafa);
-    //     z-index: -1;
-    //     opacity: 1;
-    //     transition: 5s;
-    //   }
-    //   &:hover {
-    //     &:after {
-    //       opacity: 1;
-    //     }
-    //   }
-    // }
+  }
+  @media (max-width: 1200px) {
+    #content {
+      #hometext {
+        padding: 2rem;
+      }
+    }
+  }
+  @media (max-width: 800px) {
+    #content {
+      display: block;
+      #introtext {
+        position: relative;
+        width: 100%;
+        font-size: 1.5rem;
+        bottom: auto;
+        left: auto;
+        padding: 0 0.5rem;
+        /deep/ p {
+          max-width: auto;
+        }
+      }
+      #hometext {
+        border: 0;
+        margin-left: 0;
+        width: 70%;
+        max-width: none;
+        padding-top: 4rem;
+      }
+    }
+  }
+  @media (max-width: 600px) {
+    #content {
+      #introtext {
+        display: flex;
+        align-items: flex-end;
+        min-height: calc(var(--vh, 1vh) * 80 - 2.5rem);
+        /deep/ #md {
+          align-self: flex-end;
+        }
+      }
+      #hometext {
+        padding: 2rem 0.5rem;
+        float: left;
+        align-items: left;
+        display: block;
+        width: 100%;
+        max-width: none;
+        /deep/ #md {
+          margin: 0;
+        }
+        /deep/ p {
+          max-width: 100%;
+          width: 100%;
+        }
+      }
+    }
   }
 }
 </style>

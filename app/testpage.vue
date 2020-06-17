@@ -1,5 +1,10 @@
 <template>
   <div id="testpage">
+    <!-- <topbar>
+      <template #left>
+        <router-link to="/">back</router-link>
+      </template>
+    </topbar> -->
     <testframe v-if="exists && $store.state.profile.UID"></testframe>
     <div v-if="errormessage">Error: {{ errormessage }}</div>
   </div>
@@ -18,6 +23,7 @@ export default {
     },
   },
   mounted() {
+    // check test exists
     if (
       !this.$route.params.testname ||
       Object.keys(this.$store.state.tests.tests).length < 1 ||
@@ -28,9 +34,10 @@ export default {
       this.exists = true;
       this.$store.commit("tests/setActive", this.$route.params.testname);
     }
-    if (this.$store.state.profile.UID === false) {
+    // get uid if not exist
+    if (this.$store.state.profile.UID === null) {
       this.$axios
-        .get("./api/uid")
+        .post("./api/create", { language: this.$store.state.profile.language })
         .then((x) => {
           if (x.data.UID)
             this.$store.dispatch("profile/set", { UID: x.data.UID });
