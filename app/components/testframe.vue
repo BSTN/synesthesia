@@ -102,8 +102,8 @@ export default {
       if (Object.keys(this.testdata.questions).length - 1 == this.position) {
         // set finished to true
         await this.$store.dispatch("tests/setFinished");
-        // go to results
-        this.$router.push({ path: "/results" });
+        // go to next page
+        this.$router.push({ path: this.config.continue });
       } else {
         this.$store.dispatch("tests/next");
       }

@@ -5,9 +5,6 @@
         <languages></languages>
       </template>
       <template #right>
-        <router-link to="/page/postquestions" id="name">
-          postquestions
-        </router-link>
         <router-link to="/about" id="name">
           about
         </router-link>

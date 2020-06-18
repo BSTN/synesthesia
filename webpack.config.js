@@ -59,7 +59,8 @@ module.exports = {
             if (process.env.NODE_ENV === "development") {
               return resourcePath.split("/server")[1];
             } else {
-              return "[path][name].[ext]";
+              return resourcePath.split("/server")[1];
+              // return "[path][name].[ext]";
             }
           },
           emitFile: false,

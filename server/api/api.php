@@ -19,8 +19,21 @@ try {
 }
 
 /* 
- * API Start 
- */
+* API Start 
+*/
+if ($PATH === "/setup") {
+    $sql = file_get_contents(dirname(__DIR__) . "/setup/setup.sql");
+    $sql = preg_replace("/CREATE TABLE `/i", "CREATE TABLE " . '`' . DB_PREFIX, $sql);
+    $sql = "USE " . MYSQL_DBNAME . ";" . $sql;
+    try {
+        $dbc->exec($sql);
+    } catch (PDOException $Exception) {
+        error($Exception);
+    };
+    echo $sql;
+    // echo "done.";
+    exit();
+}
 
 if ($PATH === "/create") {
 
@@ -41,7 +54,8 @@ if ($PATH === "/create") {
     }
 
     $prep = $dbc->prepare(
-        "INSERT INTO profile SET 
+        "INSERT INTO " . DB_PREFIX . "profile SET 
+            created=NOW(),
             IP=SHA2(:IP,256), 
             language=:language, 
             UID=:UID,
@@ -106,7 +120,8 @@ if ($PATH === "/store") {
          * Insert profile data
          */
         $prep = $dbc->prepare(
-            "INSERT INTO profile SET 
+            "INSERT INTO " . DB_PREFIX . "profile SET 
+                created=NOW(),
                 IP=SHA2(:IP,256), 
                 language=:language, 
                 UID=:UID
@@ -123,7 +138,8 @@ if ($PATH === "/store") {
         }
     } elseif ($postdata['table'] === 'questions') {
         $prep = $dbc->prepare(
-            "INSERT INTO questions SET 
+            "INSERT INTO " . DB_PREFIX . "questions SET
+                created=NOW(), 
                 IP=SHA2(:IP,256), 
                 UID=:UID,
                 testname=:testname,
@@ -150,7 +166,7 @@ if ($PATH === "/store") {
 
         // make sure profile exists
         try {
-            $prep = $dbc->prepare("SELECT UID FROM profile WHERE UID=:UID;");
+            $prep = $dbc->prepare("SELECT UID FROM " . DB_PREFIX . "profile WHERE UID=:UID;");
             $res = $prep->execute(array(":UID" => $insertdata[':UID']));
         } catch (PDOException $Exception) {
             error($Exception);
@@ -158,7 +174,7 @@ if ($PATH === "/store") {
 
         // get JSON
         try {
-            $prep = $dbc->prepare("SELECT data FROM extra WHERE UID=:UID;");
+            $prep = $dbc->prepare("SELECT data FROM " . DB_PREFIX . "extra WHERE UID=:UID;");
             $prep->execute(array(":UID" => $insertdata[':UID']));
             $data = $prep->fetchColumn();
             $data = (array) json_decode($data);
@@ -171,8 +187,10 @@ if ($PATH === "/store") {
         $data = json_encode($data);
 
         $prep = $dbc->prepare(
-            "SET @current := (SELECT data FROM extra WHERE UID=:UID);
-            INSERT INTO extra SET 
+            "SET @current := (SELECT data FROM " . DB_PREFIX .
+                "extra WHERE UID=:UID);
+            INSERT INTO " . DB_PREFIX . "extra SET
+              created=NOW(), 
               IP=SHA2(:IP,256), 
               UID=:UID,
               data=:data

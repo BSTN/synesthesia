@@ -40,6 +40,7 @@ gulp.task("templates", function(cb) {
     MYSQL_DBNAME: production
       ? process.env.LIVE_MYSQL_DBNAME
       : process.env.DEV_MYSQL_DBNAME,
+    DB_PREFIX: process.env.DB_PREFIX,
   };
 
   // define path
@@ -109,6 +110,7 @@ gulp.task("upload", function() {
   return gulp.src("live/**").pipe(
     rsync({
       root: "live/",
+      username: process.env.SSH_USERNAME,
       hostname: process.env.SSH_HOST,
       port: process.env.SSH_PORT,
       destination: process.env.SSH_PATH,
@@ -116,6 +118,10 @@ gulp.task("upload", function() {
       silent: false,
       compress: true,
       update: true,
+      include: [".htaccess"],
+      exclude: [".*"],
     })
   );
 });
+
+gulp.task("buildandupload", gulp.series(["build", "upload"]));

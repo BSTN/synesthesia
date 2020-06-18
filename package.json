@@ -8,7 +8,8 @@
   "scripts": {
     "dev": "NODE_ENV=development gulp dev",
     "build": "NODE_ENV=production gulp build",
-    "upload": "gulp upload"
+    "uploaddev": "NODE_ENV=production DB_PREFIX=dev LIVE_BASE=/dev/ SSH_PATH=htdocs/dev/ gulp buildandupload",
+    "uploadlive": "NODE_ENV=production DB_PREFIX=live LIVE_BASE=/live/ SSH_PATH=htdocs/live/ gulp buildandupload"
   },
   "postcss": {
     "plugins": {
