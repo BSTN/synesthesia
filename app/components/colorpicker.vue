@@ -29,11 +29,11 @@
         ref="slider"
         v-model="lightness"
         v-bind="sliderOptions"
-        @change="setColor"
+        @change="changeSlider"
       ></vue-slider>
       <div id="labels">
-        <label>Darker</label>
-        <label>Lighter</label>
+        <label>{{ $t("darker") }}</label>
+        <label>{{ $t("lighter") }}</label>
       </div>
     </div>
     <div id="nocolor">
@@ -41,7 +41,7 @@
         @click="toggleNocolor()"
         :class="{ active: q.value === 'nocolor' }"
       >
-        no color
+        {{ $t("nocolor") }}
       </button>
     </div>
   </div>
@@ -147,9 +147,12 @@ export default {
         .replace("#", "");
       await this.$store.dispatch("tests/setValue", { value: hex });
     },
-    toggleNocolor() {
+    async toggleNocolor() {
+      await this.$store.dispatch("tests/setValue", {
+        clicks: this.q.clicks + 1,
+      });
       if (this.q.color !== "nocolor") {
-        this.$store.dispatch("tests/setValue", { value: "nocolor" });
+        await this.$store.dispatch("tests/setValue", { value: "nocolor" });
       } else {
         let h, s, l;
         h = (this.posx * 360 + (1 - this.offset) * 360) % 360;
@@ -159,8 +162,17 @@ export default {
           .hsl(h, s, l * 100)
           .hex()
           .replace("#", "");
-        this.$store.dispatch("tests/setValue", { value: hex });
+        await this.$store.dispatch("tests/setValue", { value: hex });
       }
+    },
+    addSliderClick() {
+      this.$store.dispatch("tests/setValue", {
+        clicksslider: parseInt(this.q.clicksslider) + 1,
+      });
+    },
+    changeSlider(val) {
+      this.setColor(val);
+      this.addSliderClick();
     },
   },
   mounted() {
@@ -187,6 +199,7 @@ export default {
           )
           .hex()
           .replace("#", "");
+        console.log(hex);
         this.$store.dispatch("tests/setValue", { value: hex });
       }
       if (ev.type === "mouseup") mousedown = false;
@@ -278,8 +291,9 @@ export default {
         opacity: 1;
       }
       &.active {
-        background: @fg;
-        color: @bg;
+        border: 1px solid #333;
+        background: #333;
+        color: #fafafa;
         opacity: 1;
         border-color: @fg;
       }

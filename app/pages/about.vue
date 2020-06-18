@@ -68,7 +68,7 @@ export default {
     margin-bottom: 1em;
     margin: 2em auto 1em auto;
     font-size: 1.5em;
-    max-width: 10em;
+    max-width: 16em;
     text-align: center;
     text-indent: none;
   }

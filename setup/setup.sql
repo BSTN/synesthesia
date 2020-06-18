@@ -24,9 +24,9 @@ CREATE TABLE `questions` (
   `value` varchar(512) DEFAULT NULL,
   `clicks` int DEFAULT NULL,
   `clicksslider` int DEFAULT NULL,
-  `timing` int DEFAULT NULL,
-  `qnr` int DEFAULT NULL,
-  `interrupted` binary(1) DEFAULT NULL
+  `gridposition` int DEFAULT NULL,
+  `timing` bigint DEFAULT NULL,
+  `qnr` int DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=UTF8MB4;
 
 CREATE TABLE `extra` (

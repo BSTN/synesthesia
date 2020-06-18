@@ -24,18 +24,19 @@ export default {
           UID: this.$store.state.profile.UID,
         })
         .then((x) => {
-          console.log(x);
           this.loading = false;
         })
-        .catch((x) => {
-          console.log(x);
+        .catch((err) => {
           this.loading = false;
           this.message = "Could not store data, please try again.";
+          // make this global message
           if (this.timer) clearTimeout(this.timer);
           this.timer = setTimeout(() => {
             this.message = false;
           }, 2000);
+          return false;
         });
+      this.$router.push({ path: this.to });
     },
   },
 };

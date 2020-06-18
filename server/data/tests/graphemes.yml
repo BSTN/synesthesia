@@ -1,8 +1,8 @@
 public: yes
 name: graphemes
 introduction: yes
-help: yes
-type: colorpicker
+# type: colorpicker
+type: colorgrid
 continue: /page/postquestions
 sets:
   set1:

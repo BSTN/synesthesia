@@ -31,7 +31,10 @@ function error($message, $e = true)
     $return['error'] = $e;
     $status_header = 'HTTP/1.1 400';
     header($status_header);
-    pjson($return);
+    echo $message;
+    echo "\n---------------\n";
+    print_r($e);
+    exit();
 }
 
 // uniqe id

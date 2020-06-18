@@ -1,10 +1,6 @@
 import Vue from "vue";
-import color from 'color';
-import {
-  each,
-  clone,
-  cloneDeep
-} from "lodash";
+import color from "color";
+import { each, clone, cloneDeep } from "lodash";
 
 // defaults
 const emptyTest = {
@@ -17,10 +13,10 @@ const emptyItem = {
   symbol: null,
   value: null,
   clicks: 0,
-  clicksslider: null,
+  clicksslider: 0,
+  gridposition: null,
   timing: null,
   qnr: null,
-  interrupted: false,
 };
 
 // store
@@ -51,7 +47,7 @@ export const mutations = {
       var notempty = cloneDeep(emptyItem);
       let item = {};
       item.symbol = clone(v);
-      item.qnr = k
+      item.qnr = k;
       Vue.set(
         state.tests[content.name].questions,
         k,
@@ -107,17 +103,21 @@ export const actions = {
     if (store.state.active === null) return false;
     store.commit("setValue", {
       name: store.state.active,
-      values: content
+      values: content,
     });
   },
   fill(store, testname) {
-    each(store.state.tests, test => {
-      each(test.questions, q => {
-        if (Math.random() > 0.9) q.value = 'nocolor';
-        else q.value = color.rgb(Math.random() * 256, Math.random() * 256, Math.random() * 256).hex().replace("#", "")
-      })
-    })
-  }
+    each(store.state.tests, (test) => {
+      each(test.questions, (q) => {
+        if (Math.random() > 0.9) q.value = "nocolor";
+        else
+          q.value = color
+            .rgb(Math.random() * 256, Math.random() * 256, Math.random() * 256)
+            .hex()
+            .replace("#", "");
+      });
+    });
+  },
 };
 
 export const getters = {

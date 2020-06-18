@@ -17,7 +17,9 @@
       <div id="introtext" class="section" md="intro">
         <div id="md">{{ $t("intro") }}</div>
       </div>
-      <md id="hometext" class="section" md="home" v-if="delayed"></md>
+      <transition name="hometext">
+        <md id="hometext" class="section" md="home" v-if="delayed"></md>
+      </transition>
     </div>
   </div>
 </template>
@@ -43,6 +45,10 @@ export default {
   min-height: 100vh;
   min-height: calc(var(--vh, 1vh) * 100);
   border-width: 0;
+
+  /deep/ #topbar {
+    position: sticky;
+  }
 
   #content {
     min-height: calc(100vh - 2rem);
@@ -109,6 +115,7 @@ export default {
     display: flex;
     align-items: center;
     justify-content: flex-start;
+
     /deep/ #md {
       align-self: center;
       margin: 0;

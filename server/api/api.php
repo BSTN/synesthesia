@@ -114,7 +114,11 @@ if ($PATH === "/store") {
                 UID=:UID
             ;"
         );
-        $prep->execute($insertdata);
+        try {
+            $prep->execute($insertdata);
+        } catch (PDOException $Exception) {
+            error($Exception);
+        }
     } elseif ($postdata['table'] === 'questions') {
         $prep = $dbc->prepare(
             "INSERT INTO questions SET 
@@ -127,31 +131,60 @@ if ($PATH === "/store") {
                 clicks=:clicks,
                 clicksslider=:clicksslider,
                 timing=:timing,
-                qnr=:qnr,
-                interrupted=:interrupted;"
+                gridposition=:gridposition,
+                qnr=:qnr;"
         );
 
-        $prep->execute($insertdata);
+
+        try {
+            $prep->execute($insertdata);
+        } catch (PDOException $Exception) {
+            error_log("save data:" . print_r($insertdata, true));
+            error($Exception);
+        }
     } elseif ($postdata['table'] === 'extra') {
-        $values = $insertdata[':values'];
+        $values = (array) $insertdata[':values'];
         unset($insertdata[':values']);
 
-        // get current values (JSON)
+        // make sure profile exists
+        try {
+            $prep = $dbc->prepare("SELECT UID FROM profile WHERE UID=:UID;");
+            $res = $prep->execute(array(":UID" => $insertdata[':UID']));
+        } catch (PDOException $Exception) {
+            error($Exception);
+        }
 
+        // get JSON
+        try {
+            $prep = $dbc->prepare("SELECT data FROM extra WHERE UID=:UID;");
+            $prep->execute(array(":UID" => $insertdata[':UID']));
+            $data = $prep->fetchColumn();
+            $data = (array) json_decode($data);
+        } catch (PDOException $Exception) {
+            $data = array();
+        }
 
-        // $prep = $dbc->prepare(
-        //     "SET @current := (SELECT data FROM extra WHERE UID=:UID);
-        //     INSERT INTO extra SET 
-        //       IP=SHA2(:IP,256), 
-        //       UID=:UID,
-        //       data=JSON_SET('{}', :key, :value)
-        //     ON DUPLICATE KEY UPDATE
-        //       IP=SHA2(:IP,256),
-        //       data=:data;"
-        // );
+        // merge values
+        $data = array_merge($data, $values);
+        $data = json_encode($data);
 
-        $data = json_encode($values);
-        $prep->execute(array(":data" => $data));
+        $prep = $dbc->prepare(
+            "SET @current := (SELECT data FROM extra WHERE UID=:UID);
+            INSERT INTO extra SET 
+              IP=SHA2(:IP,256), 
+              UID=:UID,
+              data=:data
+            ON DUPLICATE KEY UPDATE
+              IP=SHA2(:IP,256),
+              data=:data;"
+        );
+
+        try {
+            $prep->execute(array(":data" => $data, ":IP" => $insertdata[':IP'], ":UID" => $insertdata[':UID']));
+        } catch (PDOException $Exception) {
+            error($Exception);
+        }
+        pjson("done");
     }
 
 

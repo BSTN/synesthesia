@@ -6,3 +6,19 @@ next:
   nl: volgende
   en: next
   se: näste
+darker:
+  nl: Donkerder
+  en: Darker
+  se: Mörkare
+lighter:
+  nl: Lichter
+  en: Lighter
+  se: Ljusare
+colorpickerhelp:
+  nl: Probeer instinctief de kleur te kiezen die je associeert of het beste vind passen bij het character/woord hierboven.
+  en: Try to instinctively choose the color you associate, or feel fits best with the character/word above.
+  se: Försök att så instinktivt som möjligt välja den färg du förknippar med, eller känner passar bäst ihop.
+nocolor:
+  nl: geen kleur
+  en: no color
+  se: ingen färg

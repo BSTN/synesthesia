@@ -1,10 +1,10 @@
 <template>
   <div id="testframe">
     <div id="frame">
-      <div id="top">
+      <!-- <div id="top">
         <div class="flex"></div>
         <button>help</button>
-      </div>
+      </div> -->
       <div id="mid">
         <transition name="symbol" mode="out-in">
           <div id="symbol" :key="testdata.position">
@@ -20,31 +20,41 @@
           </div>
         </transition>
         <div id="color">
-          <colorpicker></colorpicker>
+          <colorpicker v-if="config.type === 'colorpicker'"></colorpicker>
+          <colorgrid v-if="config.type === 'colorgrid'"></colorgrid>
         </div>
       </div>
       <div id="bottom">
         <!-- <button id="helpbutton">help</button> -->
-        <div id="help">
-          Try to instinctively choose the color you associate, or feel fits best
-          with the character/word/image/sound above.
-        </div>
         <div class="flex"></div>
-        <button id="nextbutton" @click="next()" :disabled="disabled">
-          {{ $t("next") }}
+        <div id="help" v-if="!enabled">
+          {{ $t("colorpickerhelp") }}
+        </div>
+        <button id="nextbutton" @click="next()" v-if="enabled">
+          {{ $t("next") }} {{ q.time }}
         </button>
+        <div class="flex"></div>
       </div>
     </div>
   </div>
 </template>
 <script>
 import { mapGetters } from "vuex";
+import { now } from "lodash";
 export default {
+  data() {
+    return {
+      startTime: false,
+    };
+  },
   computed: {
     ...mapGetters({
       testdata: "tests/testdata",
       q: "tests/q",
     }),
+    config() {
+      return this.$tests[this.$route.params.testname];
+    },
     testname() {
       return this.$route.params.testname;
     },
@@ -59,14 +69,14 @@ export default {
       else if (this.q.value === "nocolor") return "url('assets/nocolor.png')";
       else return "#" + this.q.value;
     },
-    disabled() {
-      return this.q.value === null;
+    enabled() {
+      return this.q.value !== null;
     },
   },
   methods: {
     async next() {
       // set timing
-      // tralalala
+      await this.storeTime();
 
       // send data to server
       let data = JSON.parse(JSON.stringify(this.q));
@@ -79,13 +89,14 @@ export default {
           data: data,
         })
         .catch((err) => {
-          return "error";
+          return { error: "Could not store data", err: err.response.data };
         });
 
-      if (err === "error") {
-        console.warn("Could not store data");
+      if (err.error) {
+        console.warn("Could not store data", err.err);
         return false;
       }
+
       // scroll to top (for mobile)
       window.scrollTo(0, 0);
       if (Object.keys(this.testdata.questions).length - 1 == this.position) {
@@ -97,8 +108,20 @@ export default {
         this.$store.dispatch("tests/next");
       }
     },
+    async storeTime() {
+      await this.$store.dispatch("tests/setValue", {
+        timing: now() - this.startTime,
+      });
+    },
+  },
+  watch: {
+    "q.qnr": function() {
+      // reset timer
+      this.startTime = now();
+    },
   },
   mounted() {
+    this.startTime = now();
     window.addEventListener("keydown", (ev) => {
       if (ev.keyCode === 13 && this.q.value !== null) this.next();
     });
@@ -108,7 +131,7 @@ export default {
 <style lang="less" scoped>
 #testframe {
   background: @bg;
-  background: #eee;
+  background: #fafafa;
   color: #000;
 
   height: auto;
@@ -169,7 +192,6 @@ export default {
           align-content: center;
           align-items: center;
           justify-content: center;
-          // background: #d6d6d6;
           border-radius: 0.25rem;
           &.nocolor {
             border: 1px solid #ddd;
@@ -185,7 +207,7 @@ export default {
             justify-content: center;
             padding: 0.5em 1rem;
             background: @bg;
-            background: #eee;
+            background: #fafafa;
             margin: 2rem;
             min-width: calc(100% - 8rem);
             min-height: calc(100% - 8rem);
@@ -204,40 +226,33 @@ export default {
       display: flex;
       align-content: center;
       align-items: center;
-      justify-content: flex-end;
       padding: 0 1.5em;
       background: #d6d6d6;
       background: #e9e9e9;
+      background: #f3f3f3;
       #help {
         opacity: 0.25;
         font-style: italic;
         pointer-events: none;
-        line-height: 1em;
+        line-height: 1.25em;
         font-size: 0.75em;
+        min-width: 80%;
+        flex-shrink: 1;
+        flex-grow: 1;
+        text-align: center;
       }
       button {
-        color: #999;
-        border: 1px solid #ddd;
         padding: 0.5em 1em 0.35em;
         border-radius: 0.25em;
-        text-transform: uppercase;
         cursor: pointer;
-        &.inactive {
-          pointer-events: none;
-          font-size: 0.75em;
-          opacity: 0.5;
-          white-space: normal;
-          min-width: 60%;
-          padding: 0;
-          text-align: left;
-        }
+        opacity: 1;
+        pointer-events: auto;
+        background: #eee;
+        color: #999;
         &:hover {
-          background: #999;
-          color: #eee;
+          background: #fff;
+          color: #222;
         }
-      }
-      #helpbutton,
-      #count {
       }
     }
   }

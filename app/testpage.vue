@@ -54,6 +54,7 @@ export default {
 #testpage {
   padding: 0.5rem;
   background: @bg;
+  background: #ddd;
   min-height: 100vh;
   display: flex;
   align-content: center;
