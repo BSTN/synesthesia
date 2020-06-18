@@ -33,6 +33,7 @@ if ($PATH === "/create") {
     /* add UID */
     $data['UID'] = getUid(64);
     $data['IP'] = get_ip_address();
+    $data['SHARED'] = getShared();
 
     $insertdata = array();
     foreach ($data as $k => $v) {
@@ -43,11 +44,12 @@ if ($PATH === "/create") {
         "INSERT INTO profile SET 
             IP=SHA2(:IP,256), 
             language=:language, 
-            UID=:UID"
+            UID=:UID,
+            SHARED=:SHARED"
     );
     $prep->execute($insertdata);
 
-    pjson(array("UID" => $data['UID']));
+    pjson(array("UID" => $data['UID'], "SHARED" => $data['SHARED']));
 }
 
 if ($PATH === "/store") {

@@ -38,10 +38,15 @@ export default {
     if (this.$store.state.profile.UID === null) {
       this.$axios
         .post("./api/create", { language: this.$store.state.profile.language })
-        .then((x) => {
-          if (x.data.UID)
-            this.$store.dispatch("profile/set", { UID: x.data.UID });
-          else this.error("Did not receive UID.");
+        .then(async (x) => {
+          if (x.data.UID && x.data.SHARED) {
+            await this.$store.dispatch("profile/set", { UID: x.data.UID });
+            await this.$store.dispatch("profile/set", {
+              SHARED: x.data.SHARED,
+            });
+          } else {
+            this.error("Did not receive UID or SHARED key.");
+          }
         })
         .catch((err) => {
           this.error(err);

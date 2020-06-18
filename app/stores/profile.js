@@ -7,6 +7,7 @@ const config = JSON.parse(document.getElementById("bootload-config").innerText);
 export const state = () => ({
   UID: null,
   USERID: null,
+  SHARED: null,
   language: clone(config.defaultLanguage),
 });
 
