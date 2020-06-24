@@ -21,9 +21,7 @@ export default {
     },
   },
   mounted() {
-    window.addEventListener("scroll", (ev) => {
-      this.check();
-    });
+    window.addEventListener("scroll", this.check);
     setTimeout(this.check, 500);
   },
 };

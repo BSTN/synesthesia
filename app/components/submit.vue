@@ -1,12 +1,12 @@
 <template>
-  <div id="submit">
+  <div id="submit" :class="{ disabled }">
     <button @click="submit()">{{ $t("next") }}</button>
     <div id="message" v-if="message">{{ message }}</div>
   </div>
 </template>
 <script>
 export default {
-  props: ["to", "text"],
+  props: ["to", "text", "enabled"],
   data() {
     return {
       loading: false,
@@ -14,10 +14,26 @@ export default {
       timer: false,
     };
   },
+  computed: {
+    disabled() {
+      if (!this.enabled) return false;
+      let extravalues = this.enabled.split(",");
+      let check = false;
+      for (let key in extravalues) {
+        if (
+          !(extravalues[key] in this.$store.state.extra) ||
+          this.$store.state.extra[extravalues[key]] === null
+        )
+          return true;
+      }
+      console.log("disabled:", check);
+      return check;
+    },
+  },
   methods: {
-    submit() {
+    async submit() {
       this.loading = true;
-      this.$axios
+      await this.$axios
         .post("./api/store", {
           table: "extra",
           data: { values: JSON.parse(JSON.stringify(this.$store.state.extra)) },
@@ -43,6 +59,11 @@ export default {
 </script>
 <style lang="less" scoped>
 #submit {
+  margin: 2em auto;
+  display: block !important;
+  text-align: center;
+  opacity: 1 !important;
+  padding: 2em 0;
   button {
     border: 1px solid @fg;
     min-width: 8em;
@@ -55,5 +76,9 @@ export default {
     }
   }
   margin-bottom: 8rem;
+  &.disabled {
+    pointer-events: none;
+    opacity: 0.5 !important;
+  }
 }
 </style>

@@ -22,4 +22,4 @@
   <slot>6. Ik heb altijd dezelfde kleuren geassocieerd met letters en cijfers, en deze lijken nooit te veranderen.</slot>
 </question>
 
-<submit to="/results"></submit>
+<submit to="/results" enabled="pq1,pq2,pq3,pq4,pq5,pq6"></submit>

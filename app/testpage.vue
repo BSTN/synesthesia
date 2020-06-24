@@ -4,7 +4,7 @@
       <template #left>
         <router-link to="/">back</router-link>
       </template>
-    </topbar> -->
+    </topbar>-->
     <testframe v-if="exists && $store.state.profile.UID"></testframe>
     <div v-if="errormessage">Error: {{ errormessage }}</div>
   </div>
@@ -14,13 +14,13 @@ export default {
   data() {
     return {
       exists: false,
-      errormessage: null,
+      errormessage: null
     };
   },
   methods: {
     error(message) {
       this.errormessage = message;
-    },
+    }
   },
   mounted() {
     // check test exists
@@ -30,6 +30,7 @@ export default {
       !(this.$route.params.testname in this.$store.state.tests.tests)
     ) {
       console.warn("test does not exists");
+      this.$router.push({ path: "/" });
     } else {
       this.exists = true;
       this.$store.commit("tests/setActive", this.$route.params.testname);
@@ -38,21 +39,21 @@ export default {
     if (this.$store.state.profile.UID === null) {
       this.$axios
         .post("./api/create", { language: this.$store.state.profile.language })
-        .then(async (x) => {
+        .then(async x => {
           if (x.data.UID && x.data.SHARED) {
             await this.$store.dispatch("profile/set", { UID: x.data.UID });
             await this.$store.dispatch("profile/set", {
-              SHARED: x.data.SHARED,
+              SHARED: x.data.SHARED
             });
           } else {
             this.error("Did not receive UID or SHARED key.");
           }
         })
-        .catch((err) => {
+        .catch(err => {
           this.error(err);
         });
     }
-  },
+  }
 };
 </script>
 <style lang="less" scoped>

@@ -1,4 +1,4 @@
-Onze zintuigen zijn elke dag hard aan het werk om er voor te zorgen dat wij de wereld en elkaar kunnen begrijpen. Een goede samenwerking is daarbij van het grootste belang: om dingen te zien gebeuren koppelen we bewegingen aan geluiden, om te lezen koppelen we vormen van letters aan kennis van taal, en om taal te begrijpen koppelen we geluiden en betekenissen.
+<p class="big">Onze zintuigen zijn elke dag hard aan het werk om er voor te zorgen dat wij de wereld en elkaar kunnen begrijpen. Een goede samenwerking is daarbij van het grootste belang: om dingen te zien gebeuren koppelen we bewegingen aan geluiden, om te lezen koppelen we vormen van letters aan kennis van taal, en om taal te begrijpen koppelen we geluiden en betekenissen.</p>
 
 Hoe dat precies werkt is bij iedereen een beetje anders. Voor sommige mensen hebben letters bijna automatisch een kleur; als dat heel consistent gebeurt noemen we dat synesthesie. Andere mensen hebben juist meer moeite met het maken van die koppelingen; als dat het lezen in de weg staat noemen we het dyslexie. Tussen die twee uitersten zit een hele grote groep mensen waarbij de zintuigen ‘gewoon’ samenwerken.
 

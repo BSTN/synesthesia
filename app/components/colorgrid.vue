@@ -14,9 +14,7 @@
           id="nocolor"
           @click="setNocolor()"
           v-active="q.value === 'nocolor'"
-        >
-          {{ $t("nocolor") }}
-        </button>
+        >{{ $t("nocolor") }}</button>
       </div>
     </div>
   </div>
@@ -40,49 +38,48 @@ const colors = [
   "ffffff",
   "cbcbcb",
   "595959",
-  "000000",
+  "000000"
 ];
 export default {
   data() {
     return {
-      colors: [],
+      colors: []
     };
   },
   computed: {
     ...mapGetters({
       testdata: "tests/testdata",
-      q: "tests/q",
-    }),
+      q: "tests/q"
+    })
   },
   methods: {
     shuffle() {
       this.colors = shuffle(colors);
     },
-    async setColor(color, gridposition) {
-      console.log(gridposition);
+    async setColor(color, position) {
       await this.$store.dispatch("tests/setValue", {
-        gridposition: gridposition,
+        position: position
       });
       await this.$store.dispatch("tests/setValue", {
-        clicks: this.q.clicks + 1,
+        clicks: this.q.clicks + 1
       });
       await this.$store.dispatch("tests/setValue", { value: color });
     },
     async setNocolor() {
       await this.$store.dispatch("tests/setValue", {
-        clicks: this.q.clicks + 1,
+        clicks: this.q.clicks + 1
       });
       await this.$store.dispatch("tests/setValue", { value: "nocolor" });
-    },
+    }
   },
   watch: {
     "q.qnr": function() {
       this.shuffle();
-    },
+    }
   },
   mounted() {
     this.shuffle();
-  },
+  }
 };
 </script>
 <style lang="less" scoped>

@@ -46,20 +46,15 @@ routes.push({
   component: testpage,
 });
 
-routes.push({
-  path: "/page/:textname",
-  component: textpage,
-});
-
 // import all pages as routes
-const pages = require.context("./pages", true, /\.vue$/);
-pages.keys().forEach((key) => {
-  let newkey = key.replace(/(\.\/|\.vue)/g, "");
-  routes.push({
-    path: "/" + newkey,
-    component: pages(key).default,
-  });
-});
+// const pages = require.context("./pages", true, /\.vue$/);
+// pages.keys().forEach((key) => {
+//   let newkey = key.replace(/(\.\/|\.vue)/g, "");
+//   routes.push({
+//     path: "/" + newkey,
+//     component: pages(key).default,
+//   });
+// });
 
 // import all components
 const components = require.context("./components", true, /\.vue$/);
@@ -73,6 +68,11 @@ const directives = require.context("./directives", true, /\.vue$/);
 directives.keys().forEach((key) => {
   let newkey = key.replace(/(\.\/|\.vue)/g, "");
   Vue.directive(newkey, directives(key).default);
+});
+
+routes.push({
+  path: "/:textname",
+  component: textpage,
 });
 
 // set routes

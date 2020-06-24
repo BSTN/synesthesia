@@ -23,7 +23,7 @@ function pjson($data)
 }
 
 // error handling
-function error($message, $e = true)
+function error($message, $e = false)
 {
     error_log($message);
     $return = array();
@@ -32,8 +32,10 @@ function error($message, $e = true)
     $status_header = 'HTTP/1.1 400';
     header($status_header);
     echo $message;
-    echo "\n---------------\n";
-    print_r($e);
+    if ($e) {
+        echo "\n---------------\n";
+        print_r($e);
+    }
     exit();
 }
 
@@ -100,4 +102,9 @@ function validate_ip($ip)
         return false;
     }
     return true;
+}
+
+function unwrap($text)
+{
+    return preg_replace("/<p><(.[\s\S]*?)><\/p>/", "<$1>", $text);
 }

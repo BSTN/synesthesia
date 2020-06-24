@@ -8,11 +8,15 @@
       <div id="mid">
         <transition name="symbol" mode="out-in">
           <div id="symbol" :key="testdata.position">
-            <div
-              id="symbolframe"
-              :style="{ background: background }"
-              :class="{ nocolor: q.value === 'nocolor' }"
-            >
+            <div id="symbolframe">
+              <div
+                id="colorholder"
+                :style="{ background: background }"
+                :class="{
+                  nocolor: q.value === 'nocolor',
+                  empty: q.value === null,
+                }"
+              ></div>
               <div id="sym">
                 <div>{{ q.symbol }}</div>
               </div>
@@ -40,7 +44,7 @@
 </template>
 <script>
 import { mapGetters } from "vuex";
-import { now } from "lodash";
+import { now, filter } from "lodash";
 export default {
   data() {
     return {
@@ -113,6 +117,16 @@ export default {
         timing: now() - this.startTime,
       });
     },
+    checkFinished() {
+      let undone = filter(this.testdata.questions, (q) => {
+        return q.color === null && !q.timing === null;
+      });
+      if (Object.keys(undone).length < 1) {
+        // redirect!
+        console.log("finished, redirect please...");
+      } else {
+      }
+    },
   },
   watch: {
     "q.qnr": function() {
@@ -121,6 +135,7 @@ export default {
     },
   },
   mounted() {
+    this.checkFinished();
     this.startTime = now();
     window.addEventListener("keydown", (ev) => {
       if (ev.keyCode === 13 && this.q.value !== null) this.next();
@@ -145,6 +160,9 @@ export default {
   overflow: hidden;
   user-select: none;
   // box-shadow: 0 0 0.25em rgba(#000, 0.2);
+  @media (max-width: 800px) {
+    min-height: 100vh;
+  }
   #frame {
     position: relative;
     display: flex;
@@ -193,6 +211,17 @@ export default {
           align-items: center;
           justify-content: center;
           border-radius: 0.25rem;
+          font-family: "Roboto Mono";
+          #colorholder {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: calc(100% - 3rem);
+            height: calc(100% - 3rem);
+            margin: 1.5rem;
+            z-index: 1;
+            border-radius: 0.5em;
+          }
           &.nocolor {
             border: 1px solid #ddd;
             #sym {
@@ -200,6 +229,7 @@ export default {
             }
           }
           #sym {
+            z-index: 2;
             font-size: 4rem;
             display: flex;
             align-content: center;
@@ -213,6 +243,55 @@ export default {
             min-height: calc(100% - 8rem);
             border-radius: 0.25rem;
           }
+        }
+
+        @media (max-width: 800px) {
+          max-height: 4rem;
+          font-size: 1.5em;
+          #symbolframe {
+            border-radius: 0.25em;
+            display: flex;
+            position: relative;
+            margin: 2rem 0;
+            justify-content: stretch;
+            align-items: stretch;
+            box-shadow: 0 0 0.125rem #ccc;
+            #colorholder {
+              content: "";
+              position: relative;
+              background: inherit;
+              width: 2em;
+              height: 2em;
+              margin: 0;
+              flex-shrink: 0;
+              flex-grow: 0;
+              display: inline-block;
+              z-index: 2;
+              box-sizing: border-box;
+              border-radius: 0.25em 0 0 0.25em;
+            }
+            #sym {
+              background: transparent;
+              position: relative;
+              z-index: 3;
+              text-align: left;
+              width: 100%;
+              flex-shrink: 1;
+              flex-grow: 1;
+              font-size: 1em;
+              display: block;
+              border-radius: 0;
+              margin: 0;
+              padding: 0 1em;
+              // border: 1px solid #ddd;
+              // border-width: 1px 1px 1px 0px !important;
+              border-radius: 0 0.25em 0.25em 0;
+              line-height: calc(2em - 2px);
+            }
+          }
+        }
+        @media (max-width: 500px) {
+          font-size: 1em;
         }
       }
       #color {
@@ -280,9 +359,13 @@ export default {
       #bottom {
         flex-direction: column;
         padding: 1rem;
+        background: transparent;
         #nextbutton {
           margin-top: 1rem;
-          padding: 1rem;
+          margin-bottom: 1rem;
+          padding: 0.75rem 1.5em;
+          border: 1px solid #ddd;
+          background: transparent;
         }
       }
     }

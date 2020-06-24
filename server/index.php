@@ -1,4 +1,7 @@
-<?php require('./config.php'); ?>
+<?php
+require('./config.php');
+require('./api/api-functions.php');
+?>
 <!doctype html>
 <html>
 
@@ -45,6 +48,7 @@
   foreach (glob("./data/pages/*.md") as $filename) {
     $raw = file_get_contents($filename);
     $md = Markdown::defaultTransform($raw);
+    $md = unwrap($md);
     $name = pathinfo($filename, PATHINFO_FILENAME);
     echo "\t<script type=\"text/template\" id=\"template$name\">\n\t<div id=\"md\">$md</div>\n\t</script>\n\n";
   }
@@ -52,9 +56,6 @@
 
   <script src="<?= SRCV ?>"></script>
   <script src="<?= SRC ?>"></script>
-  <!-- <script src="assets/paper.js"></script>
-  <script type="text/paperscript" canvas="canvas-1" src="assets/connected.js?<?= time(); ?>"></script>
-  <canvas resize="true" id="canvas-1"></canvas> -->
 
 </body>
 

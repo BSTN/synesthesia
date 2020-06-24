@@ -1,12 +1,13 @@
 <template>
   <div id="home">
+    <paperjs v-if="$config.animation"></paperjs>
     <topbar>
       <template #left>
         <languages></languages>
       </template>
       <template #right>
         <router-link to="/about" id="name">
-          about
+          {{ $t("about") }}
         </router-link>
       </template>
     </topbar>
@@ -47,7 +48,18 @@ export default {
     position: sticky;
   }
 
+  video {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: fill;
+  }
+
   #content {
+    position: relative;
+    z-index: 2;
     min-height: calc(100vh - 2rem);
     min-height: calc(var(--vh, 1vh) * 100 - 2rem);
 
@@ -59,6 +71,7 @@ export default {
     }
   }
   #introtext {
+    pointer-events: none;
     position: fixed;
     bottom: 1rem;
     left: 1rem;
@@ -96,9 +109,18 @@ export default {
       line-height: inherit;
       max-width: 15em;
       margin: 0;
+      // &:after {
+      //   content: "";
+      //   width: 2em;
+      //   height: 1em;
+      //   // background: ;
+      //   float: left;
+      //   border-radius: 100%;
+      // }
     }
   }
   #hometext {
+    z-index: 2;
     margin-right: 1rem;
     padding: 2rem 4rem 0 2rem;
 
@@ -107,7 +129,7 @@ export default {
     border-left: 1px solid @fg;
     float: right;
     width: 100%;
-    max-width: 40vw;
+    max-width: 30vw;
 
     display: flex;
     align-items: center;
@@ -151,6 +173,7 @@ export default {
     #content {
       #hometext {
         padding: 2rem;
+        max-width: 40vw;
       }
     }
   }
@@ -163,7 +186,12 @@ export default {
         font-size: 1.5rem;
         bottom: auto;
         left: auto;
-        padding: 0 0.5rem;
+        padding: 1em 0.5rem;
+        display: flex;
+        align-items: flex-end;
+        min-height: calc(var(--vh, 1vh) * 50 - 2.5rem);
+        min-height: auto;
+        font-size: 2rem;
         /deep/ p {
           max-width: auto;
         }
@@ -174,21 +202,25 @@ export default {
         width: 70%;
         max-width: none;
         padding-top: 4rem;
+        float: left;
+        padding: 0.5rem;
+        padding-left: 3rem;
       }
     }
   }
   @media (max-width: 600px) {
     #content {
       #introtext {
+        font-size: 1.5rem;
         display: flex;
         align-items: flex-end;
-        min-height: calc(var(--vh, 1vh) * 80 - 2.5rem);
+        min-height: calc(var(--vh, 1vh) * 50 - 2.5rem);
         /deep/ #md {
           align-self: flex-end;
         }
       }
       #hometext {
-        padding: 2rem 0.5rem;
+        padding: 0.5rem 0.5rem 2rem 2rem;
         float: left;
         align-items: left;
         display: block;
@@ -198,7 +230,7 @@ export default {
           margin: 0;
         }
         /deep/ p {
-          max-width: 100%;
+          max-width: 18em;
           width: 100%;
         }
       }

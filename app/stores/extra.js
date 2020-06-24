@@ -21,3 +21,9 @@ export const actions = {
     store.commit("set", content);
   },
 };
+
+export const getters = {
+  all(store) {
+    return store.state
+  }
+}

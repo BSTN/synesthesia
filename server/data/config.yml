@@ -3,3 +3,4 @@ languages:
   en: English
   se: Svenska
 defaultLanguage: nl
+animation: true

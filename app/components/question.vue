@@ -1,15 +1,24 @@
 <template>
   <div id="question">
     <slot></slot>
-    <div id="options">
-      <button
+    <div
+      id="likertoptions"
+      v-if="type === 'likert' || type === 'likert-reverse'"
+    >
+      <div
         v-for="(item, k) in options"
         @click="answer = item.value"
         v-active="answer === item.value"
         :key="k"
       >
-        {{ item.text }}
-      </button>
+        <button
+          v-if="
+            (answer === null && (k === 0 || k === 5)) || answer === item.value
+          "
+        >
+          {{ item.text }}
+        </button>
+      </div>
     </div>
   </div>
 </template>
@@ -34,7 +43,7 @@ export default {
             value: 0,
           },
           {
-            text: "enigszins mee oneens",
+            text: "mee oneens",
             value: 1,
           },
           {
@@ -62,7 +71,7 @@ export default {
             value: 5,
           },
           {
-            text: "enigszins mee oneens",
+            text: "mee oneens",
             value: 4,
           },
           {
@@ -90,23 +99,68 @@ export default {
 </script>
 <style lang="less" scoped>
 #question {
+  font-family: Helvetica, sans-serif;
   margin-bottom: 4em;
-  #options {
-    margin-top: 1em;
-    button {
-      padding: 0.5em;
-      line-height: 1em;
-      margin: 0 0.25em 0.5em 0;
-      border-radius: 0.25em;
-      border: 1px solid @fg;
-      opacity: 0.5;
+  text-indent: 0;
+  // border-top: 1px solid @fg;
+  padding-top: 0.5em;
+  max-width: 24em;
+  margin-left: auto;
+  margin-right: auto;
+  #likertoptions {
+    position: relative;
+    margin-top: 3em;
+    text-indent: 0;
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    // border-top: 1px solid @fg;
+    &:before {
+      content: "";
+      position: absolute;
+      left: 100% / 12;
+      top: 0;
+      width: (100 - (100 / 6)) * 1%;
+      height: 0%;
+      border-top: 1px solid @fg;
+    }
+    div {
+      position: relative;
+      width: 100%;
+      margin: 0;
+      padding: 0;
+      font-size: 0.5em;
+      &:before {
+        content: "";
+        @s: 1.5em;
+        width: @s;
+        height: @s;
+        background: @bg;
+        border-radius: 100%;
+        position: absolute;
+        left: 50%;
+        margin-left: @s * -0.5;
+        top: @s * -0.5;
+        border: 2px solid @fg;
+        box-sizing: border-box;
+        cursor: pointer;
+      }
       &:hover {
-        opacity: 1;
+        &:before {
+          background: @syn;
+        }
       }
       &.active {
-        opacity: 1;
-        background: @fg;
-        color: @bg;
+        &:before {
+          background: @fg;
+        }
+      }
+      button {
+        padding: 0;
+        margin-top: 2em;
+        display: block;
+        width: 100%;
+        position: absolute;
       }
     }
   }

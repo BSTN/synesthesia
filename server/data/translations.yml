@@ -1,3 +1,11 @@
+home:
+  nl: home
+  en: home
+  se: home
+about:
+  nl: Lees meer
+  en: about
+  se: handla om
 intro:
   nl: Welkom bij het Online Synesthesie Platform van de Radboud Universiteit — Donders Institute for Brain, Cognition and Behaviour
   en: Welcome to the Online Synesthesia Platform of Radboud University — Donders Institute for Brain, Cognition and Behaviour
@@ -15,10 +23,13 @@ lighter:
   en: Lighter
   se: Ljusare
 colorpickerhelp:
-  nl: Probeer instinctief de kleur te kiezen die je associeert of het beste vind passen bij het character/woord hierboven.
+  nl: Probeer instinctief de kleur te kiezen die je associeert of het beste vind passen bij de letter of het woord hierboven.
   en: Try to instinctively choose the color you associate, or feel fits best with the character/word above.
   se: Försök att så instinktivt som möjligt välja den färg du förknippar med, eller känner passar bäst ihop.
 nocolor:
   nl: geen kleur
   en: no color
   se: ingen färg
+novalue:
+  nl: niet genoeg data
+  en: no value

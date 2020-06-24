@@ -1,12 +1,13 @@
 <template>
   <div id="index">
-    <paperjs></paperjs>
-    <transition name="clipright" mode="out-in">
-      <router-view class="view"></router-view>
+    <transition name="page" mode="out-in">
+      <router-view class="view" :key="$route.path"></router-view>
     </transition>
   </div>
 </template>
 <script>
+// don't scroll to top on history back
+window.history.scrollRestoration = "manual";
 import { each, sample, debounce, isEmpty } from "lodash";
 export default {
   created() {
@@ -28,6 +29,15 @@ export default {
       });
     });
   },
+  methods: {
+    setTheme(i) {
+      each(document.body.classList, (x) => {
+        if (x.match(/^theme/)) document.body.classList.remove(x);
+      });
+      document.body.classList.add("theme" + i);
+      document.body.dispatchEvent(new CustomEvent("changetheme"));
+    },
+  },
   watch: {
     $route() {
       setTimeout(() => {
@@ -39,14 +49,22 @@ export default {
     // VH fix for mobile
     let vh = window.innerHeight * 0.01;
     document.documentElement.style.setProperty("--vh", `${vh}px`);
-    window.addEventListener(
-      "resize",
-      debounce(() => {
-        let vh = window.innerHeight * 0.01;
-        document.documentElement.style.setProperty("--vh", `${vh}px`);
-      }),
-      500
-    );
+    // window.addEventListener(
+    //   "resize",
+    //   debounce(() => {
+    //     let vh = window.innerHeight * 0.01;
+    //     document.documentElement.style.setProperty("--vh", `${vh}px`);
+    //   }),
+    //   10
+    // );
+    var i = 0;
+    window.addEventListener("keydown", (ev) => {
+      if (ev.keyCode === 39) i++;
+      if (ev.keyCode === 37) i--;
+      if (i < 0) i = 0;
+      if (i > 7) i = 7;
+      this.setTheme(i);
+    });
   },
 };
 </script>

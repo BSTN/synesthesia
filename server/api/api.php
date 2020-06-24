@@ -1,5 +1,9 @@
 <?php
 
+require_once dirname(__DIR__) .  "/vendor/autoload.php";
+
+use Michelf\Markdown;
+
 require_once "../config.php";
 require_once "api-functions.php";
 
@@ -21,6 +25,7 @@ try {
 /* 
 * API Start 
 */
+
 if ($PATH === "/setup") {
     $sql = file_get_contents(dirname(__DIR__) . "/setup/setup.sql");
     $sql = preg_replace("/CREATE TABLE `/i", "CREATE TABLE " . '`' . DB_PREFIX, $sql);
@@ -30,8 +35,8 @@ if ($PATH === "/setup") {
     } catch (PDOException $Exception) {
         error($Exception);
     };
-    echo $sql;
-    // echo "done.";
+    // echo $sql;
+    echo "done.";
     exit();
 }
 
@@ -149,7 +154,7 @@ if ($PATH === "/store") {
                 clicks=:clicks,
                 clicksslider=:clicksslider,
                 timing=:timing,
-                gridposition=:gridposition,
+                position=:position,
                 qnr=:qnr;"
         );
 

@@ -10,7 +10,10 @@
   </div>
 </template>
 <script>
-export default {};
+import { each } from "lodash";
+export default {
+  methods: {},
+};
 </script>
 <style lang="less" scoped>
 #topbar {

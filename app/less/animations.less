@@ -1,0 +1,39 @@
+.movein() {
+  animation: movein;
+  animation-delay: 0s;
+  animation-duration: 3s;
+  animation-direction: forwards;
+  animation-fill-mode: forwards;
+  opacity: 0;
+  animation-timing-function: @easeInOutExpo;
+
+  @keyframes movein {
+    0% {
+      opacity: 0;
+      transform: translateY(2em);
+      line-height: 2em;
+    }
+
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+      line-height: 1.125em;
+    }
+  }
+
+  @media (max-width: 800px) {
+    @keyframes movein {
+      0% {
+        opacity: 0;
+        transform: translateY(2em);
+        line-height: 1.125em;
+      }
+
+      100% {
+        opacity: 1;
+        transform: translateY(0);
+        line-height: 1.125em;
+      }
+    }
+  }
+}

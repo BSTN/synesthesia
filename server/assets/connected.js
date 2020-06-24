@@ -1,9 +1,14 @@
+// modified from paperjs examples: http://paperjs.org/examples/meta-balls/
 // Ported from original Metaball script by SATO Hiroyuki
 // http://park12.wakwak.com/~shp/lc/et/en_aics_script.html
-var maincolor = "#ffffff00";
+var color = window
+  .getComputedStyle(document.getElementById("connected"))
+  .getPropertyValue("background-color");
+
+var canvas = document.getElementById("paperjs");
 
 project.currentStyle = {
-  fillColor: "#eeffc6",
+  fillColor: color,
 };
 
 var columns = 8;
@@ -12,57 +17,13 @@ var connectionRadius = 250;
 var randomPosition = 50;
 var dotSize = 5;
 var mouseDotSize = 5;
-
-var ballPositions = [];
-
-var points = rows * columns;
-for (var i = 0; i < points; i++) {
-  var ix = i % columns;
-  var iy = parseInt(i / rows);
-  var x =
-    ix * (window.innerWidth / (columns - 1)) +
-    (Math.random() - 0.5) * randomPosition;
-  var y =
-    iy * (window.innerHeight / rows) + (Math.random() - 0.5) * randomPosition;
-  ballPositions.push([x, y]);
-}
+var largeCircle;
+var circlePath;
 
 var handle_len_rate = 2.4;
 var circlePaths = [];
 var radius = 50;
-for (var i = 0, l = ballPositions.length; i < l; i++) {
-  var circlePath = new Path.Circle({
-    center: ballPositions[i],
-    radius: dotSize,
-    fillColor: maincolor,
-  });
-  circlePaths.push(circlePath);
-}
-
-var largeCircle = new Path.Circle({
-  center: [676, 433],
-  radius: mouseDotSize,
-});
-circlePaths.push(largeCircle);
-
-var mousePosition = [0, 0];
-
-function onMouseMove(event) {
-  var color = window
-    .getComputedStyle(document.getElementById("connected"))
-    .getPropertyValue("background-color");
-
-  maincolor = color;
-  largeCircle.fillColor = color;
-
-  for (var cp in circlePaths) {
-    circlePaths[cp].fillColor = color;
-  }
-
-  largeCircle.position = event.point;
-  mousePosition = event.point;
-  generateConnections(circlePaths);
-}
+var ballPositions = [];
 
 var connections = new Group();
 
@@ -74,10 +35,10 @@ function generateConnections(paths) {
     for (var j = i - 1; j >= 0; j--) {
       // only connect to mouse
       if (
-        (paths[i].position.x === mousePosition.x &&
-          paths[i].position.y === mousePosition.y) ||
-        (paths[j].position.x === mousePosition.x &&
-          paths[j].position.y === mousePosition.y)
+        (paths[i].position.x === largeCircle.position.x &&
+          paths[i].position.y === largeCircle.position.y) ||
+        (paths[j].position.x === largeCircle.position.x &&
+          paths[j].position.y === largeCircle.position.y)
       ) {
         var path = metaball(
           paths[i],
@@ -94,8 +55,6 @@ function generateConnections(paths) {
     }
   }
 }
-
-generateConnections(circlePaths);
 
 // ---------------------------------------------
 function metaball(ball1, ball2, v, handle_len_rate, maxDistance) {
@@ -150,7 +109,7 @@ function metaball(ball1, ball2, v, handle_len_rate, maxDistance) {
     segments: [p1a, p2a, p2b, p1b],
     style: ball1.style,
     closed: true,
-    fillColor: maincolor,
+    fillColor: color,
   });
   var segments = path.segments;
   segments[0].handleOut = getVector(angle1a - pi2, radius1);
@@ -160,7 +119,6 @@ function metaball(ball1, ball2, v, handle_len_rate, maxDistance) {
   return path;
 }
 
-// ------------------------------------------------
 function getVector(radians, length) {
   return new Point({
     // Convert radians to degrees:
@@ -168,3 +126,120 @@ function getVector(radians, length) {
     length: length,
   });
 }
+
+function setup() {
+  // color
+  color = window
+    .getComputedStyle(document.getElementById("connected"))
+    .getPropertyValue("background-color");
+
+  // paths
+  if (circlePaths.length > 0) {
+    for (var i in circlePaths) {
+      circlePaths[i].remove();
+    }
+  }
+  circlePaths = [];
+  ballPositions = [];
+
+  var cs = canvas.offsetWidth < 800 ? 100 : 150;
+  var rs = canvas.offsetWidth < 800 ? 100 : 150;
+  connectionRadius = canvas.offsetWidth < 800 ? 150 : 250;
+
+  columns = parseInt(canvas.offsetWidth / cs);
+  rows = parseInt(canvas.offsetHeight / rs);
+
+  var points = rows * columns;
+  var iy = -1;
+  for (var i = 0; i < points; i++) {
+    var ix = i % columns;
+    if (ix === 0) iy++;
+    var x =
+      ix * (canvas.offsetWidth / (columns - 1)) +
+      (Math.random() - 0.5) * randomPosition;
+    var y =
+      iy * (canvas.offsetHeight / (rows / 2)) +
+      (Math.random() - 0.5) * randomPosition;
+    ballPositions.push([x, y]);
+  }
+
+  for (var i = 0, l = ballPositions.length; i < l; i++) {
+    var circlePath = new Path.Circle({
+      center: ballPositions[i],
+      radius: dotSize,
+      fillColor: color,
+    });
+    circlePaths.push(circlePath);
+  }
+
+  largeCircle = new Path.Circle({
+    center: [676, 433],
+    radius: mouseDotSize,
+    fillColor: color,
+  });
+  circlePaths.push(largeCircle);
+}
+
+// ------------------------------------------------
+
+setup();
+
+generateConnections(circlePaths);
+
+var mouse = false;
+var touchy = false;
+
+window.addEventListener("touchstart", function() {
+  touchy = true;
+});
+
+function onMouseMove(event) {
+  mouse = true;
+  if (!touchy) {
+    largeCircle.position = event.point;
+    generateConnections(circlePaths);
+  }
+}
+
+var cx = 0;
+var cy = 0;
+var prevx = 0.5 * canvas.offsetWidth;
+var prevy = 0.5 * canvas.offsetHeight;
+var nextx = Math.random() * canvas.offsetWidth;
+var nexty = Math.random() * canvas.offsetHeight;
+
+function onFrame(event) {
+  if (touchy || !mouse) {
+    cx++;
+    cy++;
+    var newx = ((nextx - prevx) / (Math.abs(nextx - prevx) * 0.3)) * cx + prevx;
+    var newy = ((nexty - prevy) / (Math.abs(nexty - prevy) * 0.3)) * cy + prevy;
+    if (newx > canvas.offsetWidth || newx < 0) {
+      prevx = newx;
+      cx = 0;
+    }
+    if (newy > canvas.offsetHeight || newy < 0) {
+      prevy = newy;
+      cy = 0;
+    }
+    // console.log(event.count);
+    // var x = largeCircle.position.x;
+    // var y = largeCircle.position.y;
+    // var speed = 3;
+    var pos = new Point(newx, newy);
+    largeCircle.position = pos;
+    generateConnections(circlePaths);
+  }
+}
+
+window.addEventListener("resize", function() {
+  setup();
+});
+
+document.body.addEventListener("changetheme", function() {
+  setup();
+});
+
+canvas.addEventListener("resize", function() {
+  setup();
+});

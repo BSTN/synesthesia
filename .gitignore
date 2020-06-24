@@ -5,4 +5,5 @@ live
 server/vendor
 .DS_STORE
 **/*.otf
+**/*.woff
 todo.md

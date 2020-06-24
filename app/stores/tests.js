@@ -14,7 +14,7 @@ const emptyItem = {
   value: null,
   clicks: 0,
   clicksslider: 0,
-  gridposition: null,
+  position: null,
   timing: null,
   qnr: null,
 };
@@ -62,9 +62,6 @@ export const mutations = {
   next(state, content) {
     state.tests[state.active].position++;
   },
-  prev(state, content) {
-    state.tests[state.active].position--;
-  },
   setValue(state, content) {
     for (let k in content.values) {
       Vue.set(
@@ -94,10 +91,8 @@ export const actions = {
     store.commit("setFinished", store.state.active);
   },
   next(store) {
+    // check if finished
     store.commit("next");
-  },
-  prev(store) {
-    store.commit("prev");
   },
   setValue(store, content) {
     if (store.state.active === null) return false;

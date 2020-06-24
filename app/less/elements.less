@@ -10,8 +10,10 @@ body {
   --vh: 1vh;
 }
 
+@import 'themes.less';
+
 #connected {
-  background-color: @connected;
+  background-color: @syn;
 }
 
 ::selection {
@@ -48,7 +50,7 @@ a {
   color: inherit;
 
   &:hover {
-    color: @link;
+    color: @syn;
     text-decoration: underline;
   }
 }
