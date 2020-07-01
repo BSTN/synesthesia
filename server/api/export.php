@@ -96,9 +96,9 @@ function export_to_csv()
 
   // remove files from temporary folder
 
-  // unlink($profilePath);
-  // unlink($questionsPath);
-  // unlink($zipPath);
+  unlink($profilePath);
+  unlink($questionsPath);
+  unlink($zipPath);
 
   exit();
 }
