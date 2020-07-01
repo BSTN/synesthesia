@@ -42,7 +42,7 @@ CREATE TABLE `extra` (
 CREATE TABLE `access` (
   `created` timestamp NOT NULL DEFAULT 0,
   `modified` timestamp DEFAULT NOW() ON UPDATE NOW(),
-  `IP` varchar(256) NOT NULL PRIMARY KEY,
+  `IP` varchar(128) NOT NULL PRIMARY KEY,
   `NUM` INT,
   CONSTRAINT IPUNIQUE UNIQUE(IP)
 ) ENGINE=InnoDB DEFAULT CHARSET=UTF8MB4;

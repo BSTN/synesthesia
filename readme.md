@@ -34,7 +34,14 @@ SSH_PATH=
 
 DB_PREFIX=TEST
 
+DEVPASS=
+LIVEPASS=
+
 ```
+
+# create new login credentials
+
+`htpasswd -nB username`
 
 # Server-side installation
 

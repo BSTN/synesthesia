@@ -5,8 +5,8 @@ function export_to_csv()
   global $dbc;
 
   // create dir/files if not exists
-  $profilePath = joinPaths(TEMP_PATH, "/profiles—" . date("Y.m.d—H.i.s") . ".csv");
-  $questionsPath = joinPaths(TEMP_PATH, "/questions—" . date("Y.m.d—H.i.s") . ".csv");
+  $profilePath = joinPaths(TEMP_PATH, "/profiles-" . date("Y.m.d-H.i.s") . ".csv");
+  $questionsPath = joinPaths(TEMP_PATH, "/questions-" . date("Y.m.d-H.i.s") . ".csv");
   if (!file_exists(TEMP_PATH)) {
     mkdir(TEMP_PATH, 0755, true);
   }
@@ -21,7 +21,7 @@ function export_to_csv()
   $allProfileColumns = array_merge($profileColumns, $extraColumns);
 
   // file handle
-  $profileFile = fopen($profilePath, 'w');
+  $profileFile = fopen($profilePath, 'w') or die('Could not open profiles file.');
 
   // write column names
   fputcsv($profileFile, $allProfileColumns);
@@ -65,7 +65,7 @@ function export_to_csv()
   $questionsColumns = get_questions_columns();
 
   // file handle
-  $questionsFile = fopen($questionsPath, 'w');
+  $questionsFile = fopen($questionsPath, 'w') or die('Could not open questions file.');;
 
   // write column names
   fputcsv($questionsFile, $questionsColumns);
@@ -96,9 +96,9 @@ function export_to_csv()
 
   // remove files from temporary folder
 
-  unlink($profilePath);
-  unlink($questionsPath);
-  unlink($zipPath);
+  // unlink($profilePath);
+  // unlink($questionsPath);
+  // unlink($zipPath);
 
   exit();
 }

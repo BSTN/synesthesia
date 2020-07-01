@@ -79,7 +79,11 @@
   </style>
 
   <form method="POST" action="./download">
-    <div id="message"><?= $message ?></div>
+    <?php
+    if ($message !== '') {
+      echo "<div id='message'>$message</div>";
+    };
+    ?>
     <label>Username:</label>
     <input type="text" name="name" />
     <label>Password:</label>
