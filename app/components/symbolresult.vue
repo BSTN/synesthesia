@@ -41,6 +41,7 @@ export default {
     },
     distance() {
       if (this.values.indexOf("nocolor") >= 0) return false;
+      if (this.values.indexOf(null) >= 0) return false;
       else {
         let all = this.valuesFiltered.map((x) =>
           color("#" + x)

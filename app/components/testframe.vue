@@ -31,11 +31,11 @@
       <div id="bottom">
         <!-- <button id="helpbutton">help</button> -->
         <div class="flex"></div>
-        <div id="help" v-if="!enabled">
+        <div id="help">
           {{ $t("colorpickerhelp") }}
         </div>
-        <button id="nextbutton" @click="next()" v-if="enabled">
-          {{ $t("next") }} {{ q.time }}
+        <button id="nextbutton" @click="next()" v-active="q.value !== null">
+          {{ $t("next") }}
         </button>
         <div class="flex"></div>
       </div>
@@ -318,9 +318,9 @@ export default {
         min-width: 80%;
         flex-shrink: 1;
         flex-grow: 1;
-        text-align: center;
+        text-align: left;
       }
-      button {
+      #nextbutton {
         padding: 0.5em 1em 0.35em;
         border-radius: 0.25em;
         cursor: pointer;
@@ -328,9 +328,15 @@ export default {
         pointer-events: auto;
         background: #eee;
         color: #999;
+        pointer-events: none;
+        &.active {
+          pointer-events: auto;
+          color: #fafafa;
+          background: #999;
+        }
         &:hover {
-          background: #fff;
-          color: #222;
+          background: #555;
+          color: #fafafa;
         }
       }
     }
@@ -364,8 +370,6 @@ export default {
           margin-top: 1rem;
           margin-bottom: 1rem;
           padding: 0.75rem 1.5em;
-          border: 1px solid #ddd;
-          background: transparent;
         }
       }
     }

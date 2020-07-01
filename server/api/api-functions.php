@@ -2,6 +2,8 @@
 
 $PATH = getPath();
 
+require_once "export.php";
+
 function getPath()
 {
     global $BASE;
@@ -107,4 +109,78 @@ function validate_ip($ip)
 function unwrap($text)
 {
     return preg_replace("/<p><(.[\s\S]*?)><\/p>/", "<$1>", $text);
+}
+
+function joinPaths()
+{
+    $args = func_get_args();
+    $paths = array();
+    foreach ($args as $arg) {
+        $paths = array_merge($paths, (array) $arg);
+    }
+    foreach ($paths as $k => $p) {
+        if ($k === 0) {
+            $paths[$k] = rtrim($p, "/");
+        } else {
+            $paths[$k] = trim($p, "/");
+        }
+    }
+    $paths = array_filter($paths);
+    return join('/', $paths);
+}
+
+function brute_check()
+{
+    global $dbc;
+    $ip = get_ip_address();
+    $table = DB_PREFIX . "access";
+    $prep = $dbc->prepare(
+        "SELECT * FROM $table 
+        WHERE IP = ? 
+        AND NUM > 9
+        AND modified > NOW() - INTERVAL 10 MINUTE;"
+    );
+    try {
+        $prep->execute(array($ip));
+        $res = $prep->fetch(PDO::FETCH_ASSOC);
+    } catch (PDOException $Exception) {
+        error($Exception);
+    }
+    // $res = true (1) is found, false is not found: continue.
+    return $res;
+    exit();
+}
+
+function brute_fail()
+{
+    global $dbc;
+    $ip = get_ip_address();
+    $table = DB_PREFIX . "access";
+    $prep = $dbc->prepare(
+        "INSERT INTO $table SET
+            IP=:IP,
+            NUM=1
+        ON DUPLICATE KEY UPDATE 
+            NUM=MOD(NUM+1,11);"
+    );
+    try {
+        $prep->execute(array(":IP" => $ip));
+    } catch (PDOException $Exception) {
+        error($Exception);
+    }
+}
+
+function brute_reset()
+{
+    global $dbc;
+    $ip = get_ip_address();
+    $table = DB_PREFIX . "access";
+    $prep = $dbc->prepare(
+        "DELETE FROM $table WHERE IP=?;"
+    );
+    try {
+        $prep->execute(array($ip));
+    } catch (PDOException $Exception) {
+        error($Exception);
+    }
 }

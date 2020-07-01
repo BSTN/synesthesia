@@ -5,7 +5,6 @@ require_once dirname(__DIR__) .  "/vendor/autoload.php";
 use Michelf\Markdown;
 
 require_once "../config.php";
-require_once "api-functions.php";
 
 /* 
  * Connect to database
@@ -22,13 +21,53 @@ try {
     error("Could not connect to database.");
 }
 
+require_once "api-functions.php";
+
 /* 
 * API Start 
 */
 
+if ($PATH === "/download") {
+    if (array_key_exists("passwd", $_POST)) {
+
+        if (brute_check()) {
+            error_log("Download: too many attempts.");
+            $message = "Login failed, too many attempts. Locked out for 10 minutes.";
+            include_once("download.php");
+            exit();
+        }
+
+        // always sleep a bit
+        sleep(1);
+        // check password & username
+        if ($_POST['name'] === explode(":", PASS)[0] && password_verify($_POST['passwd'], explode(":", PASS)[1])) {
+            brute_reset();
+            error_log("Download success.");
+            export_to_csv();
+            exit();
+        } else {
+            brute_fail();
+            error_log("Download login failed.");
+            $message = "Login failed, please try again.";
+            include_once("download.php");
+            exit();
+        }
+    } else {
+        $message = "";
+        include_once("download.php");
+        exit();
+    }
+}
+
 if ($PATH === "/setup") {
+    $mysqlversion = intval($dbc->query('select version()')->fetchColumn());
+    $change = $mysqlversion > 5 ? true : false;
     $sql = file_get_contents(dirname(__DIR__) . "/setup/setup.sql");
     $sql = preg_replace("/CREATE TABLE `/i", "CREATE TABLE " . '`' . DB_PREFIX, $sql);
+    if ($change) {
+        // change for mysql 8
+        $sql = preg_replace("/DEFAULT\ 0/i", "DEFAULT CURRENT_TIMESTAMP", $sql);
+    }
     $sql = "USE " . MYSQL_DBNAME . ";" . $sql;
     try {
         $dbc->exec($sql);

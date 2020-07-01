@@ -41,6 +41,10 @@ gulp.task("templates", function(cb) {
       ? process.env.LIVE_MYSQL_DBNAME
       : process.env.DEV_MYSQL_DBNAME,
     DB_PREFIX: process.env.DB_PREFIX,
+    PASS: production ? process.env.LIVE_PASS : process.env.DEV_PASS,
+    TEMP_PATH: production
+      ? process.env.LIVE_TEMP_PATH
+      : process.env.DEV_TEMP_PATH,
   };
 
   // define path

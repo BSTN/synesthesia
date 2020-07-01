@@ -39,12 +39,30 @@ export default {
     },
     fill() {
       this.$store.dispatch("tests/fill", this.testname);
-      this.$store.dispatch("extra/set", { pq1: Math.round(Math.random() * 6) });
-      this.$store.dispatch("extra/set", { pq2: Math.round(Math.random() * 6) });
-      this.$store.dispatch("extra/set", { pq3: Math.round(Math.random() * 6) });
-      this.$store.dispatch("extra/set", { pq4: Math.round(Math.random() * 6) });
-      this.$store.dispatch("extra/set", { pq5: Math.round(Math.random() * 6) });
-      this.$store.dispatch("extra/set", { pq6: Math.round(Math.random() * 6) });
+      this.$store.dispatch("extra/set", {
+        key: "pq1",
+        value: Math.round(Math.random() * 6),
+      });
+      this.$store.dispatch("extra/set", {
+        key: "pq2",
+        value: Math.round(Math.random() * 6),
+      });
+      this.$store.dispatch("extra/set", {
+        key: "pq3",
+        value: Math.round(Math.random() * 6),
+      });
+      this.$store.dispatch("extra/set", {
+        key: "pq4",
+        value: Math.round(Math.random() * 6),
+      });
+      this.$store.dispatch("extra/set", {
+        key: "pq5",
+        value: Math.round(Math.random() * 6),
+      });
+      this.$store.dispatch("extra/set", {
+        key: "pq6",
+        value: Math.round(Math.random() * 6),
+      });
     },
   },
 };
