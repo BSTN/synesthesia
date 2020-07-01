@@ -65,7 +65,7 @@ function export_to_csv()
   $questionsColumns = get_questions_columns();
 
   // file handle
-  $questionsFile = fopen($questionsPath, 'w') or die('Could not open questions file.');;
+  $questionsFile = fopen($questionsPath, 'w') or die('Could not open questions file.');
 
   // write column names
   fputcsv($questionsFile, $questionsColumns);
