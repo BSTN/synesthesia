@@ -20,10 +20,10 @@ gulp.task("templates", function(cb) {
   let templateVars = {
     SRCV: production
       ? "js/vendors.js"
-      : "http://192.168.1.6:" + process.env.DEV_HOTPORT + "/vendors.js",
+      : "http://" + process.env.DEV_HOTHOST + ":" + process.env.DEV_HOTPORT + "/vendors.js",
     SRC: production
       ? "js/main.js"
-      : "http://192.168.1.6:" + process.env.DEV_HOTPORT + "/main.js",
+      : "http://" + process.env.DEV_HOTHOST + ":" + process.env.DEV_HOTPORT + "/main.js",
     BASE: production ? process.env.LIVE_BASE : process.env.DEV_BASE,
     MYSQL_USERNAME: production
       ? process.env.LIVE_MYSQL_USERNAME
@@ -88,13 +88,13 @@ const watcher = () => {
 
   // hot reload
   webpackConfig.entry = [
-    "webpack-dev-server/client?http://192.168.1.6:" + process.env.DEV_HOTPORT,
+    "webpack-dev-server/client?http://" + process.env.DEV_HOTHOST + ":" + process.env.DEV_HOTPORT,
     "webpack/hot/only-dev-server",
     path.resolve("./app"),
   ];
   new webpackDevServer(webpack(webpackConfig), webpackConfig.devServer).listen(
     process.env.DEV_HOTPORT,
-    "192.168.1.6",
+    process.env.DEV_HOTHOST,
     (err) => {
       console.warn(err);
     }

@@ -4,7 +4,7 @@
       <!-- <div id="top">
         <div class="flex"></div>
         <button>help</button>
-      </div> -->
+      </div>-->
       <div id="mid">
         <transition name="symbol" mode="out-in">
           <div id="symbol" :key="testdata.position">
@@ -17,8 +17,11 @@
                   empty: q.value === null,
                 }"
               ></div>
-              <div id="sym">
-                <div>{{ q.symbol }}</div>
+              <div
+                id="sym"
+                :class="{ mid: symbol.length > 1, long: symbol.length > 3 }"
+              >
+                <div>{{ symbol }}</div>
               </div>
             </div>
           </div>
@@ -31,9 +34,7 @@
       <div id="bottom">
         <!-- <button id="helpbutton">help</button> -->
         <div class="flex"></div>
-        <div id="help">
-          {{ $t("colorpickerhelp") }}
-        </div>
+        <div id="help">{{ $t("colorpickerhelp") }}</div>
         <button id="nextbutton" @click="next()" v-active="q.value !== null">
           {{ $t("next") }}
         </button>
@@ -75,6 +76,11 @@ export default {
     },
     enabled() {
       return this.q.value !== null;
+    },
+    symbol() {
+      return this.q.symbol.match(/^t\:/)
+        ? this.$t(this.q.symbol.replace(/^t\:/, ""))
+        : this.q.symbol;
     },
   },
   methods: {
@@ -232,16 +238,23 @@ export default {
             z-index: 2;
             font-size: 4rem;
             display: flex;
+            flex-direction: row;
             align-content: center;
             align-items: center;
             justify-content: center;
-            padding: 0.5em 1rem;
+            padding: 0rem 1rem;
             background: @bg;
             background: #fafafa;
             margin: 2rem;
             min-width: calc(100% - 8rem);
             min-height: calc(100% - 8rem);
             border-radius: 0.25rem;
+            &.mid {
+              font-size: 2rem;
+            }
+            &.long {
+              font-size: 1rem;
+            }
           }
         }
 
@@ -279,7 +292,7 @@ export default {
               flex-shrink: 1;
               flex-grow: 1;
               font-size: 1em;
-              display: block;
+              // display: block;
               border-radius: 0;
               margin: 0;
               padding: 0 1em;
@@ -287,6 +300,9 @@ export default {
               // border-width: 1px 1px 1px 0px !important;
               border-radius: 0 0.25em 0.25em 0;
               line-height: calc(2em - 2px);
+              > div {
+                width: 100%;
+              }
             }
           }
         }
@@ -329,6 +345,7 @@ export default {
         background: #eee;
         color: #999;
         pointer-events: none;
+        line-height: 1;
         &.active {
           pointer-events: auto;
           color: #fafafa;

@@ -63,8 +63,9 @@ export default {
       if (ev.keyCode === 37) i--;
       if (i < 0) i = 0;
       if (i > 7) i = 7;
-      this.setTheme(i);
+      if (ev.keyCode === 37 || ev.keyCode === 39) this.setTheme(i);
     });
+    this.setTheme(2);
   },
 };
 </script>

@@ -1,5 +1,5 @@
 <template>
-  <div id="likertresults" v-show="value">
+  <div id="combinedresult" v-show="value">
     <slot v-bind:value="value"></slot>
     <div id="slider" v-if="value">
       <div id="value" :style="{ left: (100 / 30) * value + '%' }"></div>
@@ -34,7 +34,7 @@ export default {
 };
 </script>
 <style lang="less" scoped>
-#likertresults {
+#combinedresult {
   margin: 2em auto;
   max-width: 28em;
   text-align: center;

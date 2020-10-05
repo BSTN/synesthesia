@@ -3,6 +3,7 @@ name: graphemes
 introduction: yes
 type: colorgrid
 continue: /postquestions
+cutoff: 1
 sets:
   set1:
     [

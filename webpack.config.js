@@ -11,6 +11,7 @@ if (!production) plugins.push(new webpack.HotModuleReplacementPlugin());
 module.exports = {
   mode: process.env.NODE_ENV || "production",
   entry: [path.resolve("./app")],
+  stats: "minimal",
   output: {
     filename: "[name].js",
     path: path.resolve(
@@ -19,17 +20,39 @@ module.exports = {
         "js"
       )
     ),
-    publicPath: path.resolve(
-      production ? process.env.LIVE_BASE : process.env.DEV_BASE
-    ),
+    publicPath: production
+      ? process.env.LIVE_BASE
+      : "http://" +
+        process.env.DEV_HOTHOST +
+        ":" +
+        process.env.DEV_HOTPORT +
+        "/",
   },
   devServer: {
-    contentBase: path.join(
-      production ? process.env.LIVE_BUILD_PATH : process.env.DEV_BUILD_PATH,
-      "js"
-    ),
-    port: 3000,
+    contentBase: process.env.DEV_BUILD_PATH,
+    publicPath: "/",
     hot: !production,
+    port: process.env.DEV_HOTPORT || 3000,
+    host: process.env.DEV_HOTHOST,
+    headers: {
+      "Access-Control-Allow-Origin": "*",
+    },
+    stats: {
+      colors: true,
+      hash: false,
+      version: false,
+      timings: false,
+      assets: false,
+      chunks: false,
+      modules: false,
+      reasons: false,
+      children: false,
+      source: false,
+      errors: true,
+      errorDetails: true,
+      warnings: true,
+      publicPath: false,
+    },
   },
   optimization: {
     splitChunks: {
@@ -45,7 +68,7 @@ module.exports = {
   plugins: plugins,
   resolve: {
     alias: {
-      assets: path.resolve(__dirname, "./server/assets"),
+      assets: path.resolve(__dirname, "./server/assets/"),
       vue$: "vue/dist/vue.esm.js",
     },
   },
@@ -56,12 +79,7 @@ module.exports = {
         loader: "file-loader",
         options: {
           name(resourcePath, resourceQuery) {
-            if (process.env.NODE_ENV === "development") {
-              return resourcePath.split("/server")[1];
-            } else {
-              return resourcePath.split("/server")[1];
-              // return "[path][name].[ext]";
-            }
+            return resourcePath.split("/server")[1];
           },
           emitFile: false,
         },

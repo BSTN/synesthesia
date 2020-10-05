@@ -1,7 +1,11 @@
 <template>
   <div id="colorpicker">
     <div id="hue">
-      <div id="hueframe" :style="{ backgroundColor: lightnessBackgroundColor }" ref="hue">
+      <div
+        id="hueframe"
+        :style="{ backgroundColor: lightnessBackgroundColor }"
+        ref="hue"
+      >
         <div
           id="huebg"
           ref="huebg"
@@ -21,7 +25,12 @@
       </div>
     </div>
     <div id="slider">
-      <vue-slider ref="slider" v-model="lightness" v-bind="sliderOptions" @change="changeSlider"></vue-slider>
+      <vue-slider
+        ref="slider"
+        v-model="lightness"
+        v-bind="sliderOptions"
+        @change="changeSlider"
+      ></vue-slider>
       <div id="labels">
         <label>{{ $t("darker") }}</label>
         <label>{{ $t("lighter") }}</label>
@@ -31,7 +40,9 @@
       <button
         @click="toggleNocolor()"
         :class="{ active: q.value === 'nocolor' }"
-      >{{ $t("nocolor") }}</button>
+      >
+        {{ $t("nocolor") }}
+      </button>
     </div>
   </div>
 </template>
@@ -84,14 +95,14 @@ export default {
         stepStyle: void 0,
         stepActiveStyle: void 0,
         labelStyle: void 0,
-        labelActiveStyle: void 0
-      }
+        labelActiveStyle: void 0,
+      },
     };
   },
   computed: {
     ...mapGetters({
       testdata: "tests/testdata",
-      q: "tests/q"
+      q: "tests/q",
     }),
     lightnessBackgroundColor() {
       let L = parseInt(this.lightness * 256);
@@ -112,13 +123,13 @@ export default {
       let w = 0;
       if (this.$refs["huebg"]) w = this.$refs["huebg"].clientWidth;
       return `${this.offset * w}px 0px`;
-    }
+    },
   },
   watch: {
     "q.qnr": function(val) {
       this.lightness = 0.5;
       this.randomPos();
-    }
+    },
   },
   methods: {
     randomPos() {
@@ -138,7 +149,7 @@ export default {
     },
     async toggleNocolor() {
       await this.$store.dispatch("tests/setValue", {
-        clicks: this.q.clicks + 1
+        clicks: this.q.clicks + 1,
       });
       if (this.q.color !== "nocolor") {
         await this.$store.dispatch("tests/setValue", { value: "nocolor" });
@@ -156,21 +167,21 @@ export default {
     },
     addSliderClick() {
       this.$store.dispatch("tests/setValue", {
-        clicksslider: parseInt(this.q.clicksslider) + 1
+        clicksslider: parseInt(this.q.clicksslider) + 1,
       });
     },
     changeSlider(val) {
       this.setColor(val);
       this.addSliderClick();
-    }
+    },
   },
   mounted() {
     let hueel = this.$refs.hue;
     let mousedown = false;
-    const huepos = async ev => {
+    const huepos = async (ev) => {
       if (ev.type === "mousedown") {
         await this.$store.dispatch("tests/setValue", {
-          clicks: this.clicks + 1
+          clicks: this.clicks + 1,
         });
         mousedown = true;
       }
@@ -183,7 +194,7 @@ export default {
         this.posx = clamp((ev.clientX - coor.x) / coor.width, 0, 1);
         this.posy = clamp((ev.clientY - coor.y) / coor.height, 0, 1);
         await this.$store.dispatch("tests/setValue", {
-          position: `${this.posx},${this.posy}`
+          position: `${this.posx},${this.posy}`,
         });
         let hex = color
           .hsl(
@@ -201,7 +212,7 @@ export default {
     // window.addEventListener("mousemove", huepos);
     // hueel.addEventListener("mouseup", huepos);
     this.randomPos();
-  }
+  },
 };
 </script>
 <style lang="less" scoped>
@@ -264,6 +275,7 @@ export default {
         font-size: 0.5em;
         display: inline-block;
         // text-transform: uppercase;
+        float: left;
         &:nth-child(2) {
           float: right;
         }

@@ -3,22 +3,24 @@ name: graphemes
 introduction: yes
 type: colorpicker
 continue: /postquestions
+cutoff: 1.43
+instructions: graphemes.instructions
 sets:
   set1:
     [
       "A",
       "B",
-      "WOENSDAG",
+      "t:wednesday",
       "D",
       "E",
       "A",
       "B",
-      "WOENSDAG",
+      "t:wednesday",
       "D",
       "E",
       "A",
       "B",
-      "WOENSDAG",
+      "t:wednesday",
       "D",
       "E",
     ]

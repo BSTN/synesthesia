@@ -1,6 +1,6 @@
 <template>
   <div id="r">
-    <div id="symbol">{{ symbol }}</div>
+    <div id="symbol">{{ translatedSymbol }}</div>
     <div id="colors">
       <button
         id="color"
@@ -14,7 +14,7 @@
     </div>
     <div id="distance" v-if="distance !== false">
       <div id="bar"></div>
-      <div id="cutoff"></div>
+      <div id="cutoff" :style="{ width: cutoffwidth }"></div>
       <div id="value" :style="{ left: (distance / 6) * 100 + '%' }">
         {{ distance }}
       </div>
@@ -27,6 +27,17 @@ import color from "color";
 export default {
   props: ["symbol", "testname"],
   computed: {
+    testConfig() {
+      return this.$tests[this.testname];
+    },
+    cutoffwidth() {
+      return (100 / 6) * parseFloat(this.testConfig.cutoff) + "%";
+    },
+    translatedSymbol() {
+      return this.symbol.match(/^t\:/)
+        ? this.$t(this.symbol.replace(/^t\:/, ""))
+        : this.symbol;
+    },
     values() {
       let data = [];
       each(this.$store.state.tests.tests[this.testname].questions, (q) => {
@@ -132,7 +143,7 @@ export default {
       height: 2px;
       background: @syn;
       top: calc(50% - 1px);
-      width: ((100/6) * 1.42%);
+      // width: ((100/6) * 1.42%);
     }
     #value {
       position: absolute;

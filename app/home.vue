@@ -124,12 +124,15 @@ export default {
     margin-right: 1rem;
     padding: 2rem 4rem 0 2rem;
 
+    // font-family: "Victor";
+    // font-weight: 300;
+
     // min-height: calc(100vh - 3rem);
     min-height: calc(var(--vh, 1vh) * 100 - 3rem);
-    border-left: 1px solid @fg;
+    // border-left: 1px solid @fg;
     float: right;
     width: 100%;
-    max-width: 30vw;
+    max-width: 40vw;
 
     display: flex;
     align-items: center;

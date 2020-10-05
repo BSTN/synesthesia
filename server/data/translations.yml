@@ -23,7 +23,7 @@ lighter:
   en: Lighter
   se: Ljusare
 colorpickerhelp:
-  nl: Probeer instinctief de kleur te kiezen die je associeert of het beste vind passen bij de letter of het woord hierboven.
+  nl: Probeer instinctief de kleur te kiezen die je associeert of het beste vindt passen bij de letter of het woord hierboven.
   en: Try to instinctively choose the color you associate, or feel fits best with the character/word above.
   se: Försök att så instinktivt som möjligt välja den färg du förknippar med, eller känner passar bäst ihop.
 nocolor:
@@ -33,3 +33,24 @@ nocolor:
 novalue:
   nl: niet genoeg data
   en: no value
+monday:
+  nl: maandag
+  en: monday
+tuesday:
+  nl: dinsdag
+  en: tuesday
+wednesday:
+  nl: woensdag
+  en: wednesday
+thursday:
+  nl: donderdag
+  en: thursday
+friday:
+  nl: vrijdag
+  en: friday
+saturday:
+  nl: zaterdag
+  en: saturday
+sunday:
+  nl: zondag
+  en: sunday
