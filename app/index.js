@@ -60,6 +60,7 @@ routes.push({
 const components = require.context("./components", true, /\.vue$/);
 components.keys().forEach((key) => {
   let newkey = key.replace(/(\.\/|\.vue)/g, "");
+  newkey = newkey.replace(/\//g, "-");
   Vue.component(newkey, components(key).default);
 });
 

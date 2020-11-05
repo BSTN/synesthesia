@@ -33,6 +33,12 @@ nocolor:
 novalue:
   nl: niet genoeg data
   en: no value
+ok:
+  nl: ok
+  en: ok
+cancel:
+  nl: annuleren
+  en: cancel
 monday:
   nl: maandag
   en: monday

@@ -3,6 +3,7 @@
     <transition name="page" mode="out-in">
       <router-view class="view" :key="$route.path"></router-view>
     </transition>
+    <dialog-dialogues></dialog-dialogues>
   </div>
 </template>
 <script>
@@ -30,6 +31,13 @@ export default {
     });
   },
   methods: {
+    openAlert() {
+      this.$root.confirm({message: "May I ask you a question, please?", options: ["yes", "no", "again" ,"something else"]}).then(x => {
+        console.log(x);
+      }).catch(x => {
+        console.error(x);
+      })
+    },
     setTheme(i) {
       each(document.body.classList, (x) => {
         if (x.match(/^theme/)) document.body.classList.remove(x);
@@ -64,6 +72,9 @@ export default {
       if (i < 0) i = 0;
       if (i > 7) i = 7;
       if (ev.keyCode === 37 || ev.keyCode === 39) this.setTheme(i);
+      // if (ev.keyCode === 13) {
+      //   this.openAlert();
+      // }
     });
     this.setTheme(2);
   },

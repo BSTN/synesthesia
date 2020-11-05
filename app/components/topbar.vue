@@ -17,7 +17,7 @@ export default {
 </script>
 <style lang="less" scoped>
 #topbar {
-  padding: 0.25rem 0.75rem;
+  padding: 0.45rem 1rem;
   font-size: 0.65rem;
   display: flex;
   text-transform: uppercase;

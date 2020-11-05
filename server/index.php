@@ -10,7 +10,13 @@ require('./api/api-functions.php');
   <title>Synesthesia test</title>
   <base href="<?= BASE ?>">
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <link rel="icon" type="image/png" href="assets/icon.png" />
+  <link rel="icon" type="image/png" href="assets/96x96.png" />
+  <!-- <link rel="icon" type="image/png" href="assets/16x16.png" size="16x16" />
+  <link rel="icon" type="image/png" href="assets/32x32.png" size="32x32" />
+  <link rel="icon" type="image/png" href="assets/48x48.png" size="48x48" />
+  <link rel="icon" type="image/png" href="assets/96x96.png" size="96x96" />
+  <link rel="icon" type="image/png" href="assets/512x512.png" size="512x512" />
+  <link rel="icon" type="image/x-icon" href="assets/favicon.ico" /> -->
 </head>
 
 <body>

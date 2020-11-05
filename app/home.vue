@@ -73,16 +73,16 @@ export default {
   #introtext {
     pointer-events: none;
     position: fixed;
-    bottom: 1rem;
-    left: 1rem;
+    top: 3rem;
+    left: 0.75rem;
 
     padding: 0 0;
     font-family: "Victor";
     font-weight: 300;
 
-    font-size: 5vw;
-    line-height: 1em;
-    width: 50vw;
+    font-size: 3.5vw;
+    line-height: 1.1em;
+    width: 40vw;
     letter-spacing: -0.025em;
     animation-name: line;
     animation-duration: 2s;
@@ -122,17 +122,18 @@ export default {
   #hometext {
     z-index: 2;
     margin-right: 1rem;
-    padding: 2rem 4rem 0 2rem;
+    padding: 2rem 4rem 0 4rem;
 
-    // font-family: "Victor";
-    // font-weight: 300;
+    font-family: "Victor";
+    font-weight: 500;
+    font-size: 1rem;
 
     // min-height: calc(100vh - 3rem);
     min-height: calc(var(--vh, 1vh) * 100 - 3rem);
-    // border-left: 1px solid @fg;
+    border-left: 1px solid @fg;
     float: right;
     width: 100%;
-    max-width: 40vw;
+    max-width: 50vw;
 
     display: flex;
     align-items: center;
@@ -176,25 +177,28 @@ export default {
     #content {
       #hometext {
         padding: 2rem;
-        max-width: 40vw;
+        max-width: 50vw;
       }
     }
   }
   @media (max-width: 800px) {
     #content {
       display: block;
+      padding: 0;
       #introtext {
+        margin: 0;
         position: relative;
         width: 100%;
-        font-size: 1.5rem;
         bottom: auto;
         left: auto;
-        padding: 1em 0.5rem;
-        display: flex;
-        align-items: flex-end;
+        padding: 0 .5rem;
+        display: block;
+        top: auto;
+        // display: flex;
+        // align-items: flex-end;
         min-height: calc(var(--vh, 1vh) * 50 - 2.5rem);
         min-height: auto;
-        font-size: 2rem;
+        font-size: 1.5rem;
         /deep/ p {
           max-width: auto;
         }
@@ -202,28 +206,37 @@ export default {
       #hometext {
         border: 0;
         margin-left: 0;
-        width: 70%;
+        width: 100%;
         max-width: none;
         padding-top: 4rem;
-        float: left;
-        padding: 0.5rem;
-        padding-left: 3rem;
+        // float: left;
+        padding: 1rem;
+        padding-left: 1rem;
+        float: none;
+        margin-top: 3rem;
+        text-align: center;
+        /deep/ #md {
+          width: 100%;
+          p {
+            margin: 0 auto 1.5rem;
+          }
+        }
       }
     }
   }
   @media (max-width: 600px) {
     #content {
       #introtext {
-        font-size: 1.5rem;
-        display: flex;
-        align-items: flex-end;
-        min-height: calc(var(--vh, 1vh) * 50 - 2.5rem);
+        font-size: 1.25rem;
+        // display: flex;
+        // align-items: flex-end;
+        // min-height: calc(var(--vh, 1vh) * 50 - 2.5rem);
         /deep/ #md {
           align-self: flex-end;
         }
       }
       #hometext {
-        padding: 0.5rem 0.5rem 2rem 2rem;
+        padding: 3.5rem 0.5rem 2rem 1rem;
         float: left;
         align-items: left;
         display: block;
