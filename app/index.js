@@ -46,16 +46,6 @@ routes.push({
   component: testpage,
 });
 
-// import all pages as routes
-// const pages = require.context("./pages", true, /\.vue$/);
-// pages.keys().forEach((key) => {
-//   let newkey = key.replace(/(\.\/|\.vue)/g, "");
-//   routes.push({
-//     path: "/" + newkey,
-//     component: pages(key).default,
-//   });
-// });
-
 // import all components
 const components = require.context("./components", true, /\.vue$/);
 components.keys().forEach((key) => {

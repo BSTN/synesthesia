@@ -6,19 +6,28 @@
     <div id="line"></div>
     <div class="right">
       <slot name="right"></slot>
+      <button @click="fs()">fullscreen</button>
+      <button id="userid" v-if="$store.state.profile.USERID">ID: {{$store.state.profile.USERID}}</button>
     </div>
   </div>
 </template>
 <script>
 import { each } from "lodash";
 export default {
-  methods: {},
+  methods: {
+    fs () {
+       document.documentElement.requestFullscreen();
+    }
+  },
 };
 </script>
 <style lang="less" scoped>
 #topbar {
   padding: 0.45rem 1rem;
+  padding: 1rem 1.5rem;
   font-size: 0.65rem;
+  position: relative;
+  z-index:2;
   display: flex;
   text-transform: uppercase;
   font-weight: 400;
@@ -31,6 +40,7 @@ export default {
   button {
     padding: 0;
     margin-right: 1em;
+    text-decoration: none;
     &:hover {
       text-decoration: none;
     }
@@ -40,6 +50,16 @@ export default {
     button {
       margin-right: 0;
       margin-left: 1em;
+    }
+    #userid {
+      background: @fg;
+      color: @bg;
+      padding: 0.25em 0.5em;
+      border-radius: 0.25em;
+      line-height: 1em;
+      font-size: 0.8em;
+      box-sizing: border-box;
+      transform: translateY(-0.15em);
     }
   }
   #line {

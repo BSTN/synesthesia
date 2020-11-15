@@ -1,10 +1,6 @@
 <template>
   <div id="testframe">
     <div id="frame">
-      <!-- <div id="top">
-        <div class="flex"></div>
-        <button>help</button>
-      </div>-->
       <div id="mid">
         <transition name="symbol" mode="out-in">
           <div id="symbol" :key="testdata.position">
@@ -27,11 +23,12 @@
           </div>
         </transition>
         <div id="color">
-          <colorpicker v-if="config.type === 'colorpicker'"></colorpicker>
-          <colorgrid v-if="config.type === 'colorgrid'"></colorgrid>
+          <colorpicker v-if="config.selector === 'colorpicker'"></colorpicker>
+          <colorgrid v-if="config.selector === 'colorgrid'"></colorgrid>
         </div>
       </div>
       <div id="bottom">
+        <div id="progress"><div id="bar" :style="{width: (progress * 100) + '%'}"></div></div>
         <!-- <button id="helpbutton">help</button> -->
         <div class="flex"></div>
         <div id="help">{{ $t("colorpickerhelp") }}</div>
@@ -68,6 +65,12 @@ export default {
     },
     position() {
       return this.testdata.position;
+    },
+    total() {
+      return Object.keys(this.testdata.questions).length;
+    },
+    progress() {
+      return this.testdata.position / Object.keys(this.testdata.questions).length;
     },
     background() {
       if (this.q.value === null) return "none";
@@ -110,11 +113,10 @@ export default {
       // scroll to top (for mobile)
       window.scrollTo(0, 0);
       if (Object.keys(this.testdata.questions).length - 1 == this.position) {
-        // set finished to true
-        await this.$store.dispatch("tests/setFinished");
-        // go to next page
-        this.$router.push({ path: this.config.continue });
+        // done
+        this.$emit("done");
       } else {
+        // next question please
         this.$store.dispatch("tests/next");
       }
     },
@@ -123,16 +125,16 @@ export default {
         timing: now() - this.startTime,
       });
     },
-    checkFinished() {
-      let undone = filter(this.testdata.questions, (q) => {
-        return q.color === null && !q.timing === null;
-      });
-      if (Object.keys(undone).length < 1) {
-        // redirect!
-        console.log("finished, redirect please...");
-      } else {
-      }
-    },
+    // checkFinished() {
+    //   let undone = filter(this.testdata.questions, (q) => {
+    //     return q.color === null && !q.timing === null;
+    //   });
+    //   if (Object.keys(undone).length < 1) {
+    //     // redirect!
+    //     console.log("finished, redirect please...");
+    //   } else {
+    //   }
+    // },
   },
   watch: {
     "q.qnr": function() {
@@ -141,7 +143,7 @@ export default {
     },
   },
   mounted() {
-    this.checkFinished();
+    // this.checkFinished();
     this.startTime = now();
     window.addEventListener("keydown", (ev) => {
       if (ev.keyCode === 13 && this.q.value !== null) this.next();
@@ -153,6 +155,7 @@ export default {
 #testframe {
   background: @bg;
   background: #fafafa;
+  background: #f3f3f3;
   color: #000;
 
   height: auto;
@@ -208,7 +211,7 @@ export default {
         justify-content: center;
       }
       #symbol {
-        // outline: 1px solid #000;
+        border: 1px solid #000;
         #symbolframe {
           width: calc(100% - 3rem);
           height: calc(100% - 3rem);
@@ -321,13 +324,30 @@ export default {
       display: flex;
       align-content: center;
       align-items: center;
-      padding: 0 1.5em;
+      padding: 0 .75em;
       background: #d6d6d6;
       background: #e9e9e9;
       background: #f3f3f3;
+      position: relative;
+      #progress {
+        position:absolute;
+        top:0;
+        width: 100%;
+        left:0;
+        height: 2px;
+        #bar {
+          position:absolute;
+          left:0;
+          top:0;
+          width:0%;
+          height:100%;
+          background: #555;
+          transition: all 0.25s;
+        }
+      }
       #help {
         opacity: 0.25;
-        font-style: italic;
+        // font-style: italic;
         pointer-events: none;
         line-height: 1.25em;
         font-size: 0.75em;
@@ -335,6 +355,7 @@ export default {
         flex-shrink: 1;
         flex-grow: 1;
         text-align: left;
+        padding-right: 1em;
       }
       #nextbutton {
         padding: 0.5em 1em 0.35em;
@@ -364,6 +385,7 @@ export default {
   #testframe {
     #frame {
       #mid {
+        background: #fafafa;
         flex-direction: column;
         #symbol {
           #symbolframe {
@@ -382,7 +404,7 @@ export default {
       #bottom {
         flex-direction: column;
         padding: 1rem;
-        background: transparent;
+        // background: transparent;
         #nextbutton {
           margin-top: 1rem;
           margin-bottom: 1rem;

@@ -27,6 +27,8 @@ export default {
         name: name,
         setname: setname,
         questions: v.sets[setname],
+        pretest: v.pretest,
+        posttest: v.posttest,
       });
     });
   },
@@ -76,7 +78,7 @@ export default {
       //   this.openAlert();
       // }
     });
-    this.setTheme(2);
+    this.setTheme(4);
   },
 };
 </script>

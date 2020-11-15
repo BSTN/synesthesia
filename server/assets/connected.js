@@ -14,7 +14,7 @@ project.currentStyle = {
 var columns = 8;
 var rows = 5;
 var connectionRadius = 250;
-var randomPosition = 50;
+var randomPosition = 150;
 var dotSize = 5;
 var mouseDotSize = 5;
 var largeCircle;

@@ -168,11 +168,13 @@ if ($PATH === "/store") {
                 created=NOW(),
                 IP=SHA2(:IP,256), 
                 language=:language, 
-                UID=:UID
+                UID=:UID,
+                finishedtests=:finishedtests
             ON DUPLICATE KEY UPDATE
                 IP=SHA2(:IP,256), 
                 language=:language, 
-                UID=:UID
+                UID=:UID,
+                finishedtests=:finishedtests
             ;"
         );
         try {

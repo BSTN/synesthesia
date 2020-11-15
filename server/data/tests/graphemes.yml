@@ -1,10 +1,17 @@
 public: yes
-name: graphemes
-introduction: yes
-type: colorpicker
+name: 
+  nl: grafeem-kleur
+  en: graphemes
+  se: graphemes
+pretest:
+  - grapheme.intro
+  - grapheme.test
+posttest:
+  - postquestions
+type: grapheme
+selector: colorpicker
 continue: /postquestions
 cutoff: 1.43
-instructions: graphemes.instructions
 sets:
   set1:
     [

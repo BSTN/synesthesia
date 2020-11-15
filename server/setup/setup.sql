@@ -7,6 +7,7 @@ CREATE TABLE `profile` (
   `UID` varchar(64) NOT NULL PRIMARY KEY,
   `IP` varchar(256) DEFAULT NULL,
   `language` varchar(2) DEFAULT NULL,
+  `finishedtests` TEXT DEFAULT NULL,
   `USERID` varchar(256) DEFAULT NULL,
   `SHARED` varchar(32) DEFAULT NULL,
   CONSTRAINT UIDUNIQUE UNIQUE(UID)

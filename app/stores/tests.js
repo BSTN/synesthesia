@@ -6,6 +6,11 @@ import { each, clone, cloneDeep } from "lodash";
 const emptyTest = {
   questions: {},
   position: 0,
+  pretest: false,
+  posttest: false,
+  pageCount: 0,
+  totalPages: 0,
+  testing: false,
   finished: false,
   setname: null,
 };
@@ -54,6 +59,8 @@ export const mutations = {
         Object.assign(notempty, item)
       );
     });
+    Vue.set( state.tests[content.name], "pretest", content.pretest );
+    Vue.set( state.tests[content.name], "posttest", content.posttest );
   },
   appendQuestion(state, content) {
     var notempty = cloneDeep(emptyItem);
@@ -70,7 +77,7 @@ export const mutations = {
         content.values[k]
       );
     }
-  },
+  }
 };
 
 export const actions = {
@@ -90,8 +97,8 @@ export const actions = {
     if (store.active === null) return false;
     store.commit("setFinished", store.state.active);
   },
-  next(store) {
-    // check if finished
+  next(store, content) {
+    // check if finished?
     store.commit("next");
   },
   setValue(store, content) {
@@ -113,6 +120,17 @@ export const actions = {
       });
     });
   },
+  async nextPage(store) {
+    const currentTest = store.state.tests[store.state.active]
+    // set totalpages again
+    currentTest.totalPages = currentTest.pretest.length + 1 + currentTest.posttest.length
+    // add page to pageCount
+    if (currentTest.pageCount < currentTest.totalPages) currentTest.pageCount++
+    if (currentTest.pageCount === currentTest.totalPages) {
+      store.dispatch("profile/finished", store.state.active, { root: true })
+      store.dispatch("profile/upload", {}, { root: true });
+    }
+  }
 };
 
 export const getters = {

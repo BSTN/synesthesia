@@ -1,26 +1,33 @@
 public: yes
-name: graphemes
-introduction: yes
-type: grapheme
-selector: colorgrid
+name: 
+  nl: grafeem-kleur
+  en: graphemes
+  se: graphemes
+pretest:
+  - grapheme.intro
+  - grapheme.test
+posttest:
+  - postquestions
+type: audio
+selector: colorpicker
 continue: /postquestions
-cutoff: 1
+cutoff: 1.43
 sets:
   set1:
     [
       "A",
       "B",
-      "WOENSDAG",
+      "t:wednesday",
       "D",
       "E",
       "A",
       "B",
-      "WOENSDAG",
+      "t:wednesday",
       "D",
       "E",
       "A",
       "B",
-      "WOENSDAG",
+      "t:wednesday",
       "D",
       "E",
     ]

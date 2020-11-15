@@ -1,10 +1,10 @@
 <template>
   <div id="results">
     <div id="wrap">
-      <!-- <div id="top">
+      <div id="top">
         <button class="flex"></button>
         <button @click="fill()">fill all random</button>
-      </div> -->
+      </div>
       <!-- <button @click="download()">download</button> -->
       <symbolresult
         v-for="s in symbols"

@@ -52,7 +52,8 @@ export default {
           }, 2000);
           return false;
         });
-      this.$router.push({ path: this.to });
+      if (this.to === 'nextPage') this.$store.dispatch('tests/nextPage');
+      else this.$router.push({ path: this.to });
     },
   },
 };

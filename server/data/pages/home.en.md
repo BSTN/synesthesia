@@ -1,11 +1,7 @@
-An international team of scientists is conducting research into Language and Perception using a number of tests.
+People with synesthesia have very strong associations that do not change. Do you also want to know if you have synesthesia?
 
-<router-link to="/about" class="readmore">Read more</router-link>
+<router-link to="/tests" class="link">Take the tests</router-link>
 
-Are you also curious how your senses work together?
-
-<router-link to="/test/graphemes" class="readmore">Take the tests</router-link>
-
-Have you done any of the test before and saved the data? View and compare your results here:
-
-<router-link to="/results" class="readmore">My results</router-link>
+<!--
+Heb je een van de tests al eerder gedaan en de gegevens opgeslagen? Bekijk je resultaten dan hier:
+<router-link to="/results" class="link">Mijn resultaten</router-link> -->

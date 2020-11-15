@@ -1,6 +1,7 @@
 import Vue from "vue";
-import { clone, cloneDeep } from "lodash";
+import { clone, cloneDeep, merge } from "lodash";
 import { i18n } from "../utils/i18n.js";
+import axios from 'axios';
 
 const config = JSON.parse(document.getElementById("bootload-config").innerText);
 
@@ -9,6 +10,7 @@ export const state = () => ({
   USERID: null,
   SHARED: null,
   language: clone(config.defaultLanguage),
+  finishedtests: []
 });
 
 export const mutations = {
@@ -25,4 +27,28 @@ export const actions = {
   set(store, content) {
     store.commit("set", content);
   },
+  finished(store, value) {
+    const finishedtests = store.state.finishedtests
+    alert('finished');
+    if (finishedtests.indexOf(value) === -1) {
+      finishedtests.push(value)
+      alert('finished commiting!');
+      store.commit("set", { finishedtests: finishedtests }); 
+    }
+  },
+  async upload(store) {
+    let data = {};
+    data = merge(data, cloneDeep(store.state));
+    data.finishedtests = data.finishedtests.join(',');
+    delete data.SHARED;
+    let success = await axios
+        .post("./api/store", {
+          table: "profile",
+          UID: store.state.UID,
+          data: data,
+        })
+        .catch((err) => {
+          return { error: "Could not store data", err: err.response.data };
+        });
+  }
 };
