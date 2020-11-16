@@ -8,4 +8,6 @@ Als je zowel op de test als op de vragenlijst in de range scoort die past bij sy
 
 <likertresults v-slot:default="data">Voor de extra vragen is je score: {{data.value}}. Bij een score hoger dan 17 heb je waarschijnlijk synesthesie.</likertresults>
 
-<results></results>
+# Doe nog een test:
+
+<tests list="graphemes,graphemes-kids,vowels"></tests>

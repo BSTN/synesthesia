@@ -77,7 +77,7 @@ Vue.use(VueRouter);
 // stores
 Vue.use(Vuex);
 
-const allstores = ["profile", "tests", "extra"];
+const allstores = ["profile", "tests", "extra", "func"];
 let storelist = {};
 allstores.forEach((k, v) => {
   let storeFile = require("./stores/" + k);

@@ -1,39 +1,26 @@
 public: yes
 name: 
-  nl: grafeem-kleur
-  en: graphemes
-  se: graphemes
+  nl: klinkers
+  en: vowels
+  se: klinkers
 pretest:
-  - grapheme.intro
-  - grapheme.test
+  - testaudio
 posttest:
   - postquestions
 type: audio
 selector: colorpicker
 continue: /postquestions
 cutoff: 1.43
+help:
+  nl: Probeer instinctief de kleur te kiezen die je associeert of het beste vindt passen bij de letter of het woord hierboven.
+  en: Try to instinctively choose the color you associate, or feel fits best with the character/word above.
+  se: Försök att så instinktivt som möjligt välja den färg du förknippar med, eller känner passar bäst ihop.
 sets:
   set1:
     [
-      "A",
-      "B",
-      "t:wednesday",
-      "D",
-      "E",
-      "A",
-      "B",
-      "t:wednesday",
-      "D",
-      "E",
-      "A",
-      "B",
-      "t:wednesday",
-      "D",
-      "E",
+      "04.mp3","01.mp3","03.mp3","10.mp3","16.mp3","11.mp3","04.mp3","10.mp3","16.mp3","06.mp3","08.mp3","03.mp3","07.mp3","13.mp3","08.mp3","13.mp3","14.mp3","11.mp3","07.mp3","14.mp3","11.mp3","01.mp3","10.mp3","07.mp3","06.mp3","13.mp3","16.mp3","14.mp3","06.mp3","04.mp3","01.mp3","08.mp3","03.mp3"
     ]
   set2:
-    ["I", "O", "A", "B", "Q", "I", "O", "A", "B", "Q", "I", "O", "A", "B", "Q"]
-  set3:
-    ["O", "Q", "N", "T", "F", "O", "Q", "N", "T", "F", "O", "Q", "N", "T", "F"]
-  set4:
-    ["K", "U", "M", "G", "E", "K", "U", "M", "G", "E", "K", "U", "M", "G", "E"]
+    [
+      "10.mp3","11.mp3","04.mp3","03.mp3","16.mp3","07.mp3","10.mp3","06.mp3","14.mp3","08.mp3","11.mp3","04.mp3","06.mp3","03.mp3","08.mp3","07.mp3","01.mp3","16.mp3","10.mp3","13.mp3","03.mp3","07.mp3","14.mp3","08.mp3","13.mp3","04.mp3","01.mp3","16.mp3","06.mp3","01.mp3","13.mp3","14.mp3","11.mp3"
+      ]

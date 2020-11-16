@@ -1,8 +1,10 @@
 <template>
   <div id="testpage">
-    <div id="loading" v-if="loading">
-      LOADING...
-    </div>
+    <transition name="fade">
+      <div id="loading" v-if="loading">
+        LOADING...
+      </div>
+    </transition>
     <div id="loaded" v-if="!loading">
       <div id="pretest" v-if="showPretest" class="textpage">
         <div v-for="(item,k) in config.pretest" :key="k" v-if="k === pretestCount">
@@ -18,6 +20,12 @@
         </div>
       </div>
       <div id="results" v-if="$store.state.profile.finishedtests.indexOf($route.params.testname) > -1" class="textpage">
+        <topbar>
+          <template #left>
+            <router-link to="/">{{$t('home')}}</router-link>
+          </template>
+          <template #right></template>
+        </topbar>
         <md :md="'results'"></md>
       </div>
     </div>
@@ -42,7 +50,7 @@ export default {
       return this.$tests[this.$route.params.testname];
     },
     showTestframe() {
-      if (this.testdata.pretest) return !!(this.testdata.pageCount == this.testdata.pretest.length)
+      if (this.testdata.pretest) return !!(this.testdata.pretest && this.testdata.pageCount == this.testdata.pretest.length)
       return this.testdata.pageCount == 0
     },
     pretestCount () {
@@ -57,7 +65,7 @@ export default {
       return false
     },
     showPosttest () {
-      if (this.testdata.posttest && (this.testdata.pageCount > this.testdata.pretest.length)) return true
+      if (this.testdata.posttest && (this.testdata.pretest && this.testdata.pageCount > this.testdata.pretest.length)) return true
       return false
     }
   },
@@ -110,7 +118,7 @@ export default {
 </script>
 <style lang="less" scoped>
 #testpage {
-  padding: 0.5rem;
+  // padding: 0.5rem;
   // background: @bg;
   // background: #ddd;
   // color: #222;
@@ -120,6 +128,9 @@ export default {
       display: flex;
       align-content: center;
       align-items: center;
+      @media (min-width: 800px) {
+        padding: 0 1em;
+      }
     }
   }
   @media (max-width: 600px) {
@@ -131,17 +142,22 @@ export default {
 }
 #loading {
   max-width: 8rem;
-  background: #00f;
+  background: @fg;
   margin:0 auto;
   font-size: 0.5rem;
   padding: 0 1em;
   border-radius: 0.5em;
-  color: #ccc;
+  color: @bg;
+  text-align: center;
+  position:fixed;
+  z-index:9;
+  right: 0.5em;
+  display:none;
 }
-#pretest, #posttest, #results {
+#pretest #md, #posttest #md, #results #md {
   margin: 0 auto;
   max-width: 32em;
-  padding: 0 1em;
+  padding: 0 .5em;
   font-family: 'Victor';
   @media (max-width: 800px) {
     margin: 1rem auto;

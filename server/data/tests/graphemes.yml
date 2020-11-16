@@ -5,13 +5,16 @@ name:
   se: graphemes
 pretest:
   - grapheme.intro
-  - grapheme.test
 posttest:
   - postquestions
 type: grapheme
 selector: colorpicker
 continue: /postquestions
 cutoff: 1.43
+help:
+  nl: Probeer instinctief de kleur te kiezen die je associeert of het beste vindt passen bij de letter of het woord hierboven.
+  en: Try to instinctively choose the color you associate, or feel fits best with the character/word above.
+  se: Försök att så instinktivt som möjligt välja den färg du förknippar med, eller känner passar bäst ihop.
 sets:
   set1:
     [

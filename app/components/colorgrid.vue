@@ -104,6 +104,10 @@ export default {
       grid-template-rows: 1fr 1fr 1fr 1fr;
       grid-gap: 1em;
       padding: 1.5em 1.5em 0.5em 0em;
+      @media (max-width: 800px) {
+        padding-right: 1em;
+        padding-left: 1em;
+      }
       button {
         width: 100%;
         height: 100%;
@@ -121,7 +125,7 @@ export default {
       text-align: center;
       button {
         margin: 0 auto;
-        padding: 0.25em 1em;
+        padding: 0.5em 1em;
         border-radius: 0.25em;
         opacity: 0.5;
         border: 1px solid #ccc;

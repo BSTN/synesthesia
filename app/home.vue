@@ -12,8 +12,9 @@
       </template>
     </topbar>
     <div id="content">
-      <transition name="hometext">
-        <md id="hometext" class="section" md="home"></md>
+      <transition name="homeflip" mode="out-in">
+        <md id="hometext" v-if="!$store.state.func.start" class="section" md="home" key="1"></md>
+        <md id="overview" v-else-if="$store.state.func.start" class='textpage' md="tests" key="2">overview</md>
       </transition>
       <div id="introtext" class="section" md="intro">
         <div id="md">{{ $t("intro") }}</div>
@@ -53,6 +54,9 @@ export default {
   padding: 1rem 1.75rem;
   position: relative;
   z-index:2;
+  @media (max-width: 600px) {
+    padding: 1rem;
+  }
   #hometext {
     font-family: "Victor";
     font-weight: 300;
@@ -75,15 +79,26 @@ export default {
       letter-spacing: -0.01;
     }
   }
+  #overview {
+    min-height: 80vh;
+    margin-bottom: 4rem;
+    /deep/ #md {
+      padding-left: 0;
+      padding-right: 0;
+    }
+  }
   #introtext {
     border-top: 2px solid @fg;
-    border-bottom: 2px solid @fg;
-    padding: 1rem 0;
+    // border-bottom: 2px solid @fg;
+    padding: 4rem 0;
     font-size: 1em;
     font-family: "Victor";
     font-weight: 500;
     columns:3;
     column-gap: 1rem;
+    @media (max-width: 600px) {
+      padding: 1rem 0;
+    }
     #md {
       margin-bottom: 1em;
       font-size: 1rem;
@@ -94,7 +109,7 @@ export default {
     @media (max-width: 1000px){
       columns: 1;
       > div {
-        max-width: 24em;
+        max-width: 24rem;
         margin: 0 auto;
       }
     }

@@ -29,10 +29,8 @@ export const actions = {
   },
   finished(store, value) {
     const finishedtests = store.state.finishedtests
-    alert('finished');
     if (finishedtests.indexOf(value) === -1) {
       finishedtests.push(value)
-      alert('finished commiting!');
       store.commit("set", { finishedtests: finishedtests }); 
     }
   },

@@ -1,10 +1,17 @@
 public: yes
-name: graphemes
+name: 
+  nl: grafemen
+  en: graphemes
+  se: graphemes
 introduction: yes
 type: grapheme
 selector: colorgrid
 continue: /postquestions
 cutoff: 1
+help:
+  nl: Probeer instinctief de kleur te kiezen die je associeert of het beste vindt passen bij de letter of het woord hierboven.
+  en: Try to instinctively choose the color you associate, or feel fits best with the character/word above.
+  se: Försök att så instinktivt som möjligt välja den färg du förknippar med, eller känner passar bäst ihop.
 sets:
   set1:
     [

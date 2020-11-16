@@ -287,7 +287,7 @@ export default {
     text-align: center;
     button {
       background: #d6d6d6;
-      padding: 0.25em 1em;
+      padding: 0.5em 1em;
       border-radius: 0.25em;
       opacity: 0.5;
       border: 1px solid #ccc;

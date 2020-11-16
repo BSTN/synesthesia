@@ -51,7 +51,7 @@ require('./api/api-functions.php');
   echo "<script type=\"application/json\" id=\"bootload-tests\">" . json_encode($tests) . "</script>\n\t";
 
   // load all markdown
-  foreach (glob("./data/pages/*.md") as $filename) {
+  foreach (glob("./data/texts/*.md") as $filename) {
     $raw = file_get_contents($filename);
     $md = Markdown::defaultTransform($raw);
     $md = unwrap($md);

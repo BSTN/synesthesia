@@ -123,7 +123,9 @@ export const actions = {
   async nextPage(store) {
     const currentTest = store.state.tests[store.state.active]
     // set totalpages again
-    currentTest.totalPages = currentTest.pretest.length + 1 + currentTest.posttest.length
+    let pretestlength = currentTest.pretest ? currentTest.pretest.length : 0
+    let posttestlength = currentTest.posttest ? currentTest.posttest.length : 0
+    currentTest.totalPages = pretestlength + 1 + posttestlength
     // add page to pageCount
     if (currentTest.pageCount < currentTest.totalPages) currentTest.pageCount++
     if (currentTest.pageCount === currentTest.totalPages) {

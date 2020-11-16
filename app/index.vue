@@ -12,14 +12,6 @@ window.history.scrollRestoration = "manual";
 import { each, sample, debounce, isEmpty } from "lodash";
 export default {
   created() {
-    if (!isEmpty(this.$route.query)) {
-      if (this.$route.query.id)
-        this.$store.dispatch("profile/set", { USERID: this.$route.query.id });
-      if (this.$route.query.lang)
-        this.$store.dispatch("profile/set", {
-          language: this.$route.query.lang,
-        });
-    }
     // pick a set randomly and prepare store with questions
     each(this.$tests, (v, name) => {
       let setname = sample(Object.keys(v.sets));
@@ -56,6 +48,19 @@ export default {
     },
   },
   mounted() {
+    // check id and language
+
+    if (!isEmpty(this.$route.query)) {
+      if (this.$route.query.id) {
+        // this.$root.alert({message: "id is " + this.$route.query.id});
+        this.$store.dispatch("profile/set", { USERID: this.$route.query.id });
+      }
+      if (this.$route.query.lang)
+        this.$store.dispatch("profile/set", {
+          language: this.$route.query.lang,
+        });
+    }
+
     // VH fix for mobile
     let vh = window.innerHeight * 0.01;
     document.documentElement.style.setProperty("--vh", `${vh}px`);

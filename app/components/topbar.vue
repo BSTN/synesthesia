@@ -6,7 +6,7 @@
     <div id="line"></div>
     <div class="right">
       <slot name="right"></slot>
-      <button @click="fs()">fullscreen</button>
+      <!-- <button @click="fs()">fullscreen</button> -->
       <button id="userid" v-if="$store.state.profile.USERID">ID: {{$store.state.profile.USERID}}</button>
     </div>
   </div>
@@ -32,6 +32,9 @@ export default {
   text-transform: uppercase;
   font-weight: 400;
   top: 0.25rem;
+  @media (max-width: 800px) {
+    padding: 0.45rem 1rem;
+  }
   > * {
     flex-shrink: 0;
     flex-grow: 0;

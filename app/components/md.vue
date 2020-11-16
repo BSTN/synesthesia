@@ -5,7 +5,7 @@
 </template>
 <script>
 export default {
-  props: ["md"],
+  props: ["md","type"],
   data() {
     return {
       loading: false,

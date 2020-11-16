@@ -1,7 +1,7 @@
 <template>
   <div id="tests">
     <router-link id="testlink" v-for="(test,name) in testlist" :key="name" :to="'/test/' + name">
-      <span>{{name}}</span>
+      <span>{{test.name[$store.state.profile.language]}}</span>
     </router-link>
   </div>
 </template>
@@ -23,6 +23,7 @@ export default {
 <style lang="less" scoped>
 #tests {
   text-align: center;
+  font-family: Helvetica, sans-serif;
   #testlink {
     display:inline-block;
     border: 1px solid @fg;

@@ -2,26 +2,45 @@
   <div id="testframe">
     <div id="frame">
       <div id="mid">
-        <transition name="symbol" mode="out-in">
-          <div id="symbol" :key="testdata.position">
-            <div id="symbolframe">
-              <div
-                id="colorholder"
-                :style="{ background: background }"
-                :class="{
-                  nocolor: q.value === 'nocolor',
-                  empty: q.value === null,
-                }"
-              ></div>
-              <div
-                id="sym"
-                :class="{ mid: symbol.length > 1, long: symbol.length > 3 }"
-              >
-                <div>{{ symbol }}</div>
+        <div id="leftframe" class='grapheme' v-if="config.type === 'grapheme'">
+          <transition name="symbol" mode="out-in">
+            <div id="symbol" :key="testdata.position">
+              <div id="symbolframe">
+                <div
+                  id="colorholder"
+                  :style="{ background: background }"
+                  :class="{
+                    nocolor: q.value === 'nocolor',
+                    empty: q.value === null,
+                  }"
+                ></div>
+                <div
+                  id="sym"
+                  :class="{ mid: symbol.length > 1, long: symbol.length > 3 }"
+                >
+                  <div>{{ symbol }}</div>
+                </div>
               </div>
             </div>
+          </transition>
+        </div>
+        <div id="leftframe" class='audio' v-if="config.type === 'audio'">
+          <div id="audio" @click="playAudio()" ref="audio" :style="{ background: background }">
+            <div id="icons">
+              <svg v-if="playing" width="500px" height="500px" viewBox="0 0 500 500" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                  <g id="pause" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                      <rect id="Rectangle" fill="#222222" x="135" y="95" width="85" height="311" rx="10"></rect>
+                      <rect id="Rectangle-Copy" fill="#222222" x="282" y="95" width="84" height="311" rx="10"></rect>
+                  </g>
+              </svg>
+              <svg  v-if="!playing" width="500px" height="500px" viewBox="0 0 500 500" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                  <g id="play" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                      <path d="M121.392483,46.0704638 L442.181895,251.480184 C446.832944,254.45837 448.189067,260.643087 445.210881,265.294135 C444.35089,266.637188 443.18215,267.755077 441.802195,268.554513 L121.012783,454.394516 C116.23394,457.163 110.115623,455.533282 107.347139,450.754438 C106.464701,449.231211 106,447.50203 106,445.741655 L106,54.491932 C106,48.9690845 110.477153,44.491932 116,44.491932 C117.911416,44.491932 119.78279,45.0397362 121.392483,46.0704638 Z" id="Rectangle" fill="#222222"></path>
+                  </g>
+              </svg>
+            </div>
           </div>
-        </transition>
+        </div>
         <div id="color">
           <colorpicker v-if="config.selector === 'colorpicker'"></colorpicker>
           <colorgrid v-if="config.selector === 'colorgrid'"></colorgrid>
@@ -31,7 +50,7 @@
         <div id="progress"><div id="bar" :style="{width: (progress * 100) + '%'}"></div></div>
         <!-- <button id="helpbutton">help</button> -->
         <div class="flex"></div>
-        <div id="help">{{ $t("colorpickerhelp") }}</div>
+        <div id="help">{{ config.help[$store.state.profile.language] }}</div>
         <button id="nextbutton" @click="next()" v-active="q.value !== null">
           {{ $t("next") }}
         </button>
@@ -47,6 +66,8 @@ export default {
   data() {
     return {
       startTime: false,
+      audio: false,
+      playing: false
     };
   },
   computed: {
@@ -125,26 +146,38 @@ export default {
         timing: now() - this.startTime,
       });
     },
-    // checkFinished() {
-    //   let undone = filter(this.testdata.questions, (q) => {
-    //     return q.color === null && !q.timing === null;
-    //   });
-    //   if (Object.keys(undone).length < 1) {
-    //     // redirect!
-    //     console.log("finished, redirect please...");
-    //   } else {
-    //   }
-    // },
+    loadAudio () {
+      let self = this;
+      if (this.config.type === 'audio') {
+        this.audio = new Audio('./data/audio/klinkers_rsa/' + this.symbol);
+        this.audio.addEventListener('playing', function () {
+          self.playing = true;
+        })
+        this.audio.addEventListener('ended', function () {
+          self.playing = false;
+        })
+      }
+    },
+    playAudio () {
+      if (this.config.type === 'audio') {
+        this.audio.play();
+      }
+      // store audioclicks?
+    }
   },
   watch: {
     "q.qnr": function() {
       // reset timer
       this.startTime = now();
+      
+      this.loadAudio();
+      this.playAudio();
     },
   },
   mounted() {
     // this.checkFinished();
     this.startTime = now();
+    this.loadAudio();
     window.addEventListener("keydown", (ev) => {
       if (ev.keyCode === 13 && this.q.value !== null) this.next();
     });
@@ -171,6 +204,7 @@ export default {
   // box-shadow: 0 0 0.25em rgba(#000, 0.2);
   @media (max-width: 800px) {
     min-height: 100vh;
+    border-radius: 0;
   }
   #frame {
     position: relative;
@@ -198,7 +232,14 @@ export default {
       flex-grow: 1;
       flex-shrink: 1;
       align-items: stretch;
-
+      #leftframe.grapheme {
+        display: flex;
+        flex-direction: row;
+        min-height: 100%;
+        flex-grow: 1;
+        flex-shrink: 1;
+        align-items: stretch;
+      }
       > * {
         position: relative;
         // height: 100%;
@@ -211,10 +252,13 @@ export default {
         justify-content: center;
       }
       #symbol {
-        border: 1px solid #000;
+        width: 100%;
+        height: 100%;
         #symbolframe {
           width: calc(100% - 3rem);
           height: calc(100% - 3rem);
+          width: 100%;
+          height: 100%;
           display: flex;
           align-content: center;
           align-items: center;
@@ -264,11 +308,15 @@ export default {
         @media (max-width: 800px) {
           max-height: 4rem;
           font-size: 1.5em;
+          #leftframe {
+            width: calc(100% - 2rem);
+            outline: 2px solid #00f;
+          }
           #symbolframe {
             border-radius: 0.25em;
             display: flex;
             position: relative;
-            margin: 2rem 0;
+            margin: 2rem;
             justify-content: stretch;
             align-items: stretch;
             box-shadow: 0 0 0.125rem #ccc;
@@ -391,7 +439,7 @@ export default {
           #symbolframe {
             border: 0;
             margin: 1rem 1rem 0 1rem;
-            width: 100%;
+            width: calc(100% - 2rem);
             height: 100%;
           }
         }
@@ -411,6 +459,64 @@ export default {
           padding: 0.75rem 1.5em;
         }
       }
+    }
+  }
+}
+
+#audio {
+  background: #00f;
+  width: calc(100% - 3rem);
+  height: calc(100% - 3rem);
+  min-height: 4rem;
+  margin: 1.5rem;
+  border-radius: 0.25em;
+  cursor:pointer;
+  position: relative;
+  display: flex;
+  align-content: center;
+  align-items: center;
+  text-align: center;
+  border: 1px solid #eee;
+  #icons {
+    position:relative;
+    width: 70%;
+    padding-top: 70%;
+    background: #f3f3f3;
+    border-radius: 100%;
+    margin: 0 auto;
+    border:0;
+    box-shadow: 0 0 .5rem rgba(#000,0.2);
+    svg {
+      width: 60%;
+      height: 60%;
+      position:absolute;
+      left:20%;
+      top:20%;
+      path, rect {
+          fill: #555;
+        }
+    }
+  }
+  &:hover {
+    #icons {
+      background: #fff;
+      svg {
+        path, rect {
+          fill: #000;
+        }
+      }
+    }
+  }
+  @media (max-width: 800px) {
+    margin: 1rem 1rem 0 1rem;
+    width: calc(100% - 2rem);
+    height: calc(100% - 2rem);
+    #icons {
+      width: 4rem;
+      height: 4rem;
+      padding: 0;
+      margin: 1rem auto;
+      box-shadow: 0 0 4px rgba(#000,0.3);
     }
   }
 }
