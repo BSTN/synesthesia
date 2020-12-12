@@ -1,9 +1,12 @@
 <template>
   <div id="home">
-    <paperjs v-if="$config.animation"></paperjs>
+    <button @click="toPDF()">
+      PDF
+    </button>
+    <paperjs v-if="$config.animation" />
     <topbar>
       <template #left>
-        <languages></languages>
+        <languages />
       </template>
       <template #right>
         <!-- <router-link to="/about" id="name">
@@ -12,19 +15,49 @@
       </template>
     </topbar>
     <div id="content">
-      <transition name="homeflip" mode="out-in">
-        <md id="hometext" v-if="!$store.state.func.start" class="section" md="home" key="1"></md>
-        <md id="overview" v-else-if="$store.state.func.start" class='textpage' md="tests" key="2">overview</md>
+      <transition
+        name="homeflip"
+        mode="out-in"
+      >
+        <md
+          v-if="!$store.state.func.start"
+          id="hometext"
+          key="1"
+          class="section"
+          md="home"
+        />
+        <md
+          v-else-if="$store.state.func.start"
+          id="overview"
+          key="2"
+          class="textpage"
+          md="tests"
+        >
+          overview
+        </md>
       </transition>
-      <div id="introtext" class="section" md="intro">
-        <div id="md">{{ $t("intro") }}</div>
-        <md id="abouttext" class="section" md="about"></md>
+      <div
+        id="introtext"
+        class="section"
+        md="intro"
+      >
+        <div id="md">
+          {{ $t("intro") }}
+        </div>
+        <md
+          id="abouttext"
+          class="section"
+          md="about"
+        />
       </div>
     </div>
   </div>
 </template>
 <script>
 import Vue from "vue";
+import { jsPDF } from "jspdf";
+const doc = new jsPDF();
+
 export default {
   data() {
     return {
@@ -38,6 +71,12 @@ export default {
       this.delayed = true;
     }, 2000);
   },
+  methods: {
+    toPDF () {
+      doc.text("Hello world!", 10, 10);
+      doc.save("a4.pdf");
+    }
+  },
 };
 </script>
 <style lang="less" scoped>
@@ -45,6 +84,13 @@ export default {
   min-height: 100vh;
   min-height: calc(var(--vh, 1vh) * 100);
   border-width: 0;
+  > button {
+    position:fixed;
+    z-index:9999;
+    @media print {
+      color: #00f;
+    }
+  }
 
   // /deep/ #topbar {
   //   position: sticky;

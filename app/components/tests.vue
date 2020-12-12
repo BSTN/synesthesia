@@ -1,7 +1,12 @@
 <template>
   <div id="tests">
-    <router-link id="testlink" v-for="(test,name) in testlist" :key="name" :to="'/test/' + name">
-      <span>{{test.name[$store.state.profile.language]}}</span>
+    <router-link
+      v-for="(test,name) in testlist"
+      id="testlink"
+      :key="name"
+      :to="'/test/' + name"
+    >
+      <span>{{ test.name[$store.state.profile.language] }}</span>
     </router-link>
   </div>
 </template>
@@ -36,6 +41,12 @@ export default {
     position: relative;
     transition: all 0.5s;
     border-radius: 0.25em;
+    // background: #f00;
+    background: url('~assets/kleuren.png');
+    height: 12rem;
+    background-position: center;
+    background-size: 180%;
+    background-repeat: no-repeat;
     span {
       position:absolute;
       bottom:.5em;
@@ -43,8 +54,9 @@ export default {
       left:0;
     }
     &:hover {
-      background: @fg;
+      // background: @fg;
       color: @bg;
+      background-size: 100%;
     }
   }
 }
