@@ -1,18 +1,11 @@
 <template>
   <div id="home">
-    <button @click="toPDF()">
-      PDF
-    </button>
     <paperjs v-if="$config.animation" />
     <topbar>
       <template #left>
         <languages />
       </template>
-      <template #right>
-        <!-- <router-link to="/about" id="name">
-          {{ $t("about") }}
-        </router-link> -->
-      </template>
+      <template #right />
     </topbar>
     <div id="content">
       <transition
@@ -41,9 +34,6 @@
         class="section"
         md="intro"
       >
-        <div id="md">
-          {{ $t("intro") }}
-        </div>
         <md
           id="abouttext"
           class="section"
@@ -55,8 +45,6 @@
 </template>
 <script>
 import Vue from "vue";
-import { jsPDF } from "jspdf";
-const doc = new jsPDF();
 
 export default {
   data() {
@@ -72,10 +60,6 @@ export default {
     }, 2000);
   },
   methods: {
-    toPDF () {
-      doc.text("Hello world!", 10, 10);
-      doc.save("a4.pdf");
-    }
   },
 };
 </script>
@@ -135,8 +119,7 @@ export default {
   }
   #introtext {
     border-top: 2px solid @fg;
-    // border-bottom: 2px solid @fg;
-    padding: 4rem 0;
+    padding: 1rem 0;
     font-size: 1em;
     font-family: "Victor";
     font-weight: 500;
@@ -151,8 +134,13 @@ export default {
     }
     /deep/ p {
       text-indent: 1.5rem;
+      &:first-child {
+        font-size: 1.25rem;
+        line-height: 1.2em;
+      }
     }
     @media (max-width: 1000px){
+      padding: 2rem 0;
       columns: 1;
       > div {
         max-width: 24rem;

@@ -14,6 +14,11 @@ import { i18n } from "./utils/i18n";
 Vue.prototype.$axios = axios;
 Vue.prototype.$cache = {};
 
+// load info
+Vue.prototype.$info = JSON.parse(
+  document.getElementById("bootload-info").innerText
+);
+
 // load config
 Vue.prototype.$config = JSON.parse(
   document.getElementById("bootload-config").innerText
@@ -24,10 +29,10 @@ Vue.prototype.$tests = JSON.parse(
   document.getElementById("bootload-tests").innerText
 );
 
-Vue.component("vue-slider", vueSlider);
-Vue.component("vrt", VRuntimeTemplate);
+Vue.component("VueSlider", vueSlider);
+Vue.component("Vrt", VRuntimeTemplate);
 
-Vue.component("mdc", {
+Vue.component("Mdc", {
   template: "#markdowncontact",
 });
 

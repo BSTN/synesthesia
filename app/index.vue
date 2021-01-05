@@ -1,16 +1,31 @@
 <template>
   <div id="index">
-    <transition name="page" mode="out-in">
-      <router-view class="view" :key="$route.path"></router-view>
+    <transition
+      name="page"
+      mode="out-in"
+    >
+      <router-view
+        :key="$route.path"
+        class="view"
+      />
     </transition>
-    <dialog-dialogues></dialog-dialogues>
+    <dialog-dialogues />
   </div>
 </template>
 <script>
 // don't scroll to top on history back
 window.history.scrollRestoration = "manual";
 import { each, sample, debounce, isEmpty } from "lodash";
+import moment from "moment"
+const chalk = require("chalk");
 export default {
+  watch: {
+    $route() {
+      setTimeout(() => {
+        window.scrollTo(0, 0);
+      }, 250);
+    },
+  },
   created() {
     // pick a set randomly and prepare store with questions
     each(this.$tests, (v, name) => {
@@ -24,30 +39,17 @@ export default {
       });
     });
   },
-  methods: {
-    openAlert() {
-      this.$root.confirm({message: "May I ask you a question, please?", options: ["yes", "no", "again" ,"something else"]}).then(x => {
-        console.log(x);
-      }).catch(x => {
-        console.error(x);
-      })
-    },
-    setTheme(i) {
-      each(document.body.classList, (x) => {
-        if (x.match(/^theme/)) document.body.classList.remove(x);
-      });
-      document.body.classList.add("theme" + i);
-      document.body.dispatchEvent(new CustomEvent("changetheme"));
-    },
-  },
-  watch: {
-    $route() {
-      setTimeout(() => {
-        window.scrollTo(0, 0);
-      }, 250);
-    },
-  },
   mounted() {
+    let style = `
+                  font-weight:bold;
+                  color: #005ADF; 
+                  font-size: 16px;
+                  font-family:helvetica;
+                `
+    console.log("\n\n")
+    console.log("%cLast edit by " + this.$info.name + "\n" + moment(this.$info.date).format("D MMM YYYY hh:mm a"),style)
+    console.log("%c" + this.$info.sha, "color: #999")
+    console.log("\n\n")
     // check id and language
 
     if (!isEmpty(this.$route.query)) {
@@ -84,6 +86,22 @@ export default {
       // }
     });
     this.setTheme(4);
+  },
+  methods: {
+    openAlert() {
+      this.$root.confirm({message: "May I ask you a question, please?", options: ["yes", "no", "again" ,"something else"]}).then(x => {
+        console.log(x);
+      }).catch(x => {
+        console.error(x);
+      })
+    },
+    setTheme(i) {
+      each(document.body.classList, (x) => {
+        if (x.match(/^theme/)) document.body.classList.remove(x);
+      });
+      document.body.classList.add("theme" + i);
+      document.body.dispatchEvent(new CustomEvent("changetheme"));
+    },
   },
 };
 </script>

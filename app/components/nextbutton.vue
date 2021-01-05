@@ -1,6 +1,11 @@
 <template>
-  <div id="nextbutton" @click="go()">
-    <button class="link">{{$t('next')}}</button>
+  <div
+    id="nextbutton"
+    @click="go()"
+  >
+    <button class="link">
+      {{ $t('next') }}
+    </button>
   </div>
 </template>
 <script>

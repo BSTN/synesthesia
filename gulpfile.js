@@ -40,11 +40,19 @@ gulp.task("templates", function(cb) {
     MYSQL_DBNAME: production
       ? process.env.LIVE_MYSQL_DBNAME
       : process.env.DEV_MYSQL_DBNAME,
+    TEMPUPDATEPATH: production // for git download
+      ? process.env.LIVE_TEMPUPDATEPATH
+      : process.env.DEV_TEMPUPDATEPATH,
+    CONFIGPATH: production // for git download++
+      ? process.env.LIVE_CONFIGPATH
+      : process.env.DEV_CONFIGPATH,
     DB_PREFIX: process.env.DB_PREFIX,
-    PASS: production ? "" : process.env.DEV_PASS,
+    PASS: production ? process.env.LIVEPASS : process.env.DEVPASS,
     TEMP_PATH: production
       ? process.env.LIVE_TEMP_PATH
       : process.env.DEV_TEMP_PATH,
+    GITNAME: process.env.GITNAME,
+    GITREPOSITORY: process.env.GITREPOSITORY,
   };
 
   if (templateVars.BASE === "/dev/") templateVars.PASS = process.env.DEVPASS;

@@ -41,6 +41,12 @@ function error($message, $e = false)
     exit();
 }
 
+function errormessage($message, $file) {
+    $message = $message;
+    include_once($file);
+    exit();
+}
+
 // uniqe id
 function getUid()
 {
@@ -183,4 +189,22 @@ function brute_reset()
     } catch (PDOException $Exception) {
         error($Exception);
     }
+}
+
+function rrmdir($src) {
+    $dir = opendir($src);
+    while(false !== ( $file = readdir($dir)) ) {
+        if (( $file != '.' ) && ( $file != '..' )) {
+            $full = $src . '/' . $file;
+            if ( is_dir($full) ) {
+                rrmdir($full);
+            }
+            else {
+                unlink($full);
+            }
+        }
+    }
+    closedir($dir);
+    rmdir($src);
+    return true;
 }
