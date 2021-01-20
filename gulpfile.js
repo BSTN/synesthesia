@@ -46,6 +46,9 @@ gulp.task("templates", function(cb) {
     CONFIGPATH: production // for git download++
       ? process.env.LIVE_CONFIGPATH
       : process.env.DEV_CONFIGPATH,
+    CONFIGBASE: production // for git download++
+      ? process.env.LIVE_CONFIGBASE
+      : process.env.DEV_CONFIGBASE,
     DB_PREFIX: process.env.DB_PREFIX,
     PASS: production ? process.env.LIVEPASS : process.env.DEVPASS,
     TEMP_PATH: production

@@ -227,6 +227,7 @@ export default {
     position: relative;
     max-height: 2rem;
     overflow: hidden;
+    cursor:pointer;
     #hueframe {
       position: absolute;
       top: 0;
@@ -285,6 +286,7 @@ export default {
   #nocolor {
     // min-height: 2.5rem;
     text-align: center;
+    font-size: .75rem;
     button {
       background: #d6d6d6;
       padding: 0.5em 1em;

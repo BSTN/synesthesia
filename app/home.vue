@@ -107,6 +107,13 @@ export default {
     @media (max-width: 500px){
       font-size: 1.5rem;
       letter-spacing: -0.01;
+      /deep/ p {
+        line-height: 1.25em;
+        margin-bottom: 2rem;
+      }
+      /deep/ .link {
+        font-size: .75rem;
+      }
     }
   }
   #overview {
@@ -125,7 +132,7 @@ export default {
     font-weight: 500;
     columns:3;
     column-gap: 1rem;
-    @media (max-width: 600px) {
+    @media (max-width: 30rem) {
       padding: 1rem 0;
     }
     #md {
@@ -139,7 +146,7 @@ export default {
         line-height: 1.2em;
       }
     }
-    @media (max-width: 1000px){
+    @media (max-width: 60rem){
       padding: 2rem 0;
       columns: 1;
       > div {
@@ -147,8 +154,14 @@ export default {
         margin: 0 auto;
       }
     }
-    @media (max-width: 500px){
+    @media (max-width: 45rem){
       columns: 1;
+      /deep/ p {
+        text-indent: 1.5rem;
+        &:first-child {
+          font-size: 1rem;
+        }
+      }
     }
   }
 }

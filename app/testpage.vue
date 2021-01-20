@@ -133,12 +133,6 @@ export default {
       }
     }
   }
-  @media (max-width: 600px) {
-    padding: 0;
-    #testframe {
-      border-radius: 0;
-    }
-  }
 }
 #loading {
   max-width: 8rem;

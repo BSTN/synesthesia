@@ -13,7 +13,7 @@ include './api/api-functions.php';
     <link rel="icon" type="image/png" href="assets/96x96.png" />
 </head>
 
-<body>
+<body data-configbase="<?= CONFIGBASE ?>">
     <div id='container'></div>
     <div id="connected"></div>
 
@@ -30,6 +30,7 @@ include './api/api-functions.php';
     $info['sha'] = $json->sha;
     $info['name'] = $json->commit->author->name;
     $info['date'] = $json->commit->author->date;
+    $info['url'] = 'https://github.com/' . GITNAME . '/' . GITREPOSITORY;
     echo "\t<script type=\"application/json\" id=\"bootload-info\">" . json_encode($info) . "</script>\n\t";
 
     // load yaml configuration

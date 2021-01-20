@@ -42,13 +42,15 @@ export default {
   mounted() {
     let style = `
                   font-weight:bold;
-                  color: #005ADF; 
-                  font-size: 16px;
+                  color: #00f; 
+                  font-size: 11px;
                   font-family:helvetica;
                 `
     console.log("\n\n")
-    console.log("%cLast edit by " + this.$info.name + "\n" + moment(this.$info.date).format("D MMM YYYY hh:mm a"),style)
+    console.log("%cLast commit by " + this.$info.name + "\n" + moment(this.$info.date).format("D MMM YYYY hh:mm a"),style)
+    console.log("%c" + this.$info.url, "color: #00f")
     console.log("%c" + this.$info.sha, "color: #999")
+    console.log("%c" + this.$configbase, "color: #00f")
     console.log("\n\n")
     // check id and language
 

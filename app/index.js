@@ -14,6 +14,9 @@ import { i18n } from "./utils/i18n";
 Vue.prototype.$axios = axios;
 Vue.prototype.$cache = {};
 
+// configuration base (data)
+Vue.prototype.$configbase = document.body.dataset.configbase || false
+
 // load info
 Vue.prototype.$info = JSON.parse(
   document.getElementById("bootload-info").innerText

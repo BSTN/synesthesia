@@ -264,12 +264,12 @@ if ($PATH === "/update") {
     // check password
     if (!array_key_exists("passwd", $_POST)) {
         $message = "";
-        include_once("gitsync.php");
+        include_once("update.php");
         exit();
     }
 
     if (brute_check()) {
-        errormessage("Login failed, too many attempts. Locked out for 10 minutes.", 'gitsync.php');
+        errormessage("Login failed, too many attempts. Locked out for 10 minutes.", 'update.php');
     }
 
     // always sleep a bit
@@ -278,7 +278,7 @@ if ($PATH === "/update") {
     // check password & username
     if ($_POST['name'] !== explode(":", PASS)[0] || !password_verify($_POST['passwd'], explode(":", PASS)[1])) {
         brute_fail();
-        errormessage("Login failed, please check your username and password.", 'gitsync.php');
+        errormessage("Login failed, please check your username and password.", 'update.php');
     }
     
     // vars
@@ -297,17 +297,17 @@ if ($PATH === "/update") {
     
     // download data
     if (!@file_put_contents($desttempzip, fopen("https://github.com/$gitname/$repository/archive/master.zip", "r"))){
-        errormessage('Could not download or write git zip file.', 'gitsync.php');
+        errormessage('Could not download or write git zip file.', 'update.php');
     };
     
     // get latest commit
     $opts = ['http' => ['method' => 'GET', 'header' => ['User-Agent: PHP']]];
     $context = stream_context_create($opts);
     if(!$content = @file_get_contents("https://api.github.com/repos/$gitname/$repository/commits/master", false, $context)) {
-        errormessage('Could not download meta data.', 'gitsync.php');
+        errormessage('Could not download meta data.', 'update.php');
     };
     if(!@file_put_contents($desttempjson, $content)) {
-        errormessage("Could not write meta data.", 'gitsync.php');
+        errormessage("Could not write meta data.", 'update.php');
     }
 
     // unzip folder
@@ -317,7 +317,7 @@ if ($PATH === "/update") {
         $zip->extractTo($desttempunzip);
         $zip->close();
     } else {
-        errormessage('Could not unzip file.', 'gitsync.php');
+        errormessage('Could not unzip file.', 'update.php');
     };
 
     // get git folder
@@ -327,43 +327,43 @@ if ($PATH === "/update") {
     // check if files are readable
     try {
         $raw = @file_get_contents($gitfolder . '/config.yml');
-        if (!$raw) errormessage('Could not read config.yml','gitsync.php');
+        if (!$raw) errormessage('Could not read config.yml','update.php');
         Yaml::parse($raw);
     } catch (ParseException $exception) {
         error('Unable to parse the YAML string in "config.yml": ' . $exception->getMessage());
     }
     try {
         $raw = @file_get_contents($gitfolder . '/translations.yml');
-        if (!$raw) errormessage('Could not read translations.yml','gitsync.php');
+        if (!$raw) errormessage('Could not read translations.yml','update.php');
         Yaml::parse($raw);
     } catch (ParseException $exception) {
-        errormessage('Unable to parse the YAML string in "translations.yml": ' . $exception->getMessage(), 'gitsync.php');
+        errormessage('Unable to parse the YAML string in "translations.yml": ' . $exception->getMessage(), 'update.php');
     }
     $tests = array();
     foreach (glob($gitfolder . "/tests/*.yml") as $filename) {
         try {
             $raw = @file_get_contents($filename);
-            if (!$raw) errormessage("Could not read $filename",'gitsync.php');
+            if (!$raw) errormessage("Could not read $filename",'update.php');
             Yaml::parse($raw);
         } catch (ParseException $exception) {
-            errormessage("Unable to parse the YAML string in '$filename': " . $exception->getMessage(), 'gitsync.php');
+            errormessage("Unable to parse the YAML string in '$filename': " . $exception->getMessage(), 'update.php');
         }
     }
 
     // move unzipped folder to data folder
     if (is_dir($dest)) {
         if (!@rrmdir($dest)) {
-            errormessage('Could not remove destination folder.', 'gitsync.php');
+            errormessage('Could not remove destination folder.', 'update.php');
         }
     }
     if(!@rename($gitfolder, $dest)) {
-        errormessage('Could not move zip folder to destination.', 'gitsync.php');
+        errormessage('Could not move zip folder to destination.', 'update.php');
     };
     if(!@rename($desttempjson, $destjson)) {
-        errormessage('Could not move info.json to destination.', 'gitsync.php');
+        errormessage('Could not move info.json to destination.', 'update.php');
     };
 
-    errormessage('Done!', 'gitsync.php');
+    errormessage('Done!', 'update.php');
 }
 
 error("Sorry, path does not exist.");

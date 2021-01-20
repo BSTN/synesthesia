@@ -1,6 +1,9 @@
 <template>
   <div id="md">
-    <vrt :template="template" v-if="template"></vrt>
+    <vrt
+      v-if="template"
+      :template="template"
+    />
   </div>
 </template>
 <script>
@@ -11,6 +14,14 @@ export default {
       loading: false,
       template: false,
     };
+  },
+  watch: {
+    "$store.state.profile.language": function() {
+      this.load();
+    },
+  },
+  mounted() {
+    this.load();
   },
   methods: {
     load() {
@@ -30,15 +41,13 @@ export default {
       }
     },
   },
-  watch: {
-    "$store.state.profile.language": function() {
-      this.load();
-    },
-  },
-  mounted() {
-    this.load();
-  },
 };
 </script>
 <style lang="less" scoped>
+#md {
+  /deep/ #sound {
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+  }
+}
 </style>
