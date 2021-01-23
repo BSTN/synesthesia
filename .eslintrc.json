@@ -4,7 +4,8 @@
         "sourceType": "module"
     },
     "extends": [
-        "plugin:vue/recommended"
+        "plugin:vue/essential"
+        // "plugin:vue-scoped-css/vue3-recommended"
     ],
     "rules": {
     }

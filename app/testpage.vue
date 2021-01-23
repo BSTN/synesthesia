@@ -65,7 +65,10 @@ export default {
       return false
     },
     showPosttest () {
-      if (this.testdata.posttest && (this.testdata.pretest && this.testdata.pageCount > this.testdata.pretest.length)) return true
+      if (this.testdata.posttest && this.$store.state.profile.finishedtests.indexOf(this.$route.params.testname) < 0) {
+        if (!this.testdata.pretest && this.testdata.pageCount > 0) return true
+        if (this.testdata.pretest && this.testdata.pageCount > this.testdata.pretest.length) return true
+      }
       return false
     }
   },
@@ -73,8 +76,11 @@ export default {
     next() {
 
     },
-    done(){
-      this.$store.dispatch('tests/nextPage');
+    async done(){
+      let data = await this.$store.dispatch('tests/nextPage').catch(err => {
+        console.warn("Error going to nextpage:", err)
+      });
+      if ( data ) console.log(data);
     }
   },
   watch: {
@@ -89,7 +95,7 @@ export default {
       Object.keys(this.$store.state.tests.tests).length < 1 ||
       !(this.$route.params.testname in this.$store.state.tests.tests)
     ) {
-      await this.$root.alert({message:"This test does not exist."})
+      await this.$root.alert({message:"Sorry, this test does not exist (anymore)."})
       this.$router.push({ path: "/" });
     } else {
       this.$store.commit("tests/setActive", this.$route.params.testname);

@@ -2,6 +2,8 @@ import Vue from "vue";
 import color from "color";
 import { each, clone, cloneDeep } from "lodash";
 
+const TESTS = JSON.parse(document.getElementById("bootload-tests").innerText)
+
 // defaults
 const emptyTest = {
   questions: {},
@@ -109,14 +111,19 @@ export const actions = {
     });
   },
   fill(store, testname) {
-    each(store.state.tests, (test) => {
+    each(store.state.tests, (test, testname) => {
       each(test.questions, (q) => {
-        if (Math.random() > 0.9) q.value = "nocolor";
-        else
-          q.value = color
-            .rgb(Math.random() * 256, Math.random() * 256, Math.random() * 256)
-            .hex()
-            .replace("#", "");
+        const type = TESTS[testname].type
+        if (type === 'imagesound') {
+          q.value = Math.random() > 0.5 ? q.symbol.im1 : q.symbol.im2
+        } else {
+          if (Math.random() > 0.9) q.value = "nocolor";
+          else
+            q.value = color
+              .rgb(Math.random() * 256, Math.random() * 256, Math.random() * 256)
+              .hex()
+              .replace("#", "");
+        }
       });
     });
   },
@@ -129,8 +136,9 @@ export const actions = {
     // add page to pageCount
     if (currentTest.pageCount < currentTest.totalPages) currentTest.pageCount++
     if (currentTest.pageCount === currentTest.totalPages) {
-      store.dispatch("profile/finished", store.state.active, { root: true })
-      store.dispatch("profile/upload", {}, { root: true });
+      await store.dispatch("profile/finished", store.state.active, { root: true })
+      await store.dispatch("profile/upload", {}, { root: true });
+      return "done"
     }
   }
 };

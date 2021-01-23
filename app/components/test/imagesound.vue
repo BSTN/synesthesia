@@ -18,7 +18,7 @@
       />
     </div>
     <div id="soundframe">
-      <test-sound :file="q.symbol.sound"></test-sound>
+      <test-sound :file="q.symbol.sound" autoplay></test-sound>
     </div>
   </div>
 </template>
@@ -73,7 +73,6 @@ export default {
   flex-grow:1;
   flex-shrink: 1;
   border: 1.5rem solid transparent;
-  border-bottom: 3rem solid transparent;
   > * {
     border: 1rem solid transparent;
     width: 50%;
@@ -107,10 +106,11 @@ export default {
 #soundframe {
   flex-grow: 0;
   flex-shrink: 0;
-  height: 6rem;
-  width: 6rem;
+  height: 5rem;
+  width: 5rem;
+  margin-bottom: 0.5rem;
   border: 0 solid transparent;
-  position:absolute;
+  // position:absolute;
   bottom:0;
   /deep/ #sound {
     margin:0;
@@ -118,6 +118,12 @@ export default {
 }
 
 @media (max-width: 50rem) {
+  #imagesound {
+    height: auto;
+  }
+  #images {
+    min-height: 70vw;
+  }
   #soundframe {
     position: relative;
     margin-bottom: 1rem;
@@ -126,7 +132,7 @@ export default {
 
 @media (max-width: 30rem) {
   #imagesound {
-    height: 50vh;
+    min-height: 50vh;
   }
   #images {
     border: 0;

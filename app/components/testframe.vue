@@ -6,7 +6,7 @@
           <test-symbol :q="q" :background="background" :testdata="testdata" :symbol="symbol"></test-symbol>
         </div>
         <div id="leftframe" class='audio' v-if="config.type === 'audio'">
-          <test-sound :background="background" :file="symbol" :key="testname + '' + position"></test-sound>
+          <test-sound :background="background" :file="symbol" autoplay></test-sound>
         </div>
         <test-imagesound :config="config" :q="q" :testdata="testdata"></test-imagesound>
         <div id="color" v-if="config.type !== 'imagesound'">
@@ -205,7 +205,7 @@ export default {
   display: flex;
   align-content: center;
   align-items: center;
-  padding: 1.5rem 1.5rem;
+  padding: 1rem 1.5rem 1.5rem;
   background: #d6d6d6;
   background: #e9e9e9;
   background: #f3f3f3;
@@ -215,10 +215,10 @@ export default {
     top:0;
     width: calc(100% - 3rem);
     left: 1.5rem;
-    height: 3px;
+    height: 2px;
     border-radius: 0.2rem;
     overflow: hidden;
-    background: #ccc;
+    background: #ddd;
     #bar {
       position:absolute;
       left:0;
@@ -254,20 +254,46 @@ export default {
     pointer-events: none;
     line-height: 1;
     font-size: 0.75rem;
-    box-shadow: 0 0.1rem 0.1rem rgba(#000,0.1), inset -0.05rem 0.05rem 0.1rem rgba(#fff,.7);
+    // border: 2px solid #eee;
+    color: #ddd;
+    text-shadow: 0.025rem -0.025rem 0.0125rem rgba(#000,0.3), -0.025rem 0.025rem 0.0125rem rgba(#fff,0.9);
+    box-shadow: 
+      0.05rem -0.05rem 0.05rem rgba(#000,0.1), 
+      inset -0.05rem 0.05rem 0.05rem rgba(#fff,.7),
+      inset 0.05rem -0.05rem 0.05rem rgba(#000,0.1), 
+      -0.05rem 0.05rem .05rem rgba(#fff,.7);
     text-transform: uppercase;
     white-space: nowrap;
     transition: all 0.15s @easeInOutExpo;
     &.active {
       pointer-events: auto;
-      color: #999;
       background: #fafafa;
-      box-shadow: 0 0.1rem 0.125rem rgba(#000,0.3), inset -0.05rem 0.05rem 0.1rem rgba(#fff,.7);
+      background: linear-gradient(to bottom left, #fafafa, #eee);
+      color: #999;
+      text-shadow:-0.025rem 0.025rem 0.0125rem rgba(#fff,0.9);
+      box-shadow: 
+        0.05rem -0.05rem 0.05rem rgba(#000,0.1), 
+        inset 0.05rem -0.05rem 0.05rem rgba(#000,0.1), 
+        inset -0.05rem 0.05rem 0.05rem rgba(#fff,.7),
+        -0.05rem 0.05rem 0.05rem rgba(#fff,.7);
+
       &:hover {
         background: #fff;
+        background: linear-gradient(to bottom left, #fff, #eee);
         color: #555;
-        box-shadow: 0 0.2rem 0.25rem rgba(#000,.3), inset -0.05rem 0.05rem 0.1rem rgba(#fff,.7) !important;
-        transform: scale(1.05);
+        box-shadow: 
+          0.05rem -0.05rem 0.05rem rgba(#000,0.15), 
+          inset 0.05rem -0.05rem 0.05rem rgba(#000,0.15), 
+          inset -0.05rem 0.05rem 0.05rem rgba(#fff,.7),
+          -0.05rem 0.05rem 0.05rem rgba(#fff,.7);
+      }
+      &:active {
+        background: #ddd;
+        box-shadow: 
+          0.05rem -0.05rem 0.05rem rgba(#000,0.4), 
+          inset 0.05rem -0.05rem 0.05rem rgba(#000,0.15), 
+          inset 0rem 0rem 0.25rem rgba(#000,.3),
+          -0.05rem 0.05rem 0.05rem rgba(#fff,1);
       }
     }
   }

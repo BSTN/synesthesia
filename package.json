@@ -45,6 +45,7 @@
     "raw-loader": "^4.0.1",
     "stream": "^0.0.2",
     "style-loader": "^1.2.1",
+    "stylelint-config-standard": "^20.0.0",
     "text-transform-loader": "^2.0.0",
     "v-runtime-template": "^1.10.0",
     "vue": "^2.6.11",

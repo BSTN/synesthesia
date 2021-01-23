@@ -19,7 +19,7 @@
       echo "<div id='message'>$message</div>";
     };
     ?>
-    <h1>Update configuration from github</h1>
+    <h1>Download configuration data from github</h1>
     <a href="https://github.com/<?= GITNAME . "/" . GITREPOSITORY ?>" target="_blank">https://github.com/<?= GITNAME . "/" . GITREPOSITORY ?></a>
     <label>Username:</label>
     <input type="text" name="name" />

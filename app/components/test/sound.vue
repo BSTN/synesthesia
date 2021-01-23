@@ -69,19 +69,19 @@
 </template>
 <script>
 import { join } from 'path'
+import globalAudio from '../../utils/audio'
 export default {
-  props: ["background", "file"],
+  props: ["background", "file", "autoplay", "isolate"],
   data() {
     return {
       playing: false,
-      audio: false,
-      error: false
+      error: false,
+      audio: false
     }
   },
   watch: {
     "file": function () {
       this.loadAudio();
-      this.playAudio();
     }
   },
   mounted(){
@@ -100,9 +100,13 @@ export default {
         this.error = "Could not load file."
         return
       }
-      if (this.audio) this.audio = null
-      console.log('load', this.file)
-      this.audio = new Audio(join(this.$configbase, 'audio', this.file));
+      // define audiofile
+      const audiofile = join(this.$configbase, 'audio', this.file)
+      // define audio object
+      this.audio = this.isolate !== undefined ? new Audio() : globalAudio
+
+      this.audio.autoplay = this.autoplay !== undefined
+      if (this.audio.src !== audiofile) this.audio.src = audiofile
       this.audio.addEventListener('playing', function () {
         self.playing = true;
       })
@@ -112,7 +116,6 @@ export default {
     },
     playAudio () {
       this.audio.play();
-      // store audioclicks?
     }
   }
 }
@@ -121,9 +124,9 @@ export default {
 #sound {
   background: transparent;
   min-height: 4rem;
-  margin:0 auto;
+  margin: 0 auto;
   border-radius: 0.25em;
-  cursor:pointer;
+  cursor: pointer;
   position: relative;
   display: flex;
   align-content: center;
@@ -131,61 +134,105 @@ export default {
   text-align: center;
   width: 100%;
   height: 100%;
+
   #icons {
-    position:relative;
+    position: relative;
     width: 70%;
     background: #f3f3f3;
     border-radius: 100%;
     margin: 0 auto;
-    border:0;
-    box-shadow: 0 0.1rem .25rem rgba(#000,0.4);
+    border: 0;
     max-width: 6rem;
     max-height: 6rem;
-    flex-grow:0;
-    flex-shrink:0;
+    flex-grow: 0;
+    flex-shrink: 0;
     transition: all 0.25s;
     text-align: center;
-    &:before {
+    box-shadow: 0 0.1rem 0.25rem rgba(#000, 0.4);
+    border: 0.2rem solid transparent;
+    background: rgba(#000, 0.1);
+    overflow: hidden;
+    box-shadow:
+      0.025rem -0.025rem 0.05rem rgba(#000, 0.4),
+      inset 0.05rem -0.05rem 0.05rem rgba(#000, 0.4),
+      inset -0.05rem 0.05rem 0.05rem rgba(#fff, 0.1),
+      -0.05rem 0.05rem 0.05rem rgba(#fff, 0.1);
+
+    &::before {
       content: "";
       display: block;
       padding-top: 100%;
       width: 0;
     }
+
+    &::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background: #fafafa;
+      border-radius: 100%;
+      box-shadow:
+        0.05rem -0.05rem 0.05rem rgba(#000, 0.3),
+        inset 0.05rem -0.05rem 0.05rem rgba(#000, 0.3),
+        inset -0.05rem 0.05rem 0.05rem rgba(#fff, 0.7),
+        -0.05rem 0.05rem 0.05rem rgba(#fff, 0.7);
+    }
+
     svg {
-      width: 60%;
-      height: 60%;
-      position:absolute;
-      left:20%;
-      top:20%;
-      path, rect {
-          fill: #555;
-        }
+      width: 50%;
+      height: 50%;
+      position: absolute;
+      left: 25%;
+      top: 25%;
+      z-index: 1;
+
+      path,
+      rect {
+        transition: all 0.25s;
+        fill: #999;
+      }
     }
+
     &:hover {
-      transform: scale(1.05);
-      box-shadow: 0 .25rem .35rem rgba(#000,0.3);
-    }
-  }
-  &:hover {
-    #icons {
-      background: #fff;
+      @c: #555;
+
+      background: @c;
+      box-shadow:
+        0.025rem -0.025rem 0.05rem rgba(#000, 0.3),
+        inset 0.025rem -0.025rem 0.05rem rgba(#000, 0.3),
+        inset 0 0 0.25rem rgba(#000, 0.8),
+        inset -0.05rem 0.05rem 0.05rem rgba(#fff, 0.1),
+        -0.05rem 0.05rem 0.05rem rgba(#fff, 0.1);
+
       svg {
-        path, rect {
-          fill: #000;
+        path,
+        rect {
+          fill: @c;
         }
       }
     }
   }
+
+  &:hover {
+    #icons {
+      // background: #fff;
+    }
+  }
+
   @media (max-width: 800px) {
     margin: 0 1rem;
     width: 100%;
     height: 100%;
+
     #icons {
       width: 4rem;
       height: 4rem;
       padding: 0;
       margin: 1rem auto;
-      box-shadow: 0 0 4px rgba(#000,0.3);
+      box-shadow: 0 0 4px rgba(#000, 0.3);
     }
   }
 }

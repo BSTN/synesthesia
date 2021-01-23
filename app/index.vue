@@ -50,7 +50,7 @@ export default {
     console.log("%cLast commit by " + this.$info.name + "\n" + moment(this.$info.date).format("D MMM YYYY hh:mm a"),style)
     console.log("%c" + this.$info.url, "color: #00f")
     console.log("%c" + this.$info.sha, "color: #999")
-    console.log("%c" + this.$configbase, "color: #00f")
+    console.log("%c" + window.location.origin + this.$configbase, "color: #00f")
     console.log("\n\n")
     // check id and language
 

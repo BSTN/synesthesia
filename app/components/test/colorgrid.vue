@@ -95,53 +95,75 @@ export default {
     height: 100%;
     display: flex;
     flex-direction: column;
+  }
+}
+#grid {
+  flex-grow: 1;
+  flex-shrink: 1;
+  height: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  grid-template-rows: 1fr 1fr 1fr 1fr;
+  grid-gap: 1rem;
+  padding: 1.5em 1.5em 0.5em 0em;
+  @media (max-width: 50rem) {
+    padding-right: 1em;
+    padding-left: 1em;
+  }
+  button {
+    width: 100%;
+    height: 100%;
+    border-radius: 0.25em;
+    transition: transform 0.1s;
+    &:hover {
+      transform: scale(1.1);
+    }
+  }
+}
+#nocolor {
+  flex-grow: 0;
+  flex-shrink: 0;
+  padding: 1em 0 2em 0;
+  text-align: center;
+  font-size: 1rem;
+  button {
+    margin: 0 auto;
+    padding: 0.5em 1em;
+    border-radius: 0.25em;
+    opacity: 0.5;
+    border: 1px solid #ccc;
+    margin: 0;
+    &:hover {
+      opacity: 1;
+    }
+    &.active {
+      background: #333;
+      border: 1px solid #333;
+      color: #fafafa;
+      opacity: 1;
+      border-color: @fg;
+    }
+  }
+}
+
+@media (max-width: 50rem) {
+  #colorgrid {
+    padding-top: 90%;
+  }
+  #grid {
+    padding: 1rem;
+  }
+}
+
+@media (max-width: 30rem) {
+  #colorgrid {
+    padding-top: 100%;
     #grid {
-      flex-grow: 1;
-      flex-shrink: 1;
-      height: 100%;
-      display: grid;
-      grid-template-columns: 1fr 1fr 1fr 1fr;
-      grid-template-rows: 1fr 1fr 1fr 1fr;
-      grid-gap: 1em;
-      padding: 1.5em 1.5em 0.5em 0em;
-      @media (max-width: 800px) {
-        padding-right: 1em;
-        padding-left: 1em;
-      }
-      button {
-        width: 100%;
-        height: 100%;
-        border-radius: 0.25em;
-        transition: transform 0.1s;
-        &:hover {
-          transform: scale(1.1);
-        }
-      }
+      grid-gap: 0.5rem;
     }
-    #nocolor {
-      flex-grow: 0;
-      flex-shrink: 0;
-      padding: 1em 0 2em 0;
-      text-align: center;
-      button {
-        margin: 0 auto;
-        padding: 0.5em 1em;
-        border-radius: 0.25em;
-        opacity: 0.5;
-        border: 1px solid #ccc;
-        margin: 0;
-        &:hover {
-          opacity: 1;
-        }
-        &.active {
-          background: #333;
-          border: 1px solid #333;
-          color: #fafafa;
-          opacity: 1;
-          border-color: @fg;
-        }
-      }
-    }
+  }
+  #nocolor {
+    font-size: .75rem;
   }
 }
 </style>

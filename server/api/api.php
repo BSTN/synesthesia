@@ -152,6 +152,9 @@ if ($PATH === "/store") {
      */
     $insertdata = array();
     foreach ($data as $k => $v) {
+        if (gettype($v) === 'object') {
+            $v = json_encode($v);
+        };
         $insertdata[":$k"] = $v;
     }
     $insertdata[':IP'] = get_ip_address();

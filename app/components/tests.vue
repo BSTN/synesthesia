@@ -41,8 +41,8 @@ export default {
     position: relative;
     transition: all 0.5s;
     border-radius: 0.25em;
-    // background: #f00;
-    background: url('~assets/kleuren.png');
+    background: @fg;
+    // background: url('~assets/kleuren.png');
     height: 12rem;
     background-position: center;
     background-size: 180%;
@@ -52,11 +52,13 @@ export default {
       bottom:.5em;
       width: 100%;
       left:0;
+      color: @bg;
     }
     &:hover {
       // background: @fg;
       color: @bg;
       background-size: 100%;
+      transform: scale(1.05);
     }
   }
 }

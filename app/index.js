@@ -5,6 +5,7 @@ import App from "./index.vue";
 import home from "./home.vue";
 import testpage from "./testpage.vue";
 import textpage from "./textpage.vue";
+import results from "./results.vue";
 import axios from "axios";
 import vueSlider from "vue-slider-component";
 import VRuntimeTemplate from "v-runtime-template";
@@ -47,6 +48,11 @@ const routes = [];
 routes.push({
   path: "/",
   component: home,
+});
+
+routes.push({
+  path: "/results",
+  component: results,
 });
 
 routes.push({

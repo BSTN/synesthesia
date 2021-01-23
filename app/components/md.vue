@@ -46,8 +46,7 @@ export default {
 <style lang="less" scoped>
 #md {
   /deep/ #sound {
-    margin-top: 2rem;
-    margin-bottom: 2rem;
+    margin: 2rem 0;
   }
 }
 </style>
