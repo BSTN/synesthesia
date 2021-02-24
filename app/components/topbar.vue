@@ -7,18 +7,19 @@
     <div class="right">
       <slot name="right"></slot>
       <!-- <button @click="fs()">fullscreen</button> -->
-      <button id="userid" v-if="$store.state.profile.USERID">ID: {{$store.state.profile.USERID}}</button>
+      <button id="userid" v-if="$store.state.profile.USERID">
+        ID: {{ $store.state.profile.USERID }}
+      </button>
     </div>
   </div>
 </template>
 <script>
-import { each } from "lodash";
 export default {
   methods: {
-    fs () {
-       document.documentElement.requestFullscreen();
+    fs() {
+      document.documentElement.requestFullscreen();
     }
-  },
+  }
 };
 </script>
 <style lang="less" scoped>
@@ -27,33 +28,44 @@ export default {
   padding: 1rem 1.5rem;
   font-size: 0.65rem;
   position: relative;
-  z-index:2;
+  z-index: 2;
   display: flex;
   text-transform: uppercase;
   font-weight: 400;
   top: 0.25rem;
+
   @media (max-width: 800px) {
     padding: 0.45rem 1rem;
   }
+
   > * {
     flex-shrink: 0;
     flex-grow: 0;
   }
+
   a,
   button {
     padding: 0;
     margin-right: 1em;
     text-decoration: none;
+    text-transform: uppercase;
+
     &:hover {
       text-decoration: none;
     }
   }
+
+  .left {
+    display: flex;
+  }
+
   .right {
     a,
     button {
       margin-right: 0;
       margin-left: 1em;
     }
+
     #userid {
       background: @fg;
       color: @bg;
@@ -65,6 +77,7 @@ export default {
       transform: translateY(-0.15em);
     }
   }
+
   #line {
     width: 100%;
     flex-shrink: 1;
@@ -77,15 +90,18 @@ export default {
     animation-fill-mode: forwards;
     transform-origin: top left;
     .clip(left);
+
     @keyframes klip {
       0% {
         .clip(left);
       }
+
       100% {
         .clip();
       }
     }
-    &:after {
+
+    &::after {
       content: "";
       border-top: 2px solid @fg;
       width: 100%;

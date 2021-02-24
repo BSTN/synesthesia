@@ -59,7 +59,7 @@ include './api/api-functions.php';
         $md = Markdown::defaultTransform($raw);
         $md = unwrap($md);
         $name = pathinfo($filename, PATHINFO_FILENAME);
-        echo "\t<script type=\"text/template\" id=\"template$name\">\n\t<div id=\"md\">$md</div>\n\t</script>\n\n";
+        echo "\t<script type=\"text/template\" id=\"template$name\">\n\t<div id=\"template\">$md</div>\n\t</script>\n\n";
     }
     ?>
 

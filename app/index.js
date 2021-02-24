@@ -2,15 +2,12 @@ import Vue from "vue";
 import Vuex from "vuex";
 import VueRouter from "vue-router";
 import App from "./index.vue";
-import home from "./home.vue";
-import testpage from "./testpage.vue";
-import textpage from "./textpage.vue";
-import results from "./results.vue";
 import axios from "axios";
 import vueSlider from "vue-slider-component";
 import VRuntimeTemplate from "v-runtime-template";
 import storePlugin from "./utils/storePlugin";
 import { i18n } from "./utils/i18n";
+import router from './router'
 
 Vue.prototype.$axios = axios;
 Vue.prototype.$cache = {};
@@ -43,23 +40,6 @@ Vue.component("Mdc", {
 // Vue.directive('bgimg', bgimg)
 // Vue.component('loadimg', loadimg)
 
-const routes = [];
-
-routes.push({
-  path: "/",
-  component: home,
-});
-
-routes.push({
-  path: "/results",
-  component: results,
-});
-
-routes.push({
-  path: "/test/:testname",
-  component: testpage,
-});
-
 // import all components
 const components = require.context("./components", true, /\.vue$/);
 components.keys().forEach((key) => {
@@ -75,23 +55,12 @@ directives.keys().forEach((key) => {
   Vue.directive(newkey, directives(key).default);
 });
 
-routes.push({
-  path: "/:textname",
-  component: textpage,
-});
-
-// set routes
-const router = new VueRouter({
-  routes: routes,
-  mode: "history",
-});
-
 Vue.use(VueRouter);
 
 // stores
 Vue.use(Vuex);
 
-const allstores = ["profile", "tests", "extra", "func"];
+const allstores = ["profile", "tests", "extra", "func", "shared"];
 let storelist = {};
 allstores.forEach((k, v) => {
   let storeFile = require("./stores/" + k);

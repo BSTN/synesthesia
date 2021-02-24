@@ -1,6 +1,7 @@
 import Vue from "vue";
 import color from "color";
 import { each, clone, cloneDeep } from "lodash";
+import router from 'vue-router'
 
 const TESTS = JSON.parse(document.getElementById("bootload-tests").innerText)
 

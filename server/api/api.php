@@ -8,7 +8,7 @@ use Symfony\Component\Yaml\Exception\ParseException;
 
 require_once "../config.php";
 
-/* 
+/*
  * Connect to database
  */
 try {
@@ -25,13 +25,12 @@ try {
 
 require_once "api-functions.php";
 
-/* 
-* API Start 
+/*
+* API Start
 */
 
 if ($PATH === "/download") {
     if (array_key_exists("passwd", $_POST)) {
-
         if (brute_check()) {
             error_log("Download: too many attempts.");
             $message = "Login failed, too many attempts. Locked out for 10 minutes.";
@@ -82,7 +81,6 @@ if ($PATH === "/setup") {
 }
 
 if ($PATH === "/create") {
-
     $input = file_get_contents('php://input');
     if (!$input) {
         error("Missing Post data.");
@@ -112,18 +110,74 @@ if ($PATH === "/create") {
     pjson(array("UID" => $data['UID'], "SHARED" => $data['SHARED']));
 }
 
+if ($PATH === "/getshared") {
+    /*
+    * Retrieve shared data: post request
+    *
+    * @param code
+    */
+    $input = file_get_contents('php://input');
+    if (!$input) {
+        error("Missing Post data.");
+    };
+    $data = (array) json_decode($input);
+    if (!$data['code']) {
+        error("Missing shared code.");
+    };
+    $code = $data['code'];
+
+    /* get list of finished tests */
+    $prep = $dbc->prepare(
+        "SELECT finishedtests, UID FROM " . DB_PREFIX . "profile WHERE shared = :shared;"
+    );
+    try {
+        $prep->execute(array("shared" => $code));
+    } catch (PDOException $Exception) {
+        error($Exception);
+    }
+
+    $fetch = $prep->fetch();
+    if ($fetch === false) {
+        pjson('No finished tests found.');
+    }
+
+    $finished = explode(",", $fetch['finishedtests']);
+    $UID = $fetch['UID'];
+    
+    /* get test data */
+    $results = array();
+    foreach ($finished as $testname) {
+        $prep = $dbc->prepare(
+            "SELECT * FROM " . DB_PREFIX . "questions WHERE testname = :testname AND UID = :UID;"
+        );
+        try {
+            $prep->execute(array("testname" => $testname, "UID" => $UID));
+        } catch (PDOException $Exception) {
+            error($Exception);
+        }
+        $fetched = $prep->fetchAll();
+        if (!$fetched) {
+            $results[$testname] = false;
+        } else {
+            $results[$testname] = $fetched;
+        }
+    }
+
+    pjson($results);
+}
+
 if ($PATH === "/store") {
 
     /*
     * Store data: post request
-    * 
+    *
     * @param UID
-    * @param data 
+    * @param data
     * @param table
     */
 
-    /* 
-     * Get json 
+    /*
+     * Get json
      */
     $input = file_get_contents('php://input');
     if (!$input) {
@@ -142,13 +196,13 @@ if ($PATH === "/store") {
         error("Missing table.");
     }
 
-    /* 
-     * The data object 
+    /*
+     * The data object
      */
     $data = (array) $postdata['data'];
 
     /*
-     * Prepare insert data 
+     * Prepare insert data
      */
     $insertdata = array();
     foreach ($data as $k => $v) {
@@ -160,7 +214,7 @@ if ($PATH === "/store") {
     $insertdata[':IP'] = get_ip_address();
     $insertdata[':UID'] = $postdata['UID'];
 
-    /* 
+    /*
      * $postdata['table']: profile / questions / extraquestions
      */
     if ($postdata['table'] === 'profile') {
@@ -299,24 +353,24 @@ if ($PATH === "/update") {
     $destjson = $dest . "/info.json";
     
     // download data
-    if (!@file_put_contents($desttempzip, fopen("https://github.com/$gitname/$repository/archive/master.zip", "r"))){
+    if (!@file_put_contents($desttempzip, fopen("https://github.com/$gitname/$repository/archive/master.zip", "r"))) {
         errormessage('Could not download or write git zip file.', 'update.php');
     };
     
     // get latest commit
     $opts = ['http' => ['method' => 'GET', 'header' => ['User-Agent: PHP']]];
     $context = stream_context_create($opts);
-    if(!$content = @file_get_contents("https://api.github.com/repos/$gitname/$repository/commits/master", false, $context)) {
+    if (!$content = @file_get_contents("https://api.github.com/repos/$gitname/$repository/commits/master", false, $context)) {
         errormessage('Could not download meta data.', 'update.php');
     };
-    if(!@file_put_contents($desttempjson, $content)) {
+    if (!@file_put_contents($desttempjson, $content)) {
         errormessage("Could not write meta data.", 'update.php');
     }
 
     // unzip folder
     $zip = new ZipArchive;
     $res = $zip->open($desttempzip);
-    if ($res === TRUE) {
+    if ($res === true) {
         $zip->extractTo($desttempunzip);
         $zip->close();
     } else {
@@ -330,14 +384,18 @@ if ($PATH === "/update") {
     // check if files are readable
     try {
         $raw = @file_get_contents($gitfolder . '/config.yml');
-        if (!$raw) errormessage('Could not read config.yml','update.php');
+        if (!$raw) {
+            errormessage('Could not read config.yml', 'update.php');
+        }
         Yaml::parse($raw);
     } catch (ParseException $exception) {
         error('Unable to parse the YAML string in "config.yml": ' . $exception->getMessage());
     }
     try {
         $raw = @file_get_contents($gitfolder . '/translations.yml');
-        if (!$raw) errormessage('Could not read translations.yml','update.php');
+        if (!$raw) {
+            errormessage('Could not read translations.yml', 'update.php');
+        }
         Yaml::parse($raw);
     } catch (ParseException $exception) {
         errormessage('Unable to parse the YAML string in "translations.yml": ' . $exception->getMessage(), 'update.php');
@@ -346,7 +404,9 @@ if ($PATH === "/update") {
     foreach (glob($gitfolder . "/tests/*.yml") as $filename) {
         try {
             $raw = @file_get_contents($filename);
-            if (!$raw) errormessage("Could not read $filename",'update.php');
+            if (!$raw) {
+                errormessage("Could not read $filename", 'update.php');
+            }
             Yaml::parse($raw);
         } catch (ParseException $exception) {
             errormessage("Unable to parse the YAML string in '$filename': " . $exception->getMessage(), 'update.php');
@@ -359,10 +419,10 @@ if ($PATH === "/update") {
             errormessage('Could not remove destination folder.', 'update.php');
         }
     }
-    if(!@rename($gitfolder, $dest)) {
+    if (!@rename($gitfolder, $dest)) {
         errormessage('Could not move zip folder to destination.', 'update.php');
     };
-    if(!@rename($desttempjson, $destjson)) {
+    if (!@rename($desttempjson, $destjson)) {
         errormessage('Could not move info.json to destination.', 'update.php');
     };
 

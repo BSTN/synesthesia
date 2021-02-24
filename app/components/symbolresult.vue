@@ -1,40 +1,49 @@
 <template>
   <div id="r">
-    <test-sound isolate :file="symbol.sound || symbol" v-if="testConfig.type === 'audio' || testConfig.type === 'imagesound'"></test-sound>
+    <test-sound
+      isolate
+      :file="symbol.sound || symbol"
+      v-if="testConfig.type === 'audio' || testConfig.type === 'imagesound'"
+    ></test-sound>
     <div id="symbol" v-else>
       {{ translatedSymbol }}
     </div>
     <div id="colors" v-if="testConfig.type !== 'imagesound'">
       <button
         id="color"
-        v-for="(c, k) in valuesFiltered"
+        v-for="(c, k) in valuesFilteredDisplay"
         :key="k"
-        :style="{ backgroundColor: '#' + c }"
+        :style="c"
+        :class="{ nocolor: !!c.backgroundImage }"
       ></button>
     </div>
     <div id="images" v-if="testConfig.type === 'imagesound'">
-      <div id="im1" :style="{backgroundImage: `url(${images[0]})`}"></div>
+      <div id="im1" :style="{ backgroundImage: `url(${images[0]})` }"></div>
       <div id="imagesoundresult" v-if="testConfig.type === 'imagesound'">
         <!-- {{imagesoundValues}} -->
       </div>
-      <div id="im2" :style="{backgroundImage: `url(${images[1]})`}"></div>
+      <div id="im2" :style="{ backgroundImage: `url(${images[1]})` }"></div>
     </div>
-    <div id="nodistance" v-if="distance === false && testConfig.type !== 'imagesound'">
+    <div
+      id="nodistance"
+      v-if="distance === false && testConfig.type !== 'imagesound'"
+    >
       {{ $t("novalue") }}
     </div>
-    <div id="distance" v-if="distance !== false">
+    <score cutoff="70" :value="40"></score>
+    <!-- <div id="distance" v-if="distance !== false">
       <div id="bar"></div>
       <div id="cutoff" :style="{ width: cutoffwidth }"></div>
       <div id="value" :style="{ left: (distance / 6) * 100 + '%' }">
         {{ distance }}
       </div>
-    </div>
+    </div> -->
   </div>
 </template>
 <script>
 import { each } from "lodash";
 import color from "color";
-import { join } from 'path'
+import { join } from "path";
 export default {
   props: ["symbol", "testname"],
   computed: {
@@ -45,21 +54,21 @@ export default {
       return (100 / 6) * parseFloat(this.testConfig.cutoff) + "%";
     },
     translatedSymbol() {
-      if (!this.symbol || typeof this.symbol !== 'string') return false
+      if (!this.symbol || typeof this.symbol !== "string") return false;
       return this.symbol.match(/^t\:/)
         ? this.$t(this.symbol.replace(/^t\:/, ""))
         : this.symbol;
     },
-    imagesoundValues () {
+    imagesoundValues() {
       let data = [];
-      each(this.$store.state.tests.tests[this.testname].questions, (q) => {
+      each(this.$store.state.tests.tests[this.testname].questions, q => {
         if (q.symbol === this.symbol) data.push(q.value);
       });
-      return data
+      return data;
     },
     values() {
       let data = [];
-      each(this.$store.state.tests.tests[this.testname].questions, (q) => {
+      each(this.$store.state.tests.tests[this.testname].questions, q => {
         if (q.symbol === this.symbol) data.push(q.value);
       });
       // return ["ff0000", "00ff00", "0000ff"];
@@ -67,22 +76,33 @@ export default {
       return data;
     },
     valuesFiltered() {
-      return this.values.filter((x) => x !== "nocolor");
+      return this.values.filter(x => x !== "nocolor");
     },
-    images () {
-      if (this.testConfig.type !== 'imagesound') return false;
-      return [join(this.$configbase, 'images', this.symbol.im1), join(this.$configbase, 'images', this.symbol.im2)]
+    valuesFilteredDisplay() {
+      // return this.values.filter(x => x !== "nocolor");
+      return this.values.map(x => {
+        if (x === "nocolor")
+          return { backgroundImage: `url("./assets/nocolor.png")` };
+        return { background: `#${x}` };
+      });
+    },
+    images() {
+      if (this.testConfig.type !== "imagesound") return false;
+      return [
+        join(this.$configbase, "images", this.symbol.im1),
+        join(this.$configbase, "images", this.symbol.im2)
+      ];
     },
     distance() {
-      if (this.testConfig.type === 'imagesound') return false;
+      if (this.testConfig.type === "imagesound") return false;
       if (this.values.indexOf("nocolor") >= 0) return false;
       if (this.values.indexOf(null) >= 0) return false;
       else {
-        let all = this.valuesFiltered.map((x) =>
+        let all = this.valuesFiltered.map(x =>
           color("#" + x)
             .rgb()
             .array()
-            .map((xx) => {
+            .map(xx => {
               return parseInt(xx) / 255;
             })
         );
@@ -96,12 +116,11 @@ export default {
         distance = Math.round(distance * 100) / 100;
         return distance;
       }
-    },
-  },
+    }
+  }
 };
 </script>
 <style lang="less" scoped>
-
 @g: var(--grey);
 
 #r {
@@ -112,39 +131,44 @@ export default {
 
   background: @bg;
   color: @fg;
-  padding: 0.5em;
+  padding: 0.5em 1em 0.5em 0.75em;
   display: flex;
-  font-size: 1.5em;
+  flex-direction: column;
+  width: 100%;
+
+  font-size: 1em;
   line-height: 1.5em;
   overflow: hidden;
-  max-width: calc(100% - 1em);
-  margin: 0 auto;
-  margin-bottom: 0.125em;
+  margin: 0 auto 0.5em;
   border-radius: 0.125em;
+  align-content: center;
+  align-items: center;
 
   @media (max-width: 800px) {
     font-size: 1em;
   }
 
-  &:last-child {
-    border-bottom: 1px solid @fg;
-  }
-
   #symbol {
     min-width: 7em;
-    text-align: left;
+    text-align: center;
     padding: 0 0.5em;
+    height: 2rem;
+    text-transform: uppercase;
   }
 
   /deep/ #sound {
-    min-height: 2rem;
-    width: 3rem;
+    min-height: 2.5rem;
+    width: 2.5rem;
     flex-grow: 0;
     flex-shrink: 0;
+    padding: 0;
 
     #icons {
+      width: 100%;
       max-height: 3rem;
       max-width: 3rem;
+      padding: 0;
+      margin: 0 auto;
     }
   }
 
@@ -162,6 +186,11 @@ export default {
       padding: 0;
       margin: 0 0.25em 0 0;
       vertical-align: middle;
+      background-size: 10px;
+      background-repeat: repeat;
+      &.nocolor {
+        box-shadow: inset 0 0 0.125rem rgba(#000, 0.3);
+      }
     }
   }
 
@@ -194,73 +223,76 @@ export default {
   }
 }
 
-#distance {
-  width: 100%;
-  position: relative;
-  border: 0.25em solid @bg;
-  border-width: 0.25em 0.5em 0.25em 0;
+// #distance {
+//   width: 100%;
+//   position: relative;
+//   min-width: 8rem;
+//   // border: 0.25em solid @bg;
+//   // border-width: 0.25em 0.5em 0.25em 0;
 
-  &::before,
-  &::after {
-    content: "";
-    position: absolute;
-    left: -0.125em;
-    top: 25%;
-    height: 50%;
-    border-left: 0.125em solid @g;
-    opacity: 1;
-    border-radius: 0.125em;
-  }
+//   height: 1.5rem;
 
-  &::before {
-    border-left-color: @syn;
-  }
+//   &::before,
+//   &::after {
+//     content: "";
+//     position: absolute;
+//     left: -0.125em;
+//     top: 25%;
+//     height: 50%;
+//     border-left: 0.125em solid @g;
+//     opacity: 1;
+//     border-radius: 0.125em;
+//   }
 
-  &::after {
-    left: auto;
-    right: -0.125em;
-  }
+//   &::before {
+//     border-left-color: @syn;
+//   }
 
-  #bar {
-    position: absolute;
-    left: 0;
-    width: 100%;
-    top: calc(50% - 0.0625em);
-    border-top: 0.125em solid @g;
-    opacity: 1;
-  }
+//   &::after {
+//     left: auto;
+//     right: -0.125em;
+//   }
 
-  #cutoff {
-    position: absolute;
-    height: 0.125em;
-    background: @syn;
-    top: calc(50% - 0.06125em);
-    // width: ((100/6) * 1.42%);
-  }
+//   #bar {
+//     position: absolute;
+//     left: 0;
+//     width: 100%;
+//     top: calc(50% - 0.0625em);
+//     border-top: 0.125em solid @g;
+//     opacity: 1;
+//   }
 
-  #value {
-    position: absolute;
-    height: 100%;
-    // border-left: 4px solid @fg;
-    top: 0;
-    left: 0;
-    padding-left: 1em;
-    font-size: 11px;
-    line-height: 1em;
-    transition: 2s;
+//   #cutoff {
+//     position: absolute;
+//     height: 0.125em;
+//     background: @syn;
+//     top: calc(50% - 0.06125em);
+//     // width: ((100/6) * 1.42%);
+//   }
 
-    &::after {
-      content: "";
-      position: absolute;
-      left: 0;
-      height: 100%;
-      background: @fg;
-      width: 0.25rem;
-      border-radius: 0.25rem;
-      margin-left: 0.125rem;
-    }
-  }
-}
+//   #value {
+//     position: absolute;
+//     height: 100%;
+//     // border-left: 4px solid @fg;
+//     top: 0;
+//     left: 0;
+//     padding-left: 1em;
+//     font-size: 11px;
+//     line-height: 1em;
+//     transition: 2s;
+
+//     &::after {
+//       content: "";
+//       position: absolute;
+//       left: 0;
+//       height: 100%;
+//       background: @fg;
+//       width: 0.25rem;
+//       border-radius: 0.25rem;
+//       margin-left: 0.125rem;
+//     }
+//   }
+// }
 
 @media (max-width: 500px) {
   @s: 10px;

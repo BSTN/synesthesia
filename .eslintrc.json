@@ -5,6 +5,7 @@
     },
     "extends": [
         "plugin:vue/essential"
+        // "@vue/standard"
         // "plugin:vue-scoped-css/vue3-recommended"
     ],
     "rules": {
