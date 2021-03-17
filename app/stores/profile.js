@@ -26,6 +26,9 @@ export const mutations = {
 export const actions = {
   set(store, content) {
     store.commit("set", content);
+    if (content.USERID) {
+      store.dispatch('upload')
+    }
   },
   finished(store, value) {
     const finishedtests = store.state.finishedtests

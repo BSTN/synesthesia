@@ -1,5 +1,5 @@
 <template>
-  <div id="score">
+  <div id="score" :class="{synesthesia: hasSynesthesia, nodata: realValue === false}">
     <div id="titlebar" v-if="(title && !hasAudio) || username">
       <div id="title" v-if="title && !hasAudio">{{ title }}</div>
       <div id="username" v-if="username">{{ username }}</div>
@@ -13,27 +13,41 @@
           :class="{ nocolor: !!c.backgroundImage }"
         ></button>
       </div>
-     
     </div>
-    <div id="media" v-if="hasAudio || hasAudio">
+    <div id="media" v-if="hasAudio" :class="{hasColors}">
+      <!-- images -->
+      <div id="images" v-if="hasImages">
+        <!-- <div id="im1" :style="{ backgroundImage: `url(${images[0]})` }" :class="{active: value === images[0]}"></div> -->
+        <div id="im2" :style="{ backgroundImage: `url(${images[1]})` }" :class="{active: value === images[0]}"></div>
+      </div>
       <!-- audio -->
       <div id="audio">
         <test-sound
           isolate
-          :file="symbol.sound || symbol"
+          :file="data.symbol.sound || data.symbol"
           v-if="hasAudio"
         ></test-sound>
       </div>
       <!-- images -->
       <div id="images" v-if="hasImages">
         <div id="im1" :style="{ backgroundImage: `url(${images[0]})` }" :class="{active: value === images[0]}"></div>
-        <div id="im2" :style="{ backgroundImage: `url(${images[1]})` }" :class="{active: value === images[0]}"></div>
+        <!-- <div id="im2" :style="{ backgroundImage: `url(${images[1]})` }" :class="{active: value === images[0]}"></div> -->
+      </div>
+      <!-- colors -->
+      <div id="colors" v-if="hasColors">
+        <button
+          id="color"
+          v-for="(c, k) in valuesFilteredDisplay"
+          :key="k"
+          :style="c"
+          :class="{ nocolor: !!c.backgroundImage }"
+        ></button>
       </div>
     </div>
     <div id="frame">
       <div id="slider" v-if="!isNaN(value)">
         <div id="value" :style="{ left: value + '%' }"></div>
-        <div id="cutoff" :style="{ width: 100 - cutoff + '%' }"></div>
+        <div id="cutoff" :style="{ width: 100 - cutoff + '%' }" v-if="cutoff" :class="{reverse}"></div>
       </div>
       <div id="text" v-if="text">{{ text }}</div>
     </div>
@@ -42,44 +56,84 @@
 <script>
 import { each } from 'lodash'
 import { join } from "path";
-import color from "color";
+import score from '../utils/score'
 export default {
-  props: ["testname", "symbol", "type", "user"],
+  props: ["testname", "symbol", "type", "user", "data"],
   computed: {
     testType () {
       if (!this.testname) { return false }
       return this.$tests[this.testname].type
     },
+    hasSynesthesia () {
+      if (!this.reverse) { 
+        return this.value > this.cutoff
+      } else {
+        if (!this.realValue) return false
+        return this.realValue < this.$tests[this.testname].cutoff
+      }
+    },
     cutoff () {
-      return 70
+      // percentage
+      if (this.type === 'likert') {
+        return (18 / 30) * 100
+      } else if (this.$tests[this.testname].type === 'imagesound') {
+        return false
+      } else {
+        let cutoff = this.$tests[this.testname].cutoff
+        return ((6 - cutoff) / 6) * 100
+      }
+    },
+    reverse () {
+      if (this.type === 'likert') return false
+      return !(["imagesound"].indexOf(this.$tests[this.testname].type) >= 0)
     },
     value () {
-      if (this.testType === 'grapheme') {
-        let dist = this.distance()
-        if (dist) return 100 - ((dist / 6) * 100)
+      // turn into forward percentage
+      // total
+      if (this.type === 'total') {
+        if (this.data.total === undefined || isNaN(this.data.total)) return false
+        return ((6 - this.data.total) / 6) * 100
       }
-      return 0
-    },
-    results () {
-      if (this.user) {
-        return false
+      // likert
+      if (this.type === 'likert') {
+        return this.data
       }
-      if (this.symbol) {
-        let data = []
-        each(this.$store.state.tests.tests[this.testname].questions, q => {
-          if (q.symbol === this.symbol) data.push(q.value);
-        });
-        return data
+      // no data
+      if (!this.data || !this.data.score) return false
+      if (this.testType === 'imagesound') {
+        if (isNaN(this.data.score)) return false
+        return this.data.score * 100
       }
-      return false
+      // if a symbol
+      return (this.data.score / 6) * 100
+      // return ((6 - this.data.score) / 6) * 100
     },
     realValue () {
-      if (!this.symbol) return false
-      return 'this.results'
+      if (!this.data) return false
+      if (this.type === 'total') {
+        if (this.data.total === undefined || isNaN(this.data.total)) return false
+        return parseInt(this.data.total * 100) / 100
+      }
+      // likert
+      if (this.type === 'likert') {
+        return parseInt(this.data)
+      }
+      if (this.testType === 'imagesound') {
+        return this.data.score
+      }
+      // no data
+      if (!this.data || !this.data.score) return false
+      // if a symbol
+      return this.data.score
     },
     title () {
-      if (this.type === 'likert') { return 'extra vragen' }
-      if (this.symbol) return this.symbol
+      if (this.type === 'likert') { return 'extra vragenlijst' }
+      if (this.data.symbol) {
+        if (typeof this.data.symbol === 'string' && this.data.symbol.startsWith('t:')) {
+          return this.$t(this.data.symbol.replace('t:',''))
+        }
+        return this.data.symbol
+      }
       if (this.testname === undefined) { return false }
       return this.$tests[this.testname].name[this.$store.state.profile.language]
     },
@@ -88,11 +142,15 @@ export default {
       return false
     },
     text () {
-      return 'Je score is: ' + this.value
+      if (this.type === 'likert' && !this.data) {
+        return "Niet genoeg data";
+      }
+      if (this.realValue === false) return this.$t('novalue')
+      return 'Score: ' + this.realValue
     },
     // audio
     hasAudio () {
-      if (!this.symbol) { return false }
+      if (!this.data.symbol) { return false }
       if (this.testname !== undefined) {
         if (['audio', 'imagesound'].indexOf(this.$tests[this.testname].type) > -1) {
           return true
@@ -110,11 +168,11 @@ export default {
       return false
     },
     images() {
-      if (!this.testname || !this.symbol) { return false }
+      if (!this.testname || !this.data.symbol) { return false }
       if (this.$tests[this.testname].type !== "imagesound") return false;
       return [
-        join(this.$configbase, "images", this.symbol.im1),
-        join(this.$configbase, "images", this.symbol.im2)
+        join(this.$configbase, "images", this.data.symbol.im1),
+        join(this.$configbase, "images", this.data.symbol.im2)
       ];
     },
     // colours
@@ -128,16 +186,8 @@ export default {
       return true
     },
     values() {
-      let data = [];
-      if (!this.symbol) {
-        return false
-      }
-      each(this.$store.state.tests.tests[this.testname].questions, q => {
-        if (q.symbol === this.symbol) data.push(q.value);
-      });
-      // return ["ff0000", "00ff00", "0000ff"];
-      // return ["ff0000", "ff0000", "ff0000"];
-      return data;
+      if (!this.data || !this.data.data) return false
+      return this.data.data.map(x => x.value)
     },
     valuesFiltered() {
       return this.values.filter(x => x !== "nocolor");
@@ -154,29 +204,7 @@ export default {
   },
   methods: {
     distance() {
-      if (this.testType === "imagesound") return false;
-      if (!this.values) return false;
-      if (this.values.indexOf("nocolor") >= 0) return false;
-      if (this.values.indexOf(null) >= 0) return false;
-      else {
-        let all = this.valuesFiltered.map(x =>
-          color("#" + x)
-            .rgb()
-            .array()
-            .map(xx => {
-              return parseInt(xx) / 255;
-            })
-        );
-        let distance = 0;
-        each(all, (v, k) => {
-          let r = Math.abs(v[0] - all[(parseInt(k) + 1) % all.length][0]);
-          let g = Math.abs(v[1] - all[(parseInt(k) + 1) % all.length][1]);
-          let b = Math.abs(v[2] - all[(parseInt(k) + 1) % all.length][2]);
-          distance = distance + r + g + b;
-        });
-        distance = Math.round(distance * 100) / 100;
-        return distance;
-      }
+      return score.distance(this.testType, this.values)
     }
   }
 };
@@ -208,13 +236,21 @@ export default {
 #text {
   margin-top: 0.25em;
   font-size: 0.8em;
-  opacity: 0.5;
 }
 #media {
   background: @fg;
   display:flex;
   > div {
     width: 100%;
+  }
+  &.hasColors {
+    justify-content: space-between;
+    > div {
+      width: auto;
+    }
+    > div:last-child {
+      width: 5rem;
+    }
   }
 }
 #frame {
@@ -224,7 +260,7 @@ export default {
   position: relative;
   height: 1rem;
   width: 100%;
-  overflow: hidden;
+  overflow: visible;
   margin-top: 1em;
   &:before {
     content: "";
@@ -242,7 +278,7 @@ export default {
   position: absolute;
   height: 100%;
   z-index: 1;
-  transition: all .5s @easeInOutExpo;
+  transition: all 2.5s @easeInOutExpo;
   transition-delay: .15s;
   &:before {
     content: "";
@@ -254,15 +290,27 @@ export default {
     background: @fg;
     border-radius: 0.25em;
   }
+  .synesthesia & {
+    &:before {
+      background: @fg;
+    }
+  }
 }
 #cutoff {
   background: @syn;
+  background: @fg;
   position: absolute;
   border-radius: 0 0.25em 0.25em 0;
   right: 0;
   width: 100%;
   height: @s;
   top: calc(50% - @ss);
+  opacity: 0.5;
+  &.reverse {
+    right: auto;
+    left: 0;
+    border-radius: 0.25em 0 0 0.25em;
+  }
 }
 
 #audio {
@@ -270,6 +318,26 @@ export default {
   /deep/ #sound {
     width: 4rem;
     height: 4rem;
+  }
+  @media (max-width: 40rem) {
+    /deep/ #sound {
+      margin: 0.5rem;
+      min-height: auto;
+      max-height: 2rem;
+      min-width: none;
+      max-width: 2rem;
+    }
+    /deep/ #icons {
+      margin: 0 auto !important;
+      width: 2rem !important;
+      height: 2rem !important;
+      border: 0.15rem solid transparent !important;
+      box-shadow:
+      0.025rem -0.025rem 0.05rem rgba(#000, 0.4),
+      inset 0.05rem -0.05rem 0.05rem rgba(#000, 0.4),
+      inset -0.05rem 0.05rem 0.05rem rgba(#fff, 0.1),
+      -0.05rem 0.05rem 0.05rem rgba(#fff, 0.1) !important;
+    }
   }
 }
 
@@ -297,7 +365,7 @@ export default {
 
 #images {
   display: flex;
-  padding: 0 1rem;
+  padding: 0;
   flex-grow: 1;
   align-items: center;
 
@@ -320,5 +388,17 @@ export default {
   #imagesoundresult {
     width: 100%;
   }
+}
+
+@synhighlight: #feffc5;
+// @synhighlight: #fff;
+.synesthesia {
+  --fg: @synhighlight;
+  --glow: rgba(@synhighlight, 0.25);
+  box-shadow: 0 0 1rem var(--glow);
+}
+
+.nodata {
+  opacity: 0.5;
 }
 </style>

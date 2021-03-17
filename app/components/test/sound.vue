@@ -4,7 +4,7 @@
     :style="{background: background}"
     @click="playAudio()"
   >
-    <div id="icons">
+    <div id="icons" :class='{playing}'>
       <svg
         v-if="playing"
         width="500px"
@@ -196,7 +196,7 @@ export default {
       }
     }
 
-    &:hover {
+    &:hover, &.playing {
       @c: #555;
 
       background: @c;
@@ -222,7 +222,7 @@ export default {
     }
   }
 
-  @media (max-width: 800px) {
+  @media (max-width: 40rem) {
     margin: 0 1rem;
     width: 100%;
     height: 100%;

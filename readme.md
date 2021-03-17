@@ -55,4 +55,4 @@ composer install
 
 Thanks to [Kometa](https://kometa.xyz) for using their font [Victor Serif](https://www.kometa.xyz/typefaces/victor-serif/).
 
-This project uses Google Fonts Roboto Mono for proper graphemes representation, see [https://github.com/google/fonts](https://github.com/google/fonts) for more information.
+Roboto Mono (Google Fonts) is used for the graphemes, see [https://github.com/google/fonts](https://github.com/google/fonts) for more information.

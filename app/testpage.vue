@@ -38,6 +38,9 @@ export default {
     config() {
       return this.$tests[this.$route.params.testname];
     },
+    testname () {
+      return this.$route.params.testname
+    },
     showTestframe() {
       if (this.testdata.pretest)
         return !!(
@@ -79,13 +82,24 @@ export default {
       return false;
     }
   },
+  async beforeRouteEnter (to, from, next) {
+    if (from.name === 'results' || from.name === 'likert') {
+      next("/")
+    } else {
+      next()
+    }
+  },
   methods: {
     next() {},
     async done() {
       let data = await this.$store.dispatch("tests/nextPage").catch(err => {
         console.warn("Error going to nextpage:", err);
       });
-      if (data) console.log(data);
+      if (data === 'done' && this.config.likert) {
+        this.$router.push({name: 'likert', params: {testname: this.$route.params.testname}})
+      } else if (data === 'done') {
+        this.$router.push({name: 'results', params: {testname: this.$route.params.testname}})
+      }
     }
   },
   watch: {
@@ -101,19 +115,22 @@ export default {
       !(this.$route.params.testname in this.$store.state.tests.tests)
     ) {
       await this.$root.alert({
-        message: "Sorry, this test does not exist (anymore)."
+        message: this.$t('sorrynotatest')
       });
       this.$router.push({ path: "/" });
     } else {
-      this.$store.commit("tests/setActive", this.$route.params.testname);
+      this.$store.commit("tests/setActive", this.testname);
     }
     /* get uid */
     if (this.$store.state.profile.UID === null) {
       let x = false;
       try {
-        x = await this.$axios.post("./api/create", {
-          language: this.$store.state.profile.language
-        });
+        // request server
+        // add USERID
+        const postdata = {}
+        postdata.language = this.$store.state.profile.language
+        if (this.$store.state.profile.USERID) postdata.USERID = this.$store.state.profile.USERID
+        x = await this.$axios.post("./api/create", postdata);
       } catch (err) {
         await this.$root.alert({ message: "Error testpage #1." });
         this.$router.push({ path: "/" });
@@ -125,6 +142,11 @@ export default {
         await this.$root.alert({ message: "Error testpage #2." });
         this.$router.push({ path: "/" });
       }
+    }
+    /* redirect if finished */
+    const finished = await this.$store.dispatch('tests/isFinished', this.testname)
+    if (finished) {
+      this.done()
     }
     /* LOADING */
     this.loading = false;
@@ -162,7 +184,7 @@ export default {
 #pretest #md,
 #posttest #md,
 #results #md {
-  margin: 0 auto;
+  margin: 4rem auto;
   max-width: 32em;
   padding: 0 0.5em;
   font-family: "Victor";

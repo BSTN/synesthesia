@@ -120,11 +120,16 @@ export default {
     },
   },
   mounted() {
+    const self = this
     // this.checkFinished();
     this.startTime = now();
-    window.addEventListener("keydown", (ev) => {
-      if (ev.keyCode === 13 && this.q.value !== null) this.next();
-    });
+    const keydown = function (ev) {
+      if (ev.key === "Enter" && self.q.value !== null) self.next();
+    }
+    window.addEventListener("keydown", keydown);
+    this.$on('hook:beforeDestroy', () => {
+      window.removeEventListener("keydown", keydown)
+    })
   },
 };
 </script>

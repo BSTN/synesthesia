@@ -33,6 +33,9 @@ export default {
   text-transform: uppercase;
   font-weight: 400;
   top: 0.25rem;
+  @media print {
+    display:none;
+  }
 
   @media (max-width: 800px) {
     padding: 0.45rem 1rem;
@@ -52,6 +55,7 @@ export default {
 
     &:hover {
       text-decoration: none;
+      color: @link;
     }
   }
 
@@ -82,7 +86,7 @@ export default {
     width: 100%;
     flex-shrink: 1;
     flex-grow: 1;
-    margin: 0;
+    margin: 0 1em;
     animation-name: klip;
     animation-duration: 2s;
     animation-timing-function: @easeInOutExpo;

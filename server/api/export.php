@@ -1,5 +1,4 @@
 <?php
-
 function export_to_csv()
 {
   global $dbc;
@@ -34,19 +33,23 @@ function export_to_csv()
             $profiletable.UID as UID, 
             $profiletable.IP as IP, 
             $profiletable.language as language, 
+            $profiletable.finishedtests as finishedtests, 
             $profiletable.USERID as USERID, 
             $profiletable.SHARED as SHARED, 
             $extratable.data as data 
-            FROM $profiletable INNER JOIN $extratable 
+            FROM $profiletable LEFT JOIN $extratable 
             ON $profiletable.UID = $extratable.UID;";
   $res = $dbc->query($query);
+  // for every row:
+  // echo "<pre>";
   while ($row = $res->fetch(PDO::FETCH_NAMED)) {
     $array = [];
     foreach ($row as $name => $value) {
+      // extra table data
       if ($name === 'data') {
         $JSON = (array) json_decode($value);
         foreach ($extraColumns as $c) {
-          if (isset($JSON, $c)) {
+          if (key_exists($c, $JSON)) {
             $array[] = $JSON[$c];
           } else {
             $array[] = "";
@@ -56,8 +59,10 @@ function export_to_csv()
         $array[] = $value;
       }
     }
+    // print_r($array);
     fputcsv($profileFile, $array);
   }
+  // echo "</pre>";
   fclose($profileFile);
 
 

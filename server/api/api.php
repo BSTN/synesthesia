@@ -91,6 +91,9 @@ if ($PATH === "/create") {
     $data['UID'] = getUid(64);
     $data['IP'] = get_ip_address();
     $data['SHARED'] = getShared();
+    if (!key_exists('USERID', $data)) {
+        $data['USERID'] = null;
+    };
 
     $insertdata = array();
     foreach ($data as $k => $v) {
@@ -103,6 +106,7 @@ if ($PATH === "/create") {
             IP=SHA2(:IP,256), 
             language=:language, 
             UID=:UID,
+            USERID=:USERID,
             SHARED=:SHARED"
     );
     $prep->execute($insertdata);
@@ -121,7 +125,7 @@ if ($PATH === "/getshared") {
         error("Missing Post data.");
     };
     $data = (array) json_decode($input);
-    if (!$data['code']) {
+    if (!key_exists('code', $data)) {
         error("Missing shared code.");
     };
     $code = $data['code'];
@@ -146,6 +150,16 @@ if ($PATH === "/getshared") {
     
     /* get test data */
     $results = array();
+    // filter function
+    function filter($v) {
+        $newobj;
+        foreach($v as $k => $vv) {
+            if (!in_array($k, ["IP","UID","USERID","ID","created","modified"])) {
+                $newobj[$k] = $vv;
+            }
+        };
+        return $newobj;
+    };
     foreach ($finished as $testname) {
         $prep = $dbc->prepare(
             "SELECT * FROM " . DB_PREFIX . "questions WHERE testname = :testname AND UID = :UID;"
@@ -155,12 +169,31 @@ if ($PATH === "/getshared") {
         } catch (PDOException $Exception) {
             error($Exception);
         }
-        $fetched = $prep->fetchAll();
+        $fetched = $prep->fetchAll(PDO::FETCH_CLASS);
         if (!$fetched) {
             $results[$testname] = false;
         } else {
-            $results[$testname] = $fetched;
+            
+            $filtered = array_map("filter", $fetched);
+            $results[$testname] = $filtered;
         }
+    }
+
+    /* add extra question results (likert) */
+    $prep = $dbc->prepare(
+        "SELECT * FROM " . DB_PREFIX . "extra WHERE UID = :UID;"
+    );
+    try {
+        $prep->execute(array("UID" => $UID));
+    } catch (PDOException $Exception) {
+        error($Exception);
+    }
+    $fetched = $prep->fetchAll();
+    if (!$fetched) {
+        $results['_extra'] = false;
+    } else {
+        $extra = json_decode($fetched[0]['data']);
+        $results['_extra'] = $extra;
     }
 
     pjson($results);

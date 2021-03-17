@@ -3,6 +3,7 @@ import home from "./home.vue";
 import testpage from "./testpage.vue";
 import textpage from "./textpage.vue";
 import results from "./results.vue";
+import likert from "./likert.vue";
 
 const routes = [];
 
@@ -13,8 +14,15 @@ routes.push({
 
 routes.push({
   path: "/results",
+  name: "results",
   component: results,
 });
+
+routes.push({
+  path: "/extra",
+  name: "likert",
+  component: likert
+})
 
 routes.push({
   path: "/test/:testname",

@@ -1,5 +1,6 @@
 <template>
-  <div id="languages" v-if="moreThanOne">
+  <!-- <div id="languages" v-if="moreThanOne"> -->
+  <div id="languages">
     <button
       v-for="(language, short) in $config.languages"
       :key="short"

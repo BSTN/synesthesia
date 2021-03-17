@@ -128,6 +128,19 @@ export const actions = {
       });
     });
   },
+  isFinished(store, testname) {
+    let finished
+    each(store.state.tests[testname].questions, (q, k) => {
+      if (finished === undefined && q.value !== null) {
+        finished = true
+      }
+      if (q.value === null) {
+        finished = false
+      }
+    })
+    if (finished === undefined) return false
+    return finished
+  },
   async nextPage(store) {
     const currentTest = store.state.tests[store.state.active]
     // set totalpages again
@@ -141,6 +154,7 @@ export const actions = {
       await store.dispatch("profile/upload", {}, { root: true });
       return "done"
     }
+    
   }
 };
 

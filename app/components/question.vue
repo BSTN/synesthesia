@@ -100,7 +100,8 @@ export default {
 <style lang="less" scoped>
 #question {
   font-family: Helvetica, sans-serif;
-  margin-bottom: 4em;
+  margin-top: 2em;
+  margin-bottom: 5em;
   text-indent: 0;
   // border-top: 1px solid @fg;
   padding-top: 0.5em;
@@ -109,7 +110,7 @@ export default {
   margin-right: auto;
   #likertoptions {
     position: relative;
-    margin-top: 3em;
+    margin-top: 2em;
     text-indent: 0;
     display: flex;
     flex-direction: row;
@@ -163,6 +164,12 @@ export default {
         position: absolute;
       }
     }
+  }
+}
+@media (max-width: 40rem) {
+  #question {
+    font-size: 0.8rem;
+    line-height: 1.3em; 
   }
 }
 </style>

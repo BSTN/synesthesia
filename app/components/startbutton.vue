@@ -7,5 +7,9 @@
 export default {}
 </script>
 <style lang="less" scoped>
-
+#startbutton {
+  button {
+    font-weight: 300;
+  }
+}
 </style>

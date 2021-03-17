@@ -5,7 +5,9 @@
       <template #left>
         <languages />
       </template>
-      <template #right />
+      <template #right>
+        <router-link to="/results">{{$t('results')}}</router-link>
+      </template>
     </topbar>
     <div id="content">
       <transition name="homeflip" mode="out-in">
@@ -26,6 +28,11 @@
           overview
         </md>
       </transition>
+      <div id="toresults">
+        <router-link to="/results">
+          Klik hier voor de resultaten pagina.
+        </router-link>
+      </div>
       <div id="introtext" class="section" md="intro">
         <md id="abouttext" class="section" md="about" />
       </div>
@@ -72,6 +79,7 @@ export default {
 
   #content {
     padding: 1rem 1.75rem;
+    font-family: "Victor";
     position: relative;
       z-index: 2;
 
@@ -127,7 +135,7 @@ export default {
 
     #introtext {
       border-top: 2px solid @fg;
-      padding: 1rem 0;
+      padding: 2rem 0;
       font-size: 1em;
       font-family: "Victor";
       font-weight: 500;
@@ -174,6 +182,16 @@ export default {
         }
       }
     }
+  }
+}
+
+#toresults {
+  text-align: center;
+  padding: 4rem 1rem;
+  display:block;
+  border-top: 2px solid @fg;
+  a {
+    text-decoration: none;
   }
 }
 </style>

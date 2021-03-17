@@ -52,18 +52,6 @@ export default {
     console.log("%c" + this.$info.sha, "color: #999")
     console.log("%c" + window.location.origin + this.$configbase, "color: #00f")
     console.log("\n\n")
-    // check id and language
-
-    if (!isEmpty(this.$route.query)) {
-      if (this.$route.query.id) {
-        // this.$root.alert({message: "id is " + this.$route.query.id});
-        this.$store.dispatch("profile/set", { USERID: this.$route.query.id });
-      }
-      if (this.$route.query.lang)
-        this.$store.dispatch("profile/set", {
-          language: this.$route.query.lang,
-        });
-    }
 
     // VH fix for mobile
     let vh = window.innerHeight * 0.01;
@@ -76,18 +64,19 @@ export default {
     //   }),
     //   10
     // );
-    var i = 0;
-    window.addEventListener("keydown", (ev) => {
-      if (ev.keyCode === 39) i++;
-      if (ev.keyCode === 37) i--;
-      if (i < 0) i = 0;
-      if (i > 7) i = 7;
-      if (ev.keyCode === 37 || ev.keyCode === 39) this.setTheme(i);
-      // if (ev.keyCode === 13) {
-      //   this.openAlert();
-      // }
-    });
-    this.setTheme(4);
+
+    // var i = 0;
+    // window.addEventListener("keydown", (ev) => {
+    //   if (ev.keyCode === 39) i++;
+    //   if (ev.keyCode === 37) i--;
+    //   if (i < 0) i = 0;
+    //   if (i > 7) i = 7;
+    //   if (ev.keyCode === 37 || ev.keyCode === 39) this.setTheme(i);
+    //   // if (ev.keyCode === 13) {
+    //   //   this.openAlert();
+    //   // }
+    // });
+    // this.setTheme(4);
   },
   methods: {
     openAlert() {

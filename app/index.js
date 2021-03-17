@@ -8,6 +8,8 @@ import VRuntimeTemplate from "v-runtime-template";
 import storePlugin from "./utils/storePlugin";
 import { i18n } from "./utils/i18n";
 import router from './router'
+import { isEmpty } from 'lodash'
+import queryParams from './utils/query-params'
 
 Vue.prototype.$axios = axios;
 Vue.prototype.$cache = {};
@@ -72,6 +74,8 @@ let store = new Vuex.Store({
   modules: storelist,
   plugins: [storePlugin],
 });
+
+queryParams(store);
 
 var app = new Vue({
   el: "#container",

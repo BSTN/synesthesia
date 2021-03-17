@@ -28,7 +28,6 @@ export default {
 <style lang="less" scoped>
 #tests {
   text-align: center;
-  font-family: Helvetica, sans-serif;
   #testlink {
     display:inline-block;
     border: 1px solid @fg;
@@ -47,12 +46,16 @@ export default {
     background-position: center;
     background-size: 180%;
     background-repeat: no-repeat;
+    font-family: Helvetica;
+    box-sizing: border-box;
     span {
       position:absolute;
-      bottom:.5em;
+      bottom:0;
       width: 100%;
       left:0;
       color: @bg;
+      padding: .5rem;
+      box-sizing: border-box;
     }
     &:hover {
       // background: @fg;

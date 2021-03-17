@@ -6,9 +6,11 @@
         <router-link to="/">home</router-link>
       </template>
       <template #right>
+        <button @click="compare = true">{{ $t("compare") }}</button>
         <button @click="print">print</button>
       </template>
     </topbar>
+    <!-- <pre>{{$store.state.shared.profiles}}</pre> -->
     <div id="wrap">
       <div id="tabs">
         <button
@@ -19,42 +21,59 @@
           @click="currentTab = testname"
         >{{ tab.name[$store.state.profile.language] }}</button>
       </div>
+      <!-- <pre>{{score}}</pre> -->
+
+      <div id="dothetest" v-if="!score.total || score.total === null">
+        <router-link :to="'/test/' + currentTab">
+          {{$t('notdone')}}
+        </router-link>
+      </div>
 
       <div id="mainresults">
-        <div id="description" v-if="$tests[testname].results">
-          <div id="result">
-            <score :testname="testname" type="total"></score>
-          </div>
+        <div id="description" v-if="$tests[testname].results && ((score.total && score.total !== null) || activeSharedProfile)">
           <md :md="$tests[testname].results"></md>
+          <label v-if="score.total && score.total !== null">Jouw score voor deze test:</label>
+          <score :testname="testname" type="total" :data="score" v-if="score.total && score.total !== null"></score>
+          <label v-if="activeSharedProfile">De score van {{activeSharedProfile.name}}:</label>
+          <score v-if="activeSharedProfile" :testname="testname" type="total" :data="sharedScore"></score>
         </div>
-        <div id="description" v-if="$tests[testname].results && testinfo.likert">
-          <score type="likert"></score>
-          <div>{{ $t("likert") }}</div>
+        <div id="description" v-if="$tests[testname].results && testinfo.likert && (likertScore || likertSharedScore)">
+          <div id="md" v-if="testinfo.likert">{{ $t("likert") }}</div>
+          <label v-if="likertScore">Jouw score voor de extra vragenlijst:</label>
+          <score type="likert" :data="likertScore" v-if="likertScore"></score>
+          <label v-if="activeSharedProfile">De score van {{activeSharedProfile.name}}:</label>
+          <score v-if="activeSharedProfile" type="likert" :data="likertSharedScore"></score>
         </div>
       </div>
-      
-      <button @click="compare = true">{{ $t("compare") }}</button>
 
-      <div id="resultlist">
-        <!-- <symbolresult
-          v-for="s in symbols"
-          :key="JSON.stringify(s)"
-          :symbol="s"
-          :testname="testname"
-        /> -->
-        <score
-          v-for="s in symbols"
-          :key="JSON.stringify(s)"
-          :symbol="s"
-          :testname="testname"
-        />
+      <div id="detailed">
+        <div id="resultlist" v-if="score.total && score.total !== null">
+          <label>Jouw score per item:</label>
+          <score
+            v-for="(s, symbol) in score.symbols"
+            :key="testname + symbol"
+            :data="s"
+            :testname="testname"
+          />
+        </div>
+        <div id="resultlist" v-if="sharedScore.total && sharedScore.total !== null">
+          <label>De score per item van {{activeSharedProfile.name}}:</label>
+          <score
+            v-for="(s, symbol) in sharedScore.symbols"
+            :key="testname + symbol"
+            :data="s"
+            :testname="testname"
+          />
+        </div>
       </div>
     </div>
   </div>
 </template>
 
 <script>
+import score from './utils/score'
 import { each } from 'lodash';
+import { mapGetters } from 'vuex';
 export default {
   data() {
     return {
@@ -66,6 +85,15 @@ export default {
     testname() {
       return this.currentTab;
       // return this.$store.state.tests.active || "graphemes";
+    },
+    ...mapGetters({
+      activeSharedProfile: "shared/active"
+    }),
+    sharedData () {
+      if (this.$store.state.shared.active && (this.$store.state.shared.active in this.$store.state.shared.profiles)) {
+        return this.$store.state.shared.profiles[this.$store.state.shared.active]
+      }
+      return false
     },
     testinfo () {
       return this.$tests[this.currentTab]
@@ -87,15 +115,21 @@ export default {
       }
       return result / 34 * 100
     },
-    scale () {
-      return 6
+    likertScore () {
+      return score.likert(this.$store.state.extra)
     },
-    totalScore () {
-      // calculate score
-      return (3.4 / this.scale) * 100
+    likertSharedScore () {
+      if (!this.sharedData || !this.sharedData.data) return false
+      return score.likert(this.sharedData.data['_extra'])
     },
-    cutoff () {
-      return (4.5 / this.scale) * 100
+    score () {
+      let questions = this.$store.state.tests.tests[this.testname].questions
+      return score.all(this.$tests[this.testname], questions)
+    },
+    sharedScore () {
+      if (!this.$store.state.shared.profiles[this.$store.state.shared.active]) { return false }
+      const questions = this.$store.state.shared.profiles[this.$store.state.shared.active].data[this.testname]
+      return score.all(this.$tests[this.testname], questions)
     },
     symbols() {
       let symbols = [];
@@ -119,6 +153,9 @@ export default {
         this.fill();
       }
     });
+    if (this.$route.params.testname) {
+      this.currentTab = this.$route.params.testname
+    }
   },
   methods: {
     print() {
@@ -204,18 +241,41 @@ export default {
     }
   }
 }
+
+#dothetest {
+  text-align: center;
+  border: 2px solid @fg;
+  padding: 1rem;
+  max-width: 20rem;
+  margin: 0 auto 4rem;
+  border-radius: 0.5rem;
+  a {
+    text-decoration: none;
+  }
+}
+
 #mainresults {
   display: flex;
-  justify-content: center;
-  
+  justify-content: space-around;
+  max-width: 40rem;
+  margin: 0 auto;
+  label {
+    margin-bottom:0.5rem;
+  }
 }
 #description {
   font-size: 0.75rem;
   width: 16rem;
   max-width: 100%;
-  margin: 0 3rem;
+  margin: 0 1rem;
   margin-bottom: 3rem;
   line-height: 1.5em;
+  > div {
+    max-width: 16rem;
+  }
+  #md {
+    min-height: 9rem;
+  }
 
   /deep/ h1,
   /deep/ h2,
@@ -239,6 +299,9 @@ export default {
     flex-shrink: 0;
   }
 }
+#detailed {
+  display: flex;
+}
 #resultlist {
   // min-width: 50%;
   display: grid;
@@ -247,7 +310,7 @@ export default {
   font-size: 0.75rem;
   width: 20rem;
   margin: 0 auto;
-  max-width: calc(100% - 2rem);
+  max-width: 100%;
 }
 
 @media (max-width: 40rem) {
