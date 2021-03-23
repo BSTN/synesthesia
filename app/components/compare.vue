@@ -6,14 +6,14 @@
         
         <md md="share.instructions" id="instructions"></md>
         
-        <label>
+        <label v-if="$store.state.profile.SHARED">
           Jouw unieke code:
         </label>
-        <div id="unique">{{$store.state.profile.SHARED}}</div>
+        <div id="unique" v-if="$store.state.profile.SHARED">{{$store.state.profile.SHARED}}</div>
 
         <!-- doe eerst een test om je data te kunnen delen -->
 
-        <label v-if="Object.keys(profiles).length > 0">Selecteer een deelnemer:</label>
+        <label v-if="Object.keys(profiles).length > 0">{{$t('selecttocompare')}}</label>
         <div id="list" v-if="Object.keys(profiles).length > 0">
           <div id="profile" v-for="(profile,id) in profiles" :key="id" @click="setActiveProfile(id)" :class="{active: $store.state.shared.active === id}">
             <span class='checkbox'></span>
@@ -21,14 +21,19 @@
             <button @click.stop="remove(id)" class="delete"></button>
           </div>
         </div>
-        <button>ok</button>
-        <div id="add">
-          <button id="closed" @click="close()"></button>
-          <label>Vul hier de code in om een deelnemer toe te voegen:</label>
-          <input type="text" @keydown.enter="addProfile()" v-model="sharedCode" />
-          <label>Geef dit profiel een naam (alleen voor jou zichtbaar):</label>
-          <input type="text" @keydown.enter="addProfile()" v-model="sharedName" />
-          <button id="addprofile" @click="addProfile()">toevoegen</button>
+        <button id="addnew" class='button' @click="add = true">{{$t('addsharedresults')}}</button>
+        <button class='button' @click="close()">ok</button>
+        <button id="closed" @click="close()"></button>
+        
+        <div id="add" v-if="add" @click="add = false">
+          <div id="frame" @click.stop>
+            <button id="closed" @click="add = false"></button>
+            <label>{{$t('fillcodehere')}}</label>
+            <input type="text" @keydown.enter="addProfile()" v-model="sharedCode" />
+            <label>{{$t('giveprofilename')}}</label>
+            <input type="text" @keydown.enter="addProfile()" v-model="sharedName" />
+            <button id="addprofile" @click="addProfile()" class="button">ok</button>
+          </div>
         </div>
       </div>
     </div>
@@ -40,7 +45,8 @@ export default {
   data() {
     return {
       sharedCode: "YqojeH1KtNrQoLzvZHTrFHGk795DXIyd",
-      sharedName: "Abc"
+      sharedName: "Abc",
+      add: false
     };
   },
   computed: {
@@ -77,7 +83,7 @@ export default {
     async addProfile() {
       if (this.sharedCode in this.$store.state.shared.profiles) {
         await this.$root.alert({
-          message: "Profile already exists"
+          message: this.$t('profilealreadyexists')
         });
         return false
       }
@@ -89,6 +95,7 @@ export default {
           console.warn(e);
         });
       if (data) {
+        this.add = false
         let profile = {};
         profile[this.sharedCode] = {
           name: this.sharedName,
@@ -118,14 +125,16 @@ export default {
     max-width: calc(100% - 2rem);
     background: @bg;
     border-radius: 0.5em;
-    min-height: 50vh;
+    min-height: auto;
     margin: 3rem auto;
-    padding: 3rem 2rem;
+    padding: 2rem 2rem;
     position: relative;
+    clear:both;
+    overflow: auto;
     @media (max-width: 30rem) {
-      margin-top: 1rem;
+      margin-top: .5rem;
       max-width: calc(100% - 1rem);
-      padding: 3rem 1rem;
+      padding: 3rem 1rem 1rem;
     }
     #closed {
       position: absolute;
@@ -139,6 +148,7 @@ export default {
     input {
       width: 100%;
       margin-bottom: 1rem;
+
     }
   }
 }
@@ -147,6 +157,7 @@ export default {
   margin-bottom: 2rem;
   border: 1px solid @fg;
   border-radius: 0.25rem;
+  font-size: 0.8em;
   #profile {
     border-bottom: 1px solid @fg;
     &:last-child {
@@ -220,20 +231,39 @@ input {
   width: 100%;
   box-sizing: border-box;
   border-radius: 0.25em;
+  border: 0;
+  background: rgba(#000,0.2);
+  box-shadow: inset 0 0 0.2em rgba(#000,0.3);
 }
 
 #instructions {
   font-size: 0.75em;
-  opacity: 0.5;
+  // opacity: 0.5;
+  margin-bottom: 2rem;
   /deep/ h1 {
     margin-bottom: .5em;
   }
+}
+
+#unique {
+  margin-bottom: 3rem;
 }
 
 #add {
   clear:both;
   overflow: auto;
   margin-bottom: 2rem;
+  position:fixed;
+  z-index:9;
+  top:0;
+  left:0;
+  overflow: auto;
+  background: rgba(#000,0.5);
+  width: 100%;
+  height: 100%;
+  #frame {
+    width: 24rem;
+  }
 }
 
 #addprofile {

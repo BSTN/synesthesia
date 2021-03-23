@@ -85,6 +85,35 @@
   }
 }
 
+.button {
+    display: block;
+    font-size: 0.8em;
+    // max-width: 10em;
+    font-family: Helvetica, sans-serif;
+    letter-spacing: 0;
+    padding: 0 0;
+    line-height: 2em;
+    margin-bottom: 0;
+    cursor: pointer;
+
+    border: 1px solid @fg;
+    padding: 0.65em 1.5em 0.65em 1.5em;
+    line-height: 1em;
+    display: inline-block;
+    border-radius: 0.25em;
+    background: @bg;
+    transition: all .3s;
+    text-decoration: none;
+
+    &:hover {
+        background: @fg;
+        // background: @syn;
+        // border-color: @syn;
+        color: @bg;
+        text-decoration: none;
+    }
+}
+
 .textpage {
   // background: @bg;
   #md {

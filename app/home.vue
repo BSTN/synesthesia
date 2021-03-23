@@ -6,7 +6,7 @@
         <languages />
       </template>
       <template #right>
-        <router-link to="/results">{{$t('results')}}</router-link>
+        <router-link to="/results">{{$t('myresults')}}</router-link>
       </template>
     </topbar>
     <div id="content">
@@ -28,11 +28,11 @@
           overview
         </md>
       </transition>
-      <div id="toresults">
+      <!-- <div id="toresults">
         <router-link to="/results">
           Klik hier voor de resultaten pagina.
         </router-link>
-      </div>
+      </div> -->
       <div id="introtext" class="section" md="intro">
         <md id="abouttext" class="section" md="about" />
       </div>
@@ -124,7 +124,7 @@ export default {
     }
 
     #overview {
-      min-height: 80vh;
+      // min-height: 80vh;
       margin-bottom: 4rem;
 
       /deep/ #md {

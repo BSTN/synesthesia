@@ -30,19 +30,20 @@
       </div>
 
       <div id="mainresults">
-        <div id="description" v-if="$tests[testname].results && ((score.total && score.total !== null) || activeSharedProfile)">
-          <md :md="$tests[testname].results"></md>
+        <div id="description" v-if="((score.total && score.total !== null) || activeSharedProfile)">
+          <!-- <md :md="$tests[testname].results"></md> -->
+          <div id="md" v-if="testinfo.resulttext">{{ testinfo.resulttext[this.$store.state.profile.language] }}</div>
           <label v-if="score.total && score.total !== null">Jouw score voor deze test:</label>
           <score :testname="testname" type="total" :data="score" v-if="score.total && score.total !== null"></score>
           <label v-if="activeSharedProfile">De score van {{activeSharedProfile.name}}:</label>
-          <score v-if="activeSharedProfile" :testname="testname" type="total" :data="sharedScore"></score>
+          <score class='shared'  v-if="activeSharedProfile" :testname="testname" type="total" :data="sharedScore"></score>
         </div>
-        <div id="description" v-if="$tests[testname].results && testinfo.likert && (likertScore || likertSharedScore)">
+        <div id="description" v-if="testinfo.likert && (likertScore || likertSharedScore)">
           <div id="md" v-if="testinfo.likert">{{ $t("likert") }}</div>
           <label v-if="likertScore">Jouw score voor de extra vragenlijst:</label>
           <score type="likert" :data="likertScore" v-if="likertScore"></score>
           <label v-if="activeSharedProfile">De score van {{activeSharedProfile.name}}:</label>
-          <score v-if="activeSharedProfile" type="likert" :data="likertSharedScore"></score>
+          <score class='shared' v-if="activeSharedProfile" type="likert" :data="likertSharedScore"></score>
         </div>
       </div>
 
@@ -211,19 +212,28 @@ export default {
   // margin: 2rem auto;
   max-width: calc(100% - 3rem);
   margin: 0 auto;
+  @media (max-width: 30rem) {
+    max-width: calc(100% - 1rem);
+  }
 }
 
 #tabs {
   text-align: center;
-  padding: 2em 0 3em;
+  padding: 1em 0 3em;
 
   #tab {
     text-transform: capitalize;
     position: relative;
-    padding: 0.15em 0 0.2em;
+    padding: 0.5em 1em 0.4em;
     display: inline-block;
-    margin: 0 1em 0.5em;
+    margin: 0 .5em 0.5em;
     opacity: 0.5;
+    border-radius: 0.25em;
+    border: 1px solid @fg;
+    color: @fg;
+
+    color:@fg;
+    background: @bg;
 
     &:last-child {
       &::after {
@@ -233,6 +243,8 @@ export default {
 
     &:hover,
     &.active {
+      color:@bg;
+      background: @fg;
       // background: @fg;
       // color: @bg;
       // border-radius: 0.25em;
@@ -301,16 +313,25 @@ export default {
 }
 #detailed {
   display: flex;
+  @media (max-width: 50rem) {
+    display:block;
+  }
 }
 #resultlist {
   // min-width: 50%;
-  display: grid;
-  grid-gap: 1rem;
-  grid-template-columns: 1fr;
+  // display: grid;
+  // grid-gap: 1rem;
+  // grid-template-columns: 1fr;
   font-size: 0.75rem;
   width: 20rem;
   margin: 0 auto;
   max-width: 100%;
+  label {
+    opacity: 1;
+    padding: 2rem 1rem;
+    text-align: center;
+    font-size: 1rem;
+  }
 }
 
 @media (max-width: 40rem) {

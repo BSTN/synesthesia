@@ -217,7 +217,7 @@ export default {
   border: 1px solid @fg;
   border-radius: 0.25em;
   width: 100%;
-  }
+}
 #titlebar {
   display: flex;
   padding: 0.25em 1em;
