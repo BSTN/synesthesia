@@ -100,7 +100,7 @@ export default {
       }
       // no data
       if (!this.data || !this.data.score) return false
-      if (this.testType === 'imagesound') {
+      if (this.$tests[this.testname].type === 'imagesound') {
         if (isNaN(this.data.score)) return false
         return this.data.score * 100
       }
@@ -112,7 +112,7 @@ export default {
       if (!this.data) return false
       if (this.type === 'total') {
         if (this.data.total === undefined || isNaN(this.data.total)) return false
-        return parseInt(this.data.total * 100) / 100
+        return this.data.total === 0 ? 0 : parseInt(this.data.total * 100) / 100
       }
       // likert
       if (this.type === 'likert') {
@@ -122,7 +122,7 @@ export default {
         return this.data.score
       }
       // no data
-      if (!this.data || !this.data.score) return false
+      if (!this.data || isNaN(this.data.score)) return false
       // if a symbol
       return this.data.score
     },

@@ -24,7 +24,7 @@ function distance (type, values) {
     let b = Math.abs(v[2] - all[(parseInt(k) + 1) % all.length][2]);
     distance = distance + r + g + b;
   });
-  distance = Math.round(distance * 100) / 100;
+  distance = distance > 0 ? Math.round(distance * 100) / 100 : 0;
   return distance;
 }
 
@@ -77,7 +77,7 @@ function all(testconfig, questions) {
       if (values.length === 1) v.score = false
       if (values.length === 2) v.score = values[0] === values[1] ? 1 : 0
       if (values.length === 3) {
-        v.score = uniq(values).length > 1 ? 0.5 : 1
+        v.score = uniq(values).length > 1 ? 0 : 1
       }
     } else {
       v.score = distance(testconfig.type, values);
@@ -94,7 +94,16 @@ function all(testconfig, questions) {
         count = count + 1
       }
     })
-    if (total !== undefined) total = total / count
+    if (total !== undefined && count > 1) total = total === 0 ? 0 : total / count
+  } else if (testconfig.type === "imagesound") {
+    each(bundled, x => {
+      if (total === undefined) total = 0
+      if (!isNaN(x.score) && x.score !== false) {
+        total = total + x.score
+        count = count + 1
+      }
+    })
+    if (total !== undefined && count > 1) total = total === 0 ? 0 : total / count
   }
   return { total , symbols: bundled }
 }

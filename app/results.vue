@@ -10,7 +10,7 @@
         <button @click="print">print</button>
       </template>
     </topbar>
-    <!-- <pre>{{$store.state.shared.profiles}}</pre> -->
+    <!-- <pre>{{score}}</pre> -->
     <div id="wrap">
       <div id="tabs">
         <button
@@ -23,32 +23,32 @@
       </div>
       <!-- <pre>{{score}}</pre> -->
 
-      <div id="dothetest" v-if="!score.total || score.total === null">
+      <div id="dothetest" v-if="isNaN(score.total) || score.total === null">
         <router-link :to="'/test/' + currentTab">
           {{$t('notdone')}}
         </router-link>
       </div>
 
       <div id="mainresults">
-        <div id="description" v-if="((score.total && score.total !== null) || activeSharedProfile)">
+        <div id="description" v-if="((!isNaN(score.total) && score.total !== null) || activeSharedProfile)">
           <!-- <md :md="$tests[testname].results"></md> -->
           <div id="md" v-if="testinfo.resulttext">{{ testinfo.resulttext[this.$store.state.profile.language] }}</div>
-          <label v-if="score.total && score.total !== null">Jouw score voor deze test:</label>
-          <score :testname="testname" type="total" :data="score" v-if="score.total && score.total !== null"></score>
-          <label v-if="activeSharedProfile">De score van {{activeSharedProfile.name}}:</label>
+          <label v-if="!isNaN(score.total) && score.total !== null">{{$t('yourscorethistest')}}</label>
+          <score :testname="testname" type="total" :data="score" v-if="!isNaN(score.total) && score.total !== null"></score>
+          <label v-if="activeSharedProfile">{{$t("sharedscorethistest", {name: activeSharedProfile.name})}}</label>
           <score class='shared'  v-if="activeSharedProfile" :testname="testname" type="total" :data="sharedScore"></score>
         </div>
         <div id="description" v-if="testinfo.likert && (likertScore || likertSharedScore)">
           <div id="md" v-if="testinfo.likert">{{ $t("likert") }}</div>
-          <label v-if="likertScore">Jouw score voor de extra vragenlijst:</label>
+          <label v-if="likertScore">{{$t('yourscorelikerttest')}}</label>
           <score type="likert" :data="likertScore" v-if="likertScore"></score>
-          <label v-if="activeSharedProfile">De score van {{activeSharedProfile.name}}:</label>
-          <score class='shared' v-if="activeSharedProfile" type="likert" :data="likertSharedScore"></score>
+          <label v-if="activeSharedProfile">{{$t('sharedscorelikerttest', {name: activeSharedProfile.name})}}</label>
+          <score class='shared' v-if="likertSharedScore" type="likert" :data="likertSharedScore"></score>
         </div>
       </div>
 
       <div id="detailed">
-        <div id="resultlist" v-if="score.total && score.total !== null">
+        <div id="resultlist" v-if="!isNaN(score.total) && score.total !== null">
           <label>Jouw score per item:</label>
           <score
             v-for="(s, symbol) in score.symbols"
@@ -57,7 +57,7 @@
             :testname="testname"
           />
         </div>
-        <div id="resultlist" v-if="sharedScore.total && sharedScore.total !== null">
+        <div id="resultlist" v-if="!isNaN(sharedScore.total) && sharedScore.total !== null">
           <label>De score per item van {{activeSharedProfile.name}}:</label>
           <score
             v-for="(s, symbol) in sharedScore.symbols"

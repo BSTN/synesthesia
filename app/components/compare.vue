@@ -44,8 +44,8 @@ export default {
   props: ["open"],
   data() {
     return {
-      sharedCode: "YqojeH1KtNrQoLzvZHTrFHGk795DXIyd",
-      sharedName: "Abc",
+      sharedCode: "",
+      sharedName: "",
       add: false
     };
   },

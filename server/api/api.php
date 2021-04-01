@@ -384,8 +384,11 @@ if ($PATH === "/update") {
     $desttempunzip = $desttemp . "/unzip";
     $desttempjson = $desttemp . "/info.json";
     $destjson = $dest . "/info.json";
-    
+
     // download data
+    if (!is_dir($desttemp)) {
+        errormessage('Directory does not exist', 'update.php');
+    }
     if (!@file_put_contents($desttempzip, fopen("https://github.com/$gitname/$repository/archive/master.zip", "r"))) {
         errormessage('Could not download or write git zip file.', 'update.php');
     };
@@ -405,6 +408,8 @@ if ($PATH === "/update") {
     $res = $zip->open($desttempzip);
     if ($res === true) {
         $zip->extractTo($desttempunzip);
+        // chown($desttempunzip, 'synesthesie');
+        // chgrp($desttempunzip, 'synesthesie');
         $zip->close();
     } else {
         errormessage('Could not unzip file.', 'update.php');
@@ -452,9 +457,24 @@ if ($PATH === "/update") {
             errormessage('Could not remove destination folder.', 'update.php');
         }
     }
-    if (!@rename($gitfolder, $dest)) {
-        errormessage('Could not move zip folder to destination.', 'update.php');
-    };
+
+    foreach (
+        $iterator = new \RecursiveIteratorIterator(
+        new \RecursiveDirectoryIterator($gitfolder, \RecursiveDirectoryIterator::SKIP_DOTS),
+        \RecursiveIteratorIterator::SELF_FIRST) as $item
+        ) {
+        if ($item->isDir()) {
+            mkdir($dest . DIRECTORY_SEPARATOR . $iterator->getSubPathName());
+        } else {
+            copy($item, $dest . DIRECTORY_SEPARATOR . $iterator->getSubPathName());
+        }
+    }
+    // if (!copy($gitfolder, $dest)) {
+    //     errormessage('failed', 'update.php');
+    // }
+    // if (!@rename($gitfolder, $dest)) {
+    //     errormessage('Could not move zip folder to destination.', 'update.php');
+    // };
     if (!@rename($desttempjson, $destjson)) {
         errormessage('Could not move info.json to destination.', 'update.php');
     };
