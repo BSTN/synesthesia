@@ -45,6 +45,7 @@
       </div>
     </div>
     <div id="frame">
+      {{cutoff}}
       <div id="slider" v-if="!isNaN(value)">
         <div id="value" :style="{ left: value + '%' }"></div>
         <div id="cutoff" :style="{ width: 100 - cutoff + '%' }" v-if="cutoff" :class="{reverse}"></div>
@@ -79,10 +80,10 @@ export default {
         return (18 / 30) * 100
       } else if (this.$tests[this.testname].type === 'imagesound') {
         return false
-      } else if (this.$tests[this.testname].type === 'grapheme' && this.data.data && this.data.data.length === 2) {
+      } else if (this.$tests[this.testname].type === 'grapheme' && ((this.data.data && this.data.data.length === 2) || this.data.hasDoubles)) {
         // in case grapheme symbol with only 2 values
         // return this.data.score === 1 ? 100 : 0 
-        return 50
+        return this.$tests[this.testname].cutoff * 100
       } else {
         let cutoff = this.$tests[this.testname].cutoff
         return ((6 - cutoff) / 6) * 100
@@ -90,7 +91,7 @@ export default {
     },
     reverse () {
       if (this.type === 'likert') return false
-      if (this.$tests[this.testname].type === 'grapheme' && this.data.data && this.data.data.length === 2) { return false }
+      if (this.$tests[this.testname].type === 'grapheme' && ((this.data.data && this.data.data.length === 2) || this.data.hasDoubles)) { return false }
       return !(["imagesound"].indexOf(this.$tests[this.testname].type) >= 0)
     },
     value () {
@@ -99,7 +100,7 @@ export default {
       if (this.type === 'total') {
         if (this.data.total === undefined || isNaN(this.data.total)) return false
         if (this.data.hasDoubles) {
-          return this.data.score
+          return (this.data.total / Object.keys(this.data.symbols).length) * 100
         }
         return ((6 - this.data.total) / 6) * 100
       }
