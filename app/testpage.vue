@@ -122,7 +122,7 @@ export default {
       this.$store.commit("tests/setActive", this.testname);
     }
     /* get uid */
-    if (this.$store.state.profile.UID === null) {
+    if (this.$store.state.profile.UID === null && (this.$store.state.profile.USERID || this.$config.storeall)) {
       let x = false;
       try {
         // request server

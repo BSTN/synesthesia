@@ -6,7 +6,7 @@
         <router-link to="/">home</router-link>
       </template>
       <template #right>
-        <button @click="compare = true">{{ $t("compare") }}</button>
+        <button @click="compare = true" v-if="$store.state.profile.USERID">{{ $t("compare") }}</button>
         <button @click="print">print</button>
       </template>
     </topbar>
@@ -140,11 +140,18 @@ export default {
       return symbols.sort();
     },
     tabs() {
-      const tabs = [];
-      each(this.$tests, (v, k) => {
-        // if (v.hidden)
-        tabs.push(v.name[this.$store.state.profile.language]);
-      });
+      // todo: move this to config?
+      let template = document.getElementById(`templatetests`);
+      let tabs = {}
+      if (template) {
+        template = template.innerHTML
+        let dom = new DOMParser().parseFromString(template, 'text/html');
+        let new_element = dom.querySelector('tests');
+        let list = new_element.getAttribute('list').split(',')
+        for(let i in list) {
+          tabs[list[i]] = this.$tests[list[i]]
+        }
+      }
       return tabs;
     }
   },
@@ -251,6 +258,15 @@ export default {
       opacity: 1;
       // border-bottom: 2px solid @fg;
     }
+    @media print {
+      display:none;
+      &.active {
+        margin: 0 auto;
+        display:block;
+        background: 0;
+        border: 1px solid @fg;
+      }
+    }
   }
 }
 
@@ -264,6 +280,13 @@ export default {
   a {
     text-decoration: none;
   }
+  &:hover {
+    background: @fg;
+    color: @bg;
+    a {
+      color:inherit;
+    }
+  }
 }
 
 #mainresults {
@@ -273,6 +296,11 @@ export default {
   margin: 0 auto;
   label {
     margin-bottom:0.5rem;
+  }
+  @media print {
+    display:block;
+    text-align: center;
+    max-width: 100%;
   }
 }
 #description {
@@ -298,6 +326,11 @@ export default {
     margin: 0 auto 1em;
     text-align: center;
     max-width: 70%;
+  }
+  @media print {
+    display:inline-block;
+    text-align: left;
+    margin: 0 2rem !important;
   }
 }
 #inframe {
@@ -331,6 +364,9 @@ export default {
     padding: 2rem 1rem;
     text-align: center;
     font-size: 1rem;
+  }
+  @media print {
+    width: 100%;
   }
 }
 

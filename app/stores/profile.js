@@ -42,14 +42,16 @@ export const actions = {
     data = merge(data, cloneDeep(store.state));
     data.finishedtests = data.finishedtests.join(',');
     delete data.SHARED;
-    let success = await axios
-        .post("./api/store", {
-          table: "profile",
-          UID: store.state.UID,
-          data: data,
-        })
-        .catch((err) => {
-          return { error: "Could not store data", err: err.response.data };
-        });
+    if (store.state.USERID || config.storeall) {
+      let success = await axios
+          .post("./api/store", {
+            table: "profile",
+            UID: store.state.UID,
+            data: data,
+          })
+          .catch((err) => {
+            return { error: "Could not store data", err: err.response.data };
+          });
+      }
   }
 };

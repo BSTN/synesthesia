@@ -117,6 +117,9 @@ export const actions = {
         const type = TESTS[testname].type
         if (type === 'imagesound') {
           q.value = Math.random() > 0.5 ? q.symbol.im1 : q.symbol.im2
+        } else if (TESTS[testname].type === 'grapheme' && TESTS[testname].selector === 'colorgrid'){
+          const colors = ["fcd731","d80916","915311","a1d255","e26c22","92173d","136825","4db2fc","083d8a","6b3497","0e6b78","f373aa","ffffff","cbcbcb","595959","000000"]
+          q.value = colors[Math.round(Math.random() * (colors.length - 1))]
         } else {
           if (Math.random() > 0.9) q.value = "nocolor";
           else

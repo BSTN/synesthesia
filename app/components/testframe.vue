@@ -78,23 +78,25 @@ export default {
       // set timing
       await this.storeTime();
 
-      // send data to server
-      let data = JSON.parse(JSON.stringify(this.q));
-      data.testname = this.testname;
-      data.setname = this.setname;
-      let err = await this.$axios
-        .post("./api/store", {
-          table: "questions",
-          UID: this.$store.state.profile.UID,
-          data: data,
-        })
-        .catch((err) => {
-          return { error: "Could not store data", err: err.response.data };
-        });
+      // send data to server (if userid)
+      if (this.$store.state.profile.USERID) {
+        let data = JSON.parse(JSON.stringify(this.q));
+        data.testname = this.testname;
+        data.setname = this.setname;
+        let err = await this.$axios
+          .post("./api/store", {
+            table: "questions",
+            UID: this.$store.state.profile.UID,
+            data: data,
+          })
+          .catch((err) => {
+            return { error: "Could not store data", err: err.response.data };
+          });
 
-      if (err.error) {
-        console.warn("Could not store data", err.err);
-        return false;
+        if (err.error) {
+          console.warn("Could not store data", err.err);
+          return false;
+        }
       }
 
       // scroll to top (for mobile)

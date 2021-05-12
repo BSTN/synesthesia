@@ -33,25 +33,27 @@ export default {
   methods: {
     async submit() {
       this.loading = true;
-      await this.$axios
-        .post("./api/store", {
-          table: "extra",
-          data: { values: JSON.parse(JSON.stringify(this.$store.state.extra)) },
-          UID: this.$store.state.profile.UID,
-        })
-        .then((x) => {
-          this.loading = false;
-        })
-        .catch((err) => {
-          this.loading = false;
-          this.message = "Could not store data, please try again.";
-          // make this global message
-          if (this.timer) clearTimeout(this.timer);
-          this.timer = setTimeout(() => {
-            this.message = false;
-          }, 2000);
-          return false;
-        });
+      if (this.$store.state.profile.USERID || this.$config.storeall) {
+        await this.$axios
+          .post("./api/store", {
+            table: "extra",
+            data: { values: JSON.parse(JSON.stringify(this.$store.state.extra)) },
+            UID: this.$store.state.profile.UID,
+          })
+          .then((x) => {
+            this.loading = false;
+          })
+          .catch((err) => {
+            this.loading = false;
+            this.message = "Could not store data, please try again.";
+            // make this global message
+            if (this.timer) clearTimeout(this.timer);
+            this.timer = setTimeout(() => {
+              this.message = false;
+            }, 2000);
+            return false;
+          });
+      }
       if (this.to === 'nextPage') this.$store.dispatch('tests/nextPage');
       else this.$router.push({ path: this.to });
     },

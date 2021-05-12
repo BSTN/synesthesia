@@ -28,7 +28,6 @@ export default {
   },
   methods: {
     async isFinished (test) {
-      console.log(test);
       return await this.$store.dispatch('tests/isFinished', test)
     }
   }
@@ -38,9 +37,10 @@ export default {
 #tests {
   text-align: center;
   #testlink {
-    display:inline-block;
+    display:block;
     // border: 1px solid @fg;
-    width: 10rem;
+    // width: 10rem;
+    min-width: 10rem;
     max-width: calc(100% - 2rem);
     height: 6rem;
     margin: 1rem;
@@ -60,6 +60,7 @@ export default {
     overflow: hidden;
     display:inline-flex;
     flex-direction: column;
+    vertical-align: middle;
     --c1: #fdfdb4;
     --c2: #ccccff;
     &:nth-child(2) {
@@ -87,17 +88,18 @@ export default {
     }
     span {
       color: @fg;
-      padding: 2em .5em; 
+      padding: .5em 1em; 
       // font-size: 0.8rem;
-      border: 2px solid @fg;
+      border: 1px solid @fg;
       border-radius: 0.25rem;
       background: @bg;
+      display: block;
     }
     &:hover {
       // background: @fg;
       color: @bg;
       background-size: 100%;
-      transform: scale(1.05);
+      // transform: scale(1.05);
       span {
         background: @fg;
         color: @bg;
@@ -109,8 +111,8 @@ export default {
       color: @bg;
       font-size: 0.75rem;
       span {
-        margin-bottom: 0.5rem;
-        font-size: 1rem;
+        // margin-bottom: 0.5rem;
+        // font-size: 1rem;
       }
     }
   }

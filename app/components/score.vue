@@ -69,6 +69,7 @@ export default {
         return this.value > this.cutoff
       } else {
         if (!this.realValue) return false
+        /// somewhere here!
         return this.realValue < this.$tests[this.testname].cutoff
       }
     },
@@ -78,6 +79,10 @@ export default {
         return (18 / 30) * 100
       } else if (this.$tests[this.testname].type === 'imagesound') {
         return false
+      } else if (this.$tests[this.testname].type === 'grapheme' && this.data.data && this.data.data.length === 2) {
+        // in case grapheme symbol with only 2 values
+        // return this.data.score === 1 ? 100 : 0 
+        return 50
       } else {
         let cutoff = this.$tests[this.testname].cutoff
         return ((6 - cutoff) / 6) * 100
@@ -85,6 +90,7 @@ export default {
     },
     reverse () {
       if (this.type === 'likert') return false
+      if (this.$tests[this.testname].type === 'grapheme' && this.data.data && this.data.data.length === 2) { return false }
       return !(["imagesound"].indexOf(this.$tests[this.testname].type) >= 0)
     },
     value () {
@@ -92,6 +98,9 @@ export default {
       // total
       if (this.type === 'total') {
         if (this.data.total === undefined || isNaN(this.data.total)) return false
+        if (this.data.hasDoubles) {
+          return this.data.score
+        }
         return ((6 - this.data.total) / 6) * 100
       }
       // likert
@@ -105,14 +114,23 @@ export default {
         return this.data.score * 100
       }
       // if a symbol
+      if (this.data.hasDoubles || (this.data.data && this.data.data.length === 2)) {
+        return this.data.score * 100
+      }
       return (this.data.score / 6) * 100
       // return ((6 - this.data.score) / 6) * 100
     },
     realValue () {
       if (!this.data) return false
       if (this.type === 'total') {
-        if (this.data.total === undefined || isNaN(this.data.total)) return false
-        return this.data.total === 0 ? 0 : parseInt(this.data.total * 100) / 100
+        if (this.data.total === undefined || isNaN(this.data.total)) {
+          return false
+        } else {
+          if (this.data.hasDoubles) {
+            return this.data.total
+          }
+          return this.data.total === 0 ? 0 : parseInt(this.data.total * 100) / 100
+        }
       }
       // likert
       if (this.type === 'likert') {
@@ -143,7 +161,7 @@ export default {
     },
     text () {
       if (this.type === 'likert' && !this.data) {
-        return "Niet genoeg data";
+        return this.$t('novalue');
       }
       if (this.realValue === false) return this.$t('novalue')
       return 'Score: ' + this.realValue
@@ -217,6 +235,16 @@ export default {
   border: 1px solid @fg;
   border-radius: 0.25em;
   width: 100%;
+  -webkit-print-color-adjust:exact;
+  @media print {
+    border: 1px solid #ccc;
+    --fg: #555;
+    --bg: #fff;
+    break-inside: avoid;
+    display:inline-block;
+    max-width: 20rem;
+    margin-right: 1rem;
+  }
 }
 #titlebar {
   display: flex;
@@ -232,10 +260,18 @@ export default {
     font-size: 0.8em;
     text-transform: uppercase;
   }
+  @media print {
+    background: #eee;
+    color: #000;
+    box-shadow: inset 0 0 0 1000px #eee;
+  }
 }
 #text {
   margin-top: 0.25em;
   font-size: 0.8em;
+  @media print {
+    color: #000;
+  }
 }
 #media {
   background: @fg;
@@ -273,6 +309,9 @@ export default {
     background: @fg;
     opacity: 0.125;
   }
+  @media print {
+    box-shadow: 0 0 5px #ccc;
+  }
 }
 #value {
   position: absolute;
@@ -289,6 +328,9 @@ export default {
     width: 4px;
     background: @fg;
     border-radius: 0.25em;
+    @media print {
+      box-shadow: inset 0 0 0 1000px #000;
+    }
   }
   .synesthesia & {
     &:before {
@@ -310,6 +352,11 @@ export default {
     right: auto;
     left: 0;
     border-radius: 0.25em 0 0 0.25em;
+  }
+  @media print {
+    background: #ccc;
+    opacity: 1;
+    box-shadow: inset 0 0 0 1000px #ccc;
   }
 }
 
@@ -396,6 +443,9 @@ export default {
   --fg: @synhighlight;
   --glow: rgba(@synhighlight, 0.25);
   box-shadow: 0 0 1rem var(--glow);
+  @media print {
+    --fg: #000;
+  }
 }
 
 .nodata {
