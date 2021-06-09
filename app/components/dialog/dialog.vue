@@ -1,7 +1,11 @@
 <template>
   <div id="dialog">
     <div id="frame">
-      <div id="message" v-html="options.message"></div>
+      <div id="message" v-html="options.message" v-if="options.message"></div>
+      <div id="input" v-if="options.type === 'input'">
+        <label>{{options.label}}</label>
+        <input type='input' v-model='inputvalue' @keydown.enter="ok()">
+      </div>
       <div id="buttons" v-if="options.type === 'choose'">
         <button v-for="(option,k) in options.options" :key="k" @click="choose(option)">{{option}}</button>
       </div>
@@ -12,6 +16,10 @@
       <div id="buttons" v-if="options.type === 'alert'">
         <button @click="ok()">{{$t('ok')}}</button>
       </div>
+      <div id="buttons" v-if="options.type === 'input'">
+        <button @click="ok()">{{$t('ok')}}</button>
+        <button @click="cancel()">{{$t('cancel')}}</button>
+      </div>
     </div>
     <div id="bg" @click="cancel()"></div>
   </div>
@@ -19,9 +27,18 @@
 <script>
 export default {
   props: ["options","index"],
+  data() {
+    return {
+      inputvalue: ''
+    }
+  },
   methods: {
     ok () {
-      this.options.promiseResolver({message:"done"});
+      if (this.options.type === 'input') {
+        this.options.promiseResolver({inputvalue:this.inputvalue});
+      } else {
+        this.options.promiseResolver({message:"done"});
+      }
       this.$root.removeDialog(this.index);
     },
     cancel () {
@@ -32,6 +49,9 @@ export default {
       this.options.promiseResolver(text);
       this.$root.removeDialog(this.index);
     }
+  },
+  mounted () {
+    this.inputvalue = this.options.inputvalue
   }
 }
 </script>
@@ -55,6 +75,22 @@ export default {
     border-radius: 0.25em;
     #message {
       margin-bottom:1em;
+    }
+    #input {
+      padding: 0 0 1em;
+      label {
+        margin-bottom: 1em;
+        margin-top:0;
+      }
+      input {
+        border: 2px solid @fg;
+        background: transparent;
+        border-radius: 0.25em;
+        width: 100%;
+        padding: 0.35em 0.5em;
+        color: @fg;
+        box-sizing: border-box;
+      }
     }
     #buttons {
       text-align:right;

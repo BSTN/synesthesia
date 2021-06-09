@@ -18,7 +18,9 @@
       <!-- images -->
       <div id="images" v-if="hasImages">
         <!-- <div id="im1" :style="{ backgroundImage: `url(${images[0]})` }" :class="{active: value === images[0]}"></div> -->
-        <div id="im2" :style="{ backgroundImage: `url(${images[1]})` }" :class="{active: value === images[0]}"></div>
+        <div id="im2" :class="{active: value === images[0]}">
+          <img :src="images[1]">
+        </div>
       </div>
       <!-- audio -->
       <div id="audio">
@@ -27,10 +29,13 @@
           :file="data.symbol.sound || data.symbol"
           v-if="hasAudio"
         ></test-sound>
+        <div id="soundfilename">{{data.symbol.sound || data.symbol}}</div>
       </div>
       <!-- images -->
       <div id="images" v-if="hasImages">
-        <div id="im1" :style="{ backgroundImage: `url(${images[0]})` }" :class="{active: value === images[0]}"></div>
+        <div id="im1" :class="{active: value === images[0]}">
+          <img :src="images[0]">
+        </div>
         <!-- <div id="im2" :style="{ backgroundImage: `url(${images[1]})` }" :class="{active: value === images[0]}"></div> -->
       </div>
       <!-- colors -->
@@ -45,7 +50,7 @@
       </div>
     </div>
     <div id="frame">
-      {{cutoff}}
+      <!-- {{cutoff}} -->
       <div id="slider" v-if="!isNaN(value)">
         <div id="value" :style="{ left: value + '%' }"></div>
         <div id="cutoff" :style="{ width: 100 - cutoff + '%' }" v-if="cutoff" :class="{reverse}"></div>
@@ -83,6 +88,9 @@ export default {
       } else if (this.$tests[this.testname].type === 'grapheme' && ((this.data.data && this.data.data.length === 2) || this.data.hasDoubles)) {
         // in case grapheme symbol with only 2 values
         // return this.data.score === 1 ? 100 : 0 
+        if (this.data.hasDoubles) {
+          return (this.$tests[this.testname].cutoff / Object.keys(this.data.symbols).length) * 100
+        }
         return this.$tests[this.testname].cutoff * 100
       } else {
         let cutoff = this.$tests[this.testname].cutoff
@@ -363,6 +371,18 @@ export default {
 
 #audio {
   text-align: center;
+  #soundfilename {
+    display:none;
+  }
+  @media print { 
+    #soundfilename {
+      display:block;
+      padding: 0.5em;
+    }
+    /deep/ #sound {
+      display:none;
+    }
+  }
   /deep/ #sound {
     width: 4rem;
     height: 4rem;
@@ -424,10 +444,20 @@ export default {
     background-repeat: no-repeat;
     background-position: center;
     opacity: .25;
-
-    &:first-child {
-      margin-right: 1rem;
+    position: relative;
+    img {
+      object-fit: contain;
+      object-position: center;
+      position:absolute;
+      left:0;
+      top:0;
+      width:100%;
+      height:100%;
     }
+
+    // &:first-child {
+    //   margin-right: 1rem;
+    // }
     &.active {
       opacity: 1;
     }

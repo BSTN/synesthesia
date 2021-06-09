@@ -55,6 +55,15 @@ export default {
         self.list.push(options);
       });
     }
+    this.$root.input = function(options) {
+      return new Promise((resolve, reject) => {
+        options.id = Date.now();
+        options.type = 'input';
+        options.promiseResolver = resolve;
+        options.promiseRejecter = reject;
+        self.list.push(options);
+      });
+    }
     this.$root.choose = function(options) {
       return new Promise((resolve, reject) => {
         options.id = Date.now();

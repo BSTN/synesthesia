@@ -6,19 +6,22 @@
         <router-link to="/">home</router-link>
       </template>
       <template #right>
-        <button @click="compare = true" v-if="$store.state.profile.USERID">{{ $t("compare") }}</button>
+        <button @click="compare = true">{{ $t("compare") }}</button>
         <button @click="print">print</button>
       </template>
     </topbar>
+    <div id="name" v-if="$store.state.func.name">
+      {{$store.state.func.name}}
+    </div>
     <!-- <pre>{{score}}</pre> -->
     <div id="wrap">
       <div id="tabs">
         <button
-          v-for="(tab, testname) in $tests"
-          :key="'tab' + testname"
+          v-for="(tab, testname) in tablist"
+          :key="'tab' + tab.id"
           id="tab"
-          :class="{ active: testname === currentTab }"
-          @click="currentTab = testname"
+          :class="{ active: tab.id === currentTab }"
+          @click="currentTab = tab.id"
         >{{ tab.name[$store.state.profile.language] }}</button>
       </div>
       <!-- <pre>{{score}}</pre> -->
@@ -79,7 +82,8 @@ export default {
   data() {
     return {
       currentTab: "graphemes",
-      compare: false
+      compare: false,
+      tablist: []
     };
   },
   computed: {
@@ -164,10 +168,44 @@ export default {
     if (this.$route.params.testname) {
       this.currentTab = this.$route.params.testname
     }
+    // set testlist  --------- bit complicated, but this way you can have a different list for every language
+
+    let name = "tests"
+    if (this.$store.state.profile.language !== this.$config.defaultLanguage) {
+        name = name + "." + this.$store.state.profile.language;
+      }
+    let template = document.getElementById(`template${name}`);
+    if (template) {
+      let txt = template.innerHTML
+      let found = txt.match(/(?<=<tests list=\")(.*?)(?=\")/g)
+      if (found[0]) {
+        let list = found[0].split(',')
+        this.tablist = list.map(x => {
+          return {
+            id: x,
+            name: this.$tests[x].name
+          }
+        })
+      }
+    }
+
+    // let names = this.list.split(',');
+    // let testlist = {}
+    // for(name in names) {
+    //   testlist[names[name]] = this.$tests[names[name].trim()] || false
+    // }
+    // return testlist;
   },
   methods: {
     print() {
-      window.print();
+      this.$root.input({inputvalue: this.$store.state.func.name + '', label: this.$t('yourname')}).then(async x => {
+        await this.$store.commit('func/setName', x.inputvalue);
+        setTimeout(() => {
+          window.print();
+        }, 500)
+      }).catch(x => {
+        // do nothing on cancel name input
+      });
     },
     download() {
       window.open(
@@ -212,6 +250,16 @@ export default {
   min-height: 100vh;
   font-family: Helvetica, sans-serif;
   padding-bottom: 5rem;
+}
+
+#name {
+  font-size: 2rem;
+  text-align: center;
+  display:none;
+  padding: 0.5em;
+  @media print {
+    display: block;
+  }
 }
 
 #wrap {
