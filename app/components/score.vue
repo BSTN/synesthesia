@@ -114,7 +114,7 @@ export default {
       }
       // likert
       if (this.type === 'likert') {
-        return this.data
+        return (parseInt(this.data) / 30) * 100
       }
       // no data
       if (!this.data || !this.data.score) return false

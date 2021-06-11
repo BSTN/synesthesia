@@ -34,17 +34,17 @@ function distance (type, values) {
   return distance;
 }
 
-function likert(data) {
+function likert(testid, data) {
   if (!data) return false
-  const check = ['pq1', 'pq2', 'pq3', 'pq4', 'pq5', 'pq6'].filter(x => (x in Object.keys(data)))
+  const check = [testid + '1', testid + '2', testid + '3', testid + '4', testid + '5', testid + '6'].filter(x => (x in Object.keys(data)))
   if (check.length > 0) return JSON.stringify(data)
-  let res = data.pq1 +
-        data.pq2 +
-        data.pq3 +
-        data.pq4 +
-        data.pq5 +
-        data.pq6
-  return (res / 30) * 100
+  let res = data[testid + '1'] +
+        data[testid + '2'] +
+        data[testid + '3'] +
+        data[testid + '4'] +
+        data[testid + '5'] +
+        data[testid + '6']
+  return res
 }
 
 function all(testconfig, questions) {

@@ -121,11 +121,11 @@ export default {
       return result / 34 * 100
     },
     likertScore () {
-      return score.likert(this.$store.state.extra)
+      return score.likert(this.currentTab, this.$store.state.extra)
     },
     likertSharedScore () {
       if (!this.sharedData || !this.sharedData.data) return false
-      return score.likert(this.sharedData.data['_extra'])
+      return score.likert(this.currentTab, this.sharedData.data['_extra'])
     },
     score () {
       let questions = this.$store.state.tests.tests[this.testname].questions

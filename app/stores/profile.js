@@ -1,5 +1,5 @@
 import Vue from "vue";
-import { clone, cloneDeep, merge } from "lodash";
+import { clone, cloneDeep, merge, each } from "lodash";
 import { i18n } from "../utils/i18n.js";
 import axios from 'axios';
 
@@ -55,3 +55,20 @@ export const actions = {
       }
   }
 };
+
+export const getters = {
+  downloadString (state, getters, rootState) {
+    let data = {}
+    if(rootState.tests.tests && state.finishedtests) {
+      state.finishedtests.map(x => {
+        if (x && rootState.tests.tests[x]) {
+          data[x] = rootState.tests.tests[x]
+        }
+      })
+    }
+    if(Object.keys(rootState.extra).length > 0) {
+      data._extra = cloneDeep(rootState.extra)
+    }
+    return "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(data));
+  }
+}

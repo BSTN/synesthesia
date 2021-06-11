@@ -5,11 +5,14 @@
       <div id="frame" @click.stop>
         
         <md md="share.instructions" id="instructions"></md>
-        
+
+        <a :href="downloadstring" class='button' download="my_synesthesia_testdata.json">Download jouw data</a><Br/><Br/>
+
         <label v-if="$store.state.profile.SHARED">
           Jouw unieke code:
         </label>
         <div id="unique" v-if="$store.state.profile.SHARED">{{$store.state.profile.SHARED}}</div>
+
 
         <!-- doe eerst een test om je data te kunnen delen -->
 
@@ -28,8 +31,10 @@
         <div id="add" v-if="add" @click="add = false">
           <div id="frame" @click.stop>
             <button id="closed" @click="add = false"></button>
-            <label>{{$t('fillcodehere')}}</label>
-            <input type="text" @keydown.enter="addProfile()" v-model="sharedCode" />
+            <label v-if="!loadfile">{{$t('fillcodehere')}}</label>
+            <input type="text" @keydown.enter="addProfile()" v-model="sharedCode"  v-if="!loadfile"/>
+            <label v-if="!sharedCode">{{$t('importfile')}}</label>
+            <input ref="uploadfile" id="file" type="file"  v-if="!sharedCode"/>
             <label>{{$t('giveprofilename')}}</label>
             <input type="text" @keydown.enter="addProfile()" v-model="sharedName" />
             <button id="addprofile" @click="addProfile()" class="button">ok</button>
@@ -40,16 +45,22 @@
   </transition>
 </template>
 <script>
+import { mapGetters } from 'vuex'
 export default {
   props: ["open"],
   data() {
     return {
       sharedCode: "",
       sharedName: "",
-      add: false
+      add: false,
+      loadfile: false,
+      loadfiledata: false
     };
   },
   computed: {
+    ...mapGetters({
+      downloadstring: 'profile/downloadString'
+    }),
     profiles () {
       return this.$store.state.shared.profiles
     }
@@ -61,11 +72,22 @@ export default {
       } else {
         document.body.classList.remove('scrollblock')
       }
+    },
+    'add': function (val) {
+      if (val) {
+        this.loadfile = false
+        this.$nextTick(() => {
+          this.$refs.uploadfile.addEventListener('change', this.onFileUploadChange)
+        })
+      }
     }
   },
   methods: {
     close() {
       this.$emit("update:open", false);
+    },
+    download () {
+      this.$store.dispatch("profile/download")
     },
     async remove (id) {
       const check = await this.$root.confirm({
@@ -81,6 +103,23 @@ export default {
       this.$store.commit("shared/setActive", id)
     },
     async addProfile() {
+      // if uploaded file
+      if (!this.sharedName) {
+        this.sharedName = '(unnamed)'
+      }
+      if (this.loadfile) {
+        let profile = {};
+        profile[new Date().getTime() + 'fileupload'] = {
+          name: this.sharedName,
+          timestamp: new Date().getTime(),
+          data: this.loadfiledata
+        };
+        await this.$store.dispatch("shared/setProfile", profile);
+        this.$store.commit("shared/setActive", this.sharedCode);
+        this.add = false
+        return false
+      }
+      // if sharedcode already exists
       if (this.sharedCode in this.$store.state.shared.profiles) {
         await this.$root.alert({
           message: this.$t('profilealreadyexists')
@@ -105,7 +144,22 @@ export default {
         await this.$store.dispatch("shared/setProfile", profile);
         this.$store.commit("shared/setActive", this.sharedCode);
       }
+    },
+    onFileUploadChange () {
+      const self = this
+      var reader = new FileReader();
+      reader.onload = function (event) {
+        var obj = JSON.parse(event.target.result);
+        self.loadfile = true
+        self.loadfiledata = obj
+      }
+      reader.readAsText(event.target.files[0]);
     }
+  },
+  mounted () {
+
+    // this.$refs.uploadfile.addEventListener('change', onChange);
+
   }
 };
 </script>

@@ -74,6 +74,8 @@ export default {
       }).catch(x => {
         this.$root.alert('Error uploading data, please try again.')
       })
+    } else {
+      next()
     }
   },
   mounted () {
