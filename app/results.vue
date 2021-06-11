@@ -144,7 +144,7 @@ export default {
       return symbols.sort();
     },
     tabs() {
-      // todo: move this to config?
+      // todo: move this to config? -- oops double, see mounted...
       let template = document.getElementById(`templatetests`);
       let tabs = {}
       if (template) {
@@ -168,6 +168,7 @@ export default {
     if (this.$route.params.testname) {
       this.currentTab = this.$route.params.testname
     }
+    
     // set testlist  --------- bit complicated, but this way you can have a different list for every language
 
     let name = "tests"

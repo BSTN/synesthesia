@@ -24,8 +24,11 @@
 </template>
 <script>
 export default {
-  props: ["type", "name"],
+  props: ["type", "q"],
   computed: {
+    name() {
+      return this.$route.params.testname + '' + this.q
+    },
     answer: {
       get() {
         if (!(this.name in this.$store.state.extra)) return null;
