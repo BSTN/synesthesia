@@ -76,8 +76,10 @@ export default {
     'add': function (val) {
       if (val) {
         this.loadfile = false
+        this.sharedName = ''
+        this.sharedCode = ''
         this.$nextTick(() => {
-          this.$refs.uploadfile.addEventListener('change', this.onFileUploadChange)
+          if (this.$refs.uploadfile) this.$refs.uploadfile.addEventListener('change', this.onFileUploadChange)
         })
       }
     }
@@ -109,13 +111,15 @@ export default {
       }
       if (this.loadfile) {
         let profile = {};
-        profile[new Date().getTime() + 'fileupload'] = {
+        let newkey = new Date().getTime() + 'fileupload'
+        console.log("newkey",newkey)
+        profile[newkey] = {
           name: this.sharedName,
           timestamp: new Date().getTime(),
           data: this.loadfiledata
         };
         await this.$store.dispatch("shared/setProfile", profile);
-        this.$store.commit("shared/setActive", this.sharedCode);
+        this.$store.commit("shared/setActive", newkey);
         this.add = false
         return false
       }

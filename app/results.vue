@@ -39,7 +39,7 @@
           <label v-if="!isNaN(score.total) && score.total !== null">{{$t('yourscorethistest')}}</label>
           <score :testname="testname" type="total" :data="score" v-if="!isNaN(score.total) && score.total !== null"></score>
           <label v-if="activeSharedProfile">{{$t("sharedscorethistest", {name: activeSharedProfile.name})}}</label>
-          <score class='shared'  v-if="activeSharedProfile" :testname="testname" type="total" :data="sharedScore"></score>
+          <score class='shared' v-if="activeSharedProfile" :testname="testname" type="total" :data="sharedScore"></score>
         </div>
         <div id="description" v-if="testinfo.likert && (likertScore || likertSharedScore)">
           <div id="md" v-if="testinfo.likert">{{ $t("likert") }}</div>
@@ -134,6 +134,8 @@ export default {
     sharedScore () {
       if (!this.$store.state.shared.profiles[this.$store.state.shared.active]) { return false }
       const questions = this.$store.state.shared.profiles[this.$store.state.shared.active].data[this.testname]
+      if (!questions) return false
+      // return questions
       return score.all(this.$tests[this.testname], questions)
     },
     symbols() {

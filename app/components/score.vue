@@ -53,7 +53,7 @@
       <!-- {{cutoff}} -->
       <div id="slider" v-if="!isNaN(value)">
         <div id="value" :style="{ left: value + '%' }"></div>
-        <div id="cutoff" :style="{ width: 100 - cutoff + '%' }" v-if="cutoff" :class="{reverse}"></div>
+        <div id="cutoff" :style="{ width: 100 - cutoff + '%' }" v-if="cutoff"></div>
       </div>
       <div id="text" v-if="text">{{ text }}</div>
     </div>
@@ -87,14 +87,17 @@ export default {
         return false
       } else if (this.$tests[this.testname].type === 'grapheme' && ((this.data.data && this.data.data.length === 2) || this.data.hasDoubles)) {
         // in case grapheme symbol with only 2 values
-        // return this.data.score === 1 ? 100 : 0 
         if (this.data.hasDoubles) {
           return (this.$tests[this.testname].cutoff / Object.keys(this.data.symbols).length) * 100
         }
         return this.$tests[this.testname].cutoff * 100
       } else {
         let cutoff = this.$tests[this.testname].cutoff
-        return ((6 - cutoff) / 6) * 100
+        if (this.data === false) {
+          return 0
+        } else {  
+          return ((6 - cutoff) / 6) * 100
+        }
       }
     },
     reverse () {
@@ -118,6 +121,8 @@ export default {
       }
       // no data
       if (!this.data || !this.data.score) return false
+      
+      // imagesound
       if (this.$tests[this.testname].type === 'imagesound') {
         if (isNaN(this.data.score)) return false
         return this.data.score * 100
@@ -126,7 +131,7 @@ export default {
       if (this.data.hasDoubles || (this.data.data && this.data.data.length === 2)) {
         return this.data.score * 100
       }
-      return (this.data.score / 6) * 100
+      return ((this.data.score / 6) * 100)
       // return ((6 - this.data.score) / 6) * 100
     },
     realValue () {
