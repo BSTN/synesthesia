@@ -1,7 +1,5 @@
 <template>
   <div id="likertpage" class='textpage'>
-    likertpage
-    {{$route.params.testname}}
     <md :md="markdownfile"></md>
     <div id="next">
       <router-link :class="{enabled: allAnswered()}" class='link' :to="{name: 'results', params: {testname: this.$route.params.testname || false}}">{{$t('next')}}</router-link>
