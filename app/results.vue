@@ -61,7 +61,7 @@
           />
         </div>
         <div id="resultlist" v-if="!isNaN(sharedScore.total) && sharedScore.total !== null">
-          <label>3{{$t('sharedscoreperitem', {name: activeSharedProfile.name})}}
+          <label>{{$t('sharedscoreperitem', {name: activeSharedProfile.name})}}
           </label>
           <score
             v-for="(s, symbol) in sharedScore.symbols"
