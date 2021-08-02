@@ -9,6 +9,7 @@ export const state = () => ({
   UID: null,
   USERID: null,
   SHARED: null,
+  touchscreen: null,
   language: clone(config.defaultLanguage),
   finishedtests: []
 });
@@ -26,7 +27,7 @@ export const mutations = {
 export const actions = {
   set(store, content) {
     store.commit("set", content);
-    if (content.USERID) {
+    if (content.touchscreen) {
       store.dispatch('upload')
     }
   },
@@ -42,6 +43,7 @@ export const actions = {
     data = merge(data, cloneDeep(store.state));
     data.finishedtests = data.finishedtests.join(',');
     delete data.SHARED;
+    console.log('upload UID:', store.state.UID)
     if (store.state.USERID || config.storeall) {
       let success = await axios
           .post("./api/store", {

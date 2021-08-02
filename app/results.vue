@@ -280,7 +280,6 @@ export default {
   padding: 1em 0 3em;
 
   #tab {
-    text-transform: capitalize;
     position: relative;
     padding: 0.5em 1em 0.4em;
     display: inline-block;

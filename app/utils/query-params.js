@@ -3,6 +3,7 @@ export default (store) => {
   const id = params.get("id")
   const language = params.get("lang")
   if (id) {
+    console.log(id);
     store.dispatch("profile/set", { USERID: id });
     // URLSearchParams.delete("id")
   }

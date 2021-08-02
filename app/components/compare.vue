@@ -4,7 +4,8 @@
       
       <div id="frame" @click.stop>
         
-        <md md="share.instructions" id="instructions"></md>
+        <md md="share.instructions" id="instructions" v-if="$store.state.profile.USERID"></md>
+        <md md="share.instructions.noid" id="instructions" v-if="!$store.state.profile.USERID"></md>
 
         <a :href="downloadstring" class='button' download="my_synesthesia_testdata.json">Download jouw data</a><Br/><Br/>
 

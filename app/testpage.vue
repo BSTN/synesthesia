@@ -143,6 +143,14 @@ export default {
         this.$router.push({ path: "/" });
       }
     }
+    /* ask for touchscreen if not yet set */
+    if (this.$store.state.profile.USERID && this.$store.state.profile.touchscreen === null) {
+      const touchscreen = await this.$root.choose({message:this.$t('touchscreen'), options: this.$t('touchscreenoptions')}).catch(err => {
+        console.log('nothing chosen?');
+      })
+      await this.$store.dispatch('profile/set',{touchscreen})
+    }
+
     /* redirect if finished */
     const finished = await this.$store.dispatch('tests/isFinished', this.testname)
     if (finished) {

@@ -208,3 +208,10 @@ function rrmdir($src) {
     rmdir($src);
     return true;
 }
+
+function cleanUpQuery($string) {
+    $string = preg_replace("/[\r\n]+/", "\n", $string);
+    $string = preg_replace("/\s+/", ' ', $string);
+    return $string;
+    // return preg_replace('/\v(?:[\v\h]+)/', '', $string);
+}

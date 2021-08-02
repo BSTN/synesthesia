@@ -58,7 +58,7 @@ function all(testconfig, questions) {
     if (testconfig.type === 'imagesound') {
       name = [v.symbol.im1, v.symbol.im2, v.symbol.sound].sort().join('-');
     }
-    // create scire object if not exists
+    // create score object if not exists
     if (!bundled[name]) bundled[name] = { score: null, data: [], symbol: v.symbol }
     bundled[name].data.push(v)
   })
@@ -109,6 +109,46 @@ function all(testconfig, questions) {
       if (!hasDoubles) total = total === 0 ? 0 : total / count
     }
   }
+
+  // sort
+  bundled = Object.keys(bundled).sort((a,b) => {
+    a = a.toLowerCase().trim()
+    b = b.toLowerCase().trim()
+    const days = ['monday','tuesday','wednesday','thursday','friday','saturday','sunday'];
+    const months = ['january','february','march','april','may','june','july','august','september','october','november','december'];
+    const dagen = ['maandag','dinsdag','woensdag','donderdag','vrijdag','zaterdag','zondag']
+    const maanden = ['januari','februari','maart','april','mei','juni','juli','augustus','september','oktober','november','december']
+    if (a.startsWith('t:') && !b.startsWith('t:')) {
+      return -1
+    }
+    if (!a.startsWith('t:') && b.startsWith('t:')) {
+      return 1
+    }
+    if (a.startsWith('t:') && b.startsWith('t:')) {
+      const aa = a.replace(/^t:/,'')
+      const bb = b.replace(/^t:/,'')
+      if (days.indexOf(aa) > -1 && !(days.indexOf(bb) > -1)) { return -1 }
+      if (!(days.indexOf(aa) > -1) && days.indexOf(bb) > -1) { return 1 }
+      if (days.indexOf(aa) > -1 && days.indexOf(bb) > -1) { 
+        return days.indexOf(aa) < days.indexOf(bb);
+      }
+      if (months.indexOf(aa) > -1 && !(months.indexOf(bb) > -1)) { return -1 }
+      if (!(months.indexOf(aa) > -1) && months.indexOf(bb) > -1) { return 1 }
+      if (months.indexOf(aa) > -1 && months.indexOf(bb) > -1) { 
+        return months.indexOf(aa) < months.indexOf(bb);
+      }
+    }
+    if (dagen.indexOf(a) > -1 && dagen.indexOf(b) > -1) { 
+      return dagen.indexOf(a) > dagen.indexOf(b);
+    }
+    if (maanden.indexOf(a) > -1 && maanden.indexOf(b) > -1) { 
+      return maanden.indexOf(a) > maanden.indexOf(b);
+    }
+    return a.localeCompare(b)
+  }).reduce((obj, key) => { 
+      obj[key] = bundled[key]; 
+      return obj;
+  }, {});
   return { total , symbols: bundled, hasDoubles }
 }
 

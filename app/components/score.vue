@@ -51,9 +51,9 @@
     </div>
     <div id="frame">
       <!-- {{cutoff}} -->
-      <div id="slider" v-if="!isNaN(value)">
+      <div id="slider" v-if="!isNaN(value) && realValue !== false">
         <div id="value" :style="{ left: value + '%' }"></div>
-        <div id="cutoff" :style="{ width: 100 - cutoff + '%' }" v-if="cutoff"></div>
+        <div id="cutoff" :style="{ width: 100 - cutoff + '%' }" v-if="cutoff" :class="{reverse}"></div>
       </div>
       <div id="text" v-if="text">{{ text }}</div>
     </div>
@@ -71,12 +71,13 @@ export default {
       return this.$tests[this.testname].type
     },
     hasSynesthesia () {
-      if (!this.reverse) { 
+      if (this.type !== 'likert') { 
         return this.value > this.cutoff
       } else {
         if (!this.realValue) return false
         /// somewhere here!
-        return this.realValue < this.$tests[this.testname].cutoff
+        if (!this.$tests[this.testname]) return false
+        return this.realValue <= this.$tests[this.testname].cutoff
       }
     },
     cutoff () {
@@ -101,9 +102,9 @@ export default {
       }
     },
     reverse () {
-      if (this.type === 'likert') return false
+      if (this.type === 'likert') return true
       if (this.$tests[this.testname].type === 'grapheme' && ((this.data.data && this.data.data.length === 2) || this.data.hasDoubles)) { return false }
-      return !(["imagesound"].indexOf(this.$tests[this.testname].type) >= 0)
+      return !(["imagesound","grapheme","audio"].indexOf(this.$tests[this.testname].type) >= 0)
     },
     value () {
       // turn into forward percentage
@@ -356,16 +357,16 @@ export default {
   background: @syn;
   background: @fg;
   position: absolute;
-  border-radius: 0 0.25em 0.25em 0;
-  right: 0;
+  border-radius: 0.25em 0 0 0.25em;
+  left: 0;
   width: 100%;
   height: @s;
   top: calc(50% - @ss);
   opacity: 0.5;
   &.reverse {
-    right: auto;
-    left: 0;
-    border-radius: 0.25em 0 0 0.25em;
+    right: 0;
+    left: auto;
+    border-radius: 0 0.25em 0.25em 0;
   }
   @media print {
     background: #ccc;

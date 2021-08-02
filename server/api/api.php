@@ -255,27 +255,31 @@ if ($PATH === "/store") {
         /*
          * Insert profile data
          */
-        $prep = $dbc->prepare(
+
+        $prep = $dbc->prepare(cleanUpQuery(
             "INSERT INTO " . DB_PREFIX . "profile SET 
                 created=NOW(),
                 IP=SHA2(:IP,256), 
                 language=:language, 
                 UID=:UID,
-                finishedtests=:finishedtests
+                finishedtests=:finishedtests,
+                touchscreen=:touchscreen
             ON DUPLICATE KEY UPDATE
                 IP=SHA2(:IP,256), 
                 language=:language, 
                 UID=:UID,
-                finishedtests=:finishedtests
+                finishedtests=:finishedtests,
+                touchscreen=:touchscreen
             ;"
-        );
+        ));
         try {
             $prep->execute($insertdata);
         } catch (PDOException $Exception) {
+            error_log("Save profile data: " . print_r($insertdata, true));
             error($Exception);
         }
     } elseif ($postdata['table'] === 'questions') {
-        $prep = $dbc->prepare(
+        $prep = $dbc->prepare(cleanUpQuery(
             "INSERT INTO " . DB_PREFIX . "questions SET
                 created=NOW(), 
                 IP=SHA2(:IP,256), 
@@ -289,13 +293,12 @@ if ($PATH === "/store") {
                 timing=:timing,
                 position=:position,
                 qnr=:qnr;"
-        );
-
+        ));
 
         try {
             $prep->execute($insertdata);
         } catch (PDOException $Exception) {
-            error_log("save data:" . print_r($insertdata, true));
+            error_log("Save data on error: " . print_r($insertdata, true));
             error($Exception);
         }
     } elseif ($postdata['table'] === 'extra') {
@@ -307,6 +310,7 @@ if ($PATH === "/store") {
             $prep = $dbc->prepare("SELECT UID FROM " . DB_PREFIX . "profile WHERE UID=:UID;");
             $res = $prep->execute(array(":UID" => $insertdata[':UID']));
         } catch (PDOException $Exception) {
+            error_log("Save extra data on error: " . print_r($insertdata, true));
             error($Exception);
         }
 
@@ -324,7 +328,7 @@ if ($PATH === "/store") {
         $data = array_merge($data, $values);
         $data = json_encode($data);
 
-        $prep = $dbc->prepare(
+        $prep = $dbc->prepare(cleanUpQuery(
             "SET @current := (SELECT data FROM " . DB_PREFIX .
                 "extra WHERE UID=:UID);
             INSERT INTO " . DB_PREFIX . "extra SET
@@ -335,11 +339,12 @@ if ($PATH === "/store") {
             ON DUPLICATE KEY UPDATE
               IP=SHA2(:IP,256),
               data=:data;"
-        );
+        ));
 
         try {
             $prep->execute(array(":data" => $data, ":IP" => $insertdata[':IP'], ":UID" => $insertdata[':UID']));
         } catch (PDOException $Exception) {
+            error_log("Save extra data (JSON) on error: " . print_r($data, true));
             error($Exception);
         }
         pjson("done");
