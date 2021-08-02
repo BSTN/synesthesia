@@ -3,11 +3,11 @@
     <compare :open.sync="compare"></compare>
     <topbar>
       <template #left>
-        <router-link to="/">home</router-link>
+        <router-link to="/">{{$t('home')}}</router-link>
       </template>
       <template #right>
         <button @click="compare = true">{{ $t("compare") }}</button>
-        <button @click="print">print</button>
+        <button @click="print">{{$t('print')}}</button>
       </template>
     </topbar>
     <div id="name" v-if="$store.state.func.name">
@@ -52,7 +52,7 @@
 
       <div id="detailed">
         <div id="resultlist" v-if="!isNaN(score.total) && score.total !== null">
-          <label>Jouw score per item:</label>
+          <label>{{$t('yourscoreperitem')}}</label>
           <score
             v-for="(s, symbol) in score.symbols"
             :key="testname + symbol"
@@ -61,7 +61,8 @@
           />
         </div>
         <div id="resultlist" v-if="!isNaN(sharedScore.total) && sharedScore.total !== null">
-          <label>De score per item van {{activeSharedProfile.name}}:</label>
+          <label>3{{$t('sharedscoreperitem', {name: activeSharedProfile.name})}}
+          </label>
           <score
             v-for="(s, symbol) in sharedScore.symbols"
             :key="testname + symbol"
@@ -133,7 +134,10 @@ export default {
     },
     sharedScore () {
       if (!this.$store.state.shared.profiles[this.$store.state.shared.active]) { return false }
-      const questions = this.$store.state.shared.profiles[this.$store.state.shared.active].data[this.testname]
+      if (!this.$store.state.shared.profiles[this.$store.state.shared.active].data) { return false }
+      if (!this.$store.state.shared.profiles[this.$store.state.shared.active].data[this.testname]) { return false }
+      if (!this.$store.state.shared.profiles[this.$store.state.shared.active].data[this.testname].questions) { return false }
+      const questions = this.$store.state.shared.profiles[this.$store.state.shared.active].data[this.testname].questions
       if (!questions) return false
       // return questions
       return score.all(this.$tests[this.testname], questions)
@@ -365,6 +369,7 @@ export default {
   }
   #md {
     min-height: 9rem;
+    margin-bottom: 1rem;
   }
 
   /deep/ h1,

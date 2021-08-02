@@ -60,6 +60,8 @@ function all(testconfig, questions) {
     }
     // create score object if not exists
     if (!bundled[name]) bundled[name] = { score: null, data: [], symbol: v.symbol }
+    
+    // push it
     bundled[name].data.push(v)
   })
   
@@ -77,10 +79,13 @@ function all(testconfig, questions) {
         }
       }
     } else {
+      console.log("values", values)
       // get score by distance
       v.score = distance(testconfig.type, values);
     }
   })
+
+  console.log("bundled", bundled)
   // calculate total
   let total = undefined
   let count = 0
@@ -149,6 +154,8 @@ function all(testconfig, questions) {
       obj[key] = bundled[key]; 
       return obj;
   }, {});
+  // return results
+  console.log("RESS", total, bundled, hasDoubles)
   return { total , symbols: bundled, hasDoubles }
 }
 

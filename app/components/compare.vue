@@ -3,6 +3,8 @@
     <div id="compare" @click="close()" v-if="open">
       
       <div id="frame" @click.stop>
+
+      {{$store.state.shared.profiles}}        
         
         <md md="share.instructions" id="instructions" v-if="$store.state.profile.USERID"></md>
         <md md="share.instructions.noid" id="instructions" v-if="!$store.state.profile.USERID"></md>
