@@ -1,0 +1,4 @@
+[submodule "server/--force"]
+	path = server/--force
+	url = https://github.com/BSTN/synesthesia_config
+	branch = kinderen
