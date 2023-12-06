@@ -1,0 +1,31 @@
+services:
+  nginx:
+    image: nginx
+    container_name: syn-nginx
+    tty: true
+    ports:
+      - 80:80
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+  composer:
+    image: composer/composer:php8
+    command: install
+    volumes:
+      - ./server:/app
+  app:
+    image: node:18.1.0-alpine
+    container_name: syn-app
+    working_dir: /app
+    command: sh -c "yarn install && yarn build"
+    expose:
+      - 80
+    volumes:
+      - type: bind
+        source: ./app
+        target: /app
+    environment:
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_DBNAME: ${MYSQL_DBNAME}
+      MYSQL_HOST: ${MYSQL_HOST}
+      DB_PREFIX: ${DB_PREFIX}

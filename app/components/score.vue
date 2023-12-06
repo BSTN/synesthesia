@@ -1,5 +1,8 @@
 <template>
-  <div id="score" :class="{synesthesia: hasSynesthesia, nodata: realValue === false}">
+  <div
+    id="score"
+    :class="{ synesthesia: hasSynesthesia, nodata: realValue === false }"
+  >
     <div id="titlebar" v-if="(title && !hasAudio) || username">
       <div id="title" v-if="title && !hasAudio">{{ title }}</div>
       <div id="username" v-if="username">{{ username }}</div>
@@ -14,12 +17,12 @@
         ></button>
       </div>
     </div>
-    <div id="media" v-if="hasAudio" :class="{hasColors}">
+    <div id="media" v-if="hasAudio" :class="{ hasColors }">
       <!-- images -->
       <div id="images" v-if="hasImages">
         <!-- <div id="im1" :style="{ backgroundImage: `url(${images[0]})` }" :class="{active: value === images[0]}"></div> -->
-        <div id="im2" :class="{active: value === images[0]}">
-          <img :src="images[1]">
+        <div id="im2" :class="{ active: value === images[0] }">
+          <img :src="images[1]" />
         </div>
       </div>
       <!-- audio -->
@@ -29,12 +32,12 @@
           :file="data.symbol.sound || data.symbol"
           v-if="hasAudio"
         ></test-sound>
-        <div id="soundfilename">{{data.symbol.sound || data.symbol}}</div>
+        <div id="soundfilename">{{ data.symbol.sound || data.symbol }}</div>
       </div>
       <!-- images -->
       <div id="images" v-if="hasImages">
-        <div id="im1" :class="{active: value === images[0]}">
-          <img :src="images[0]">
+        <div id="im1" :class="{ active: value === images[0] }">
+          <img :src="images[0]" />
         </div>
         <!-- <div id="im2" :style="{ backgroundImage: `url(${images[1]})` }" :class="{active: value === images[0]}"></div> -->
       </div>
@@ -53,182 +56,232 @@
       <!-- {{cutoff}} -->
       <div id="slider" v-if="!isNaN(value) && realValue !== false">
         <div id="value" :style="{ left: value + '%' }"></div>
-        <div id="cutoff" :style="{ width: 100 - cutoff + '%' }" v-if="cutoff" :class="{reverse}"></div>
+        <div
+          id="cutoff"
+          :style="{ width: 100 - cutoff + '%' }"
+          v-if="cutoff"
+          :class="{ reverse }"
+        ></div>
       </div>
       <div id="text" v-if="text">{{ text }}</div>
     </div>
   </div>
 </template>
 <script>
-import { each } from 'lodash'
+import { each } from "lodash";
 import { join } from "path";
-import score from '../utils/score'
+import score from "../utils/score";
 export default {
   props: ["testname", "symbol", "type", "user", "data"],
   computed: {
-    testType () {
-      if (!this.testname) { return false }
-      return this.$tests[this.testname].type
+    testType() {
+      if (!this.testname) {
+        return false;
+      }
+      return this.$tests[this.testname].type;
     },
-    hasSynesthesia () {
-      if (this.type !== 'likert') { 
-        return this.value > this.cutoff
+    hasSynesthesia() {
+      if (this.type !== "likert") {
+        return this.value > this.cutoff;
       } else {
-        if (!this.realValue) return false
+        if (!this.realValue) return false;
         /// somewhere here!
-        if (!this.$tests[this.testname]) return false
-        return this.realValue <= this.$tests[this.testname].cutoff
+        if (!this.$tests[this.testname]) return false;
+        return this.realValue <= this.$tests[this.testname].cutoff;
       }
     },
-    cutoff () {
+    cutoff() {
       // percentage
-      if (this.type === 'likert') {
-        return (18 / 30) * 100
-      } else if (this.$tests[this.testname].type === 'imagesound') {
-        return false
-      } else if (this.$tests[this.testname].type === 'grapheme' && ((this.data.data && this.data.data.length === 2) || this.data.hasDoubles)) {
+      if (this.type === "likert") {
+        return (18 / 30) * 100;
+      } else if (this.$tests[this.testname].type === "imagesound") {
+        return false;
+      } else if (
+        this.$tests[this.testname].type === "grapheme" &&
+        ((this.data.data && this.data.data.length === 2) ||
+          this.data.hasDoubles)
+      ) {
         // in case grapheme symbol with only 2 values
         if (this.data.hasDoubles) {
-          return (this.$tests[this.testname].cutoff / Object.keys(this.data.symbols).length) * 100
+          return (
+            (this.$tests[this.testname].cutoff /
+              Object.keys(this.data.symbols).length) *
+            100
+          );
         }
-        return this.$tests[this.testname].cutoff * 100
+        return this.$tests[this.testname].cutoff * 100;
       } else {
-        let cutoff = this.$tests[this.testname].cutoff
+        let cutoff = this.$tests[this.testname].cutoff;
         if (this.data === false) {
-          return 0
-        } else {  
-          return ((6 - cutoff) / 6) * 100
+          return 0;
+        } else {
+          return ((6 - cutoff) / 6) * 100;
         }
       }
     },
-    reverse () {
-      if (this.type === 'likert') return true
-      if (this.$tests[this.testname].type === 'grapheme' && ((this.data.data && this.data.data.length === 2) || this.data.hasDoubles)) { return false }
-      return !(["imagesound","grapheme","audio"].indexOf(this.$tests[this.testname].type) >= 0)
+    reverse() {
+      if (this.type === "likert") return true;
+      if (
+        this.$tests[this.testname].type === "grapheme" &&
+        ((this.data.data && this.data.data.length === 2) ||
+          this.data.hasDoubles)
+      ) {
+        return false;
+      }
+      return !(
+        ["imagesound", "grapheme", "audio"].indexOf(
+          this.$tests[this.testname].type
+        ) >= 0
+      );
     },
-    value () {
+    value() {
       // turn into forward percentage
       // total
-      if (this.type === 'total') {
-        if (this.data.total === undefined || isNaN(this.data.total)) return false
+      if (this.type === "total") {
+        if (this.data.total === undefined || isNaN(this.data.total))
+          return false;
         if (this.data.hasDoubles) {
-          return (this.data.total / Object.keys(this.data.symbols).length) * 100
+          return (
+            (this.data.total / Object.keys(this.data.symbols).length) * 100
+          );
         }
-        return ((6 - this.data.total) / 6) * 100
+        return 100 - ((6 - this.data.total) / 6) * 100;
       }
       // likert
-      if (this.type === 'likert') {
-        return (parseInt(this.data) / 30) * 100
+      if (this.type === "likert") {
+        return (parseInt(this.data) / 30) * 100;
       }
       // no data
-      if (!this.data || !this.data.score) return false
-      
+      if (!this.data || !this.data.score) return false;
+
       // imagesound
-      if (this.$tests[this.testname].type === 'imagesound') {
-        if (isNaN(this.data.score)) return false
-        return this.data.score * 100
+      if (this.$tests[this.testname].type === "imagesound") {
+        if (isNaN(this.data.score)) return false;
+        return this.data.score * 100;
       }
       // if a symbol
-      if (this.data.hasDoubles || (this.data.data && this.data.data.length === 2)) {
-        return this.data.score * 100
+      if (
+        this.data.hasDoubles ||
+        (this.data.data && this.data.data.length === 2)
+      ) {
+        return this.data.score * 100;
       }
-      return ((this.data.score / 6) * 100)
+      return (this.data.score / 6) * 100;
       // return ((6 - this.data.score) / 6) * 100
     },
-    realValue () {
-      if (!this.data) return false
-      if (this.type === 'total') {
+    realValue() {
+      if (!this.data) return false;
+      if (this.type === "total") {
         if (this.data.total === undefined || isNaN(this.data.total)) {
-          return false
+          return false;
         } else {
           if (this.data.hasDoubles) {
-            return this.data.total
+            return this.data.total;
           }
-          return this.data.total === 0 ? 0 : parseInt(this.data.total * 100) / 100
+          return this.data.total === 0
+            ? 0
+            : parseInt(this.data.total * 100) / 100;
         }
       }
       // likert
-      if (this.type === 'likert') {
-        return parseInt(this.data)
+      if (this.type === "likert") {
+        return parseInt(this.data);
       }
-      if (this.testType === 'imagesound') {
-        return this.data.score
+      if (this.testType === "imagesound") {
+        return this.data.score;
       }
       // no data
-      if (!this.data || isNaN(this.data.score)) return false
+      if (!this.data || isNaN(this.data.score)) return false;
       // if a symbol
-      return this.data.score
+      return this.data.score;
     },
-    title () {
-      if (this.type === 'likert') { return 'extra vragenlijst' }
+    title() {
+      if (this.type === "likert") {
+        return "extra vragenlijst";
+      }
       if (this.data.symbol) {
-        if (typeof this.data.symbol === 'string' && this.data.symbol.startsWith('t:')) {
-          return this.$t(this.data.symbol.replace('t:',''))
+        if (
+          typeof this.data.symbol === "string" &&
+          this.data.symbol.startsWith("t:")
+        ) {
+          return this.$t(this.data.symbol.replace("t:", ""));
         }
-        return this.data.symbol
+        return this.data.symbol;
       }
-      if (this.testname === undefined) { return false }
-      return this.$tests[this.testname].name[this.$store.state.profile.language]
-    },
-    username () {
-      if (this.user) { return this.user.name}
-      return false
-    },
-    text () {
-      if (this.type === 'likert' && !this.data) {
-        return this.$t('novalue');
+      if (this.testname === undefined) {
+        return false;
       }
-      if (this.realValue === false) return this.$t('novalue')
-      return 'Score: ' + this.realValue
+      return this.$tests[this.testname].name[
+        this.$store.state.profile.language
+      ];
+    },
+    username() {
+      if (this.user) {
+        return this.user.name;
+      }
+      return false;
+    },
+    text() {
+      if (this.type === "likert" && !this.data) {
+        return this.$t("novalue");
+      }
+      if (this.realValue === false) return this.$t("novalue");
+      return "Score: " + this.realValue;
     },
     // audio
-    hasAudio () {
-      if (!this.data.symbol) { return false }
+    hasAudio() {
+      if (!this.data.symbol) {
+        return false;
+      }
       if (this.testname !== undefined) {
-        if (['audio', 'imagesound'].indexOf(this.$tests[this.testname].type) > -1) {
-          return true
+        if (
+          ["audio", "imagesound"].indexOf(this.$tests[this.testname].type) > -1
+        ) {
+          return true;
         }
       }
-      return false
+      return false;
     },
     // images
-    hasImages () {
+    hasImages() {
       if (this.testname !== undefined) {
-        if (['imagesound'].indexOf(this.$tests[this.testname].type) > -1) {
-          return true
+        if (["imagesound"].indexOf(this.$tests[this.testname].type) > -1) {
+          return true;
         }
       }
-      return false
+      return false;
     },
     images() {
-      if (!this.testname || !this.data.symbol) { return false }
+      if (!this.testname || !this.data.symbol) {
+        return false;
+      }
       if (this.$tests[this.testname].type !== "imagesound") return false;
       return [
         join(this.$configbase, "images", this.data.symbol.im1),
-        join(this.$configbase, "images", this.data.symbol.im2)
+        join(this.$configbase, "images", this.data.symbol.im2),
       ];
     },
     // colours
-    hasColors () {
-      if (this.type === 'likert') {
-        return false
+    hasColors() {
+      if (this.type === "likert") {
+        return false;
       }
-      if (this.$tests[this.testname].type === 'imagesound') {
-        return false
+      if (this.$tests[this.testname].type === "imagesound") {
+        return false;
       }
-      return true
+      return true;
     },
     values() {
-      if (!this.data || !this.data.data) return false
-      return this.data.data.map(x => x.value)
+      if (!this.data || !this.data.data) return false;
+      return this.data.data.map((x) => x.value);
     },
     valuesFiltered() {
-      return this.values.filter(x => x !== "nocolor");
+      return this.values.filter((x) => x !== "nocolor");
     },
     valuesFilteredDisplay() {
       // return this.values.filter(x => x !== "nocolor");
-      if (!this.values) return false
-      return this.values.map(x => {
+      if (!this.values) return false;
+      return this.values.map((x) => {
         if (x === "nocolor")
           return { backgroundImage: `url("./assets/nocolor.png")` };
         return { background: `#${x}` };
@@ -237,9 +290,9 @@ export default {
   },
   methods: {
     distance() {
-      return score.distance(this.testType, this.values)
-    }
-  }
+      return score.distance(this.testType, this.values);
+    },
+  },
 };
 </script>
 <style lang="less" scoped>
@@ -250,13 +303,13 @@ export default {
   border: 1px solid @fg;
   border-radius: 0.25em;
   width: 100%;
-  -webkit-print-color-adjust:exact;
+  -webkit-print-color-adjust: exact;
   @media print {
     border: 1px solid #ccc;
     --fg: #555;
     --bg: #fff;
     break-inside: avoid;
-    display:inline-block;
+    display: inline-block;
     max-width: 20rem;
     margin-right: 1rem;
   }
@@ -268,7 +321,7 @@ export default {
   color: @bg;
   #title {
     text-transform: capitalize;
-    flex-grow:1;
+    flex-grow: 1;
   }
   #username {
     opacity: 0.5;
@@ -290,7 +343,7 @@ export default {
 }
 #media {
   background: @fg;
-  display:flex;
+  display: flex;
   > div {
     width: 100%;
   }
@@ -333,7 +386,7 @@ export default {
   height: 100%;
   z-index: 1;
   transition: all 2.5s @easeInOutExpo;
-  transition-delay: .15s;
+  transition-delay: 0.15s;
   &:before {
     content: "";
     position: absolute;
@@ -378,15 +431,15 @@ export default {
 #audio {
   text-align: center;
   #soundfilename {
-    display:none;
+    display: none;
   }
-  @media print { 
+  @media print {
     #soundfilename {
-      display:block;
+      display: block;
       padding: 0.5em;
     }
     /deep/ #sound {
-      display:none;
+      display: none;
     }
   }
   /deep/ #sound {
@@ -406,11 +459,10 @@ export default {
       width: 2rem !important;
       height: 2rem !important;
       border: 0.15rem solid transparent !important;
-      box-shadow:
-      0.025rem -0.025rem 0.05rem rgba(#000, 0.4),
-      inset 0.05rem -0.05rem 0.05rem rgba(#000, 0.4),
-      inset -0.05rem 0.05rem 0.05rem rgba(#fff, 0.1),
-      -0.05rem 0.05rem 0.05rem rgba(#fff, 0.1) !important;
+      box-shadow: 0.025rem -0.025rem 0.05rem rgba(#000, 0.4),
+        inset 0.05rem -0.05rem 0.05rem rgba(#000, 0.4),
+        inset -0.05rem 0.05rem 0.05rem rgba(#fff, 0.1),
+        -0.05rem 0.05rem 0.05rem rgba(#fff, 0.1) !important;
     }
   }
 }
@@ -449,16 +501,16 @@ export default {
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center;
-    opacity: .25;
+    opacity: 0.25;
     position: relative;
     img {
       object-fit: contain;
       object-position: center;
-      position:absolute;
-      left:0;
-      top:0;
-      width:100%;
-      height:100%;
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
     }
 
     // &:first-child {

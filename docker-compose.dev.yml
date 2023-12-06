@@ -1,0 +1,66 @@
+services:
+  nginx:
+    image: nginx
+    container_name: syn-nginx
+    tty: true
+    ports:
+      - 80:80
+    volumes:
+      - ./nginx/nginx.dev.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./server:/var/www/html
+    links:
+      - php
+  composer:
+    image: composer/composer
+    command: install
+    volumes:
+      - ./server:/app
+  php:
+    container_name: php
+    image: php:8.3-rc-fpm
+    ports:
+      - 9000:80
+      - 443:443
+    volumes:
+      - ./server:/var/www/html
+    environment:
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_DBNAME: database
+      MYSQL_HOST: localhost
+      DB_PREFIX: SYN_
+  app:
+    image: node:18.1.0-alpine
+    container_name: syn-app
+    working_dir: /app
+    command: sh -c "yarn install && yarn appdev"
+    expose:
+      - 3000
+    volumes:
+      - type: bind
+        source: ./
+        target: /app
+    environment:
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_DBNAME: database
+      MYSQL_HOST: localhost
+      DB_PREFIX: SYN_
+  db:
+    image: mariadb
+    container_name: mariadb
+    restart: on-failure
+    volumes:
+      - ./mariadb:/var/lib/mysql
+      - ./:/data
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: database
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+  adminer:
+    container_name: adminer
+    image: adminer
+    restart: always
+    ports:
+      - 4444:8080

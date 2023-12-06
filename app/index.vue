@@ -1,13 +1,7 @@
 <template>
   <div id="index">
-    <transition
-      name="page"
-      mode="out-in"
-    >
-      <router-view
-        :key="$route.path"
-        class="view"
-      />
+    <transition name="page" mode="out-in">
+      <router-view :key="$route.path" class="view" />
     </transition>
     <dialog-dialogues />
   </div>
@@ -16,7 +10,7 @@
 // don't scroll to top on history back
 window.history.scrollRestoration = "manual";
 import { each, sample, debounce, isEmpty } from "lodash";
-import moment from "moment"
+import moment from "moment";
 const chalk = require("chalk");
 export default {
   watch: {
@@ -40,51 +34,23 @@ export default {
     });
   },
   mounted() {
-    let style = `
-                  font-weight:bold;
-                  color: #00f; 
-                  font-size: 11px;
-                  font-family:helvetica;
-                `
-    console.log("\n\n")
-    console.log("%cLast commit by " + this.$info.name + "\n" + moment(this.$info.date).format("D MMM YYYY hh:mm a"),style)
-    console.log("%c" + this.$info.url, "color: #00f")
-    console.log("%c" + this.$info.sha, "color: #999")
-    console.log("%c" + window.location.origin + this.$configbase, "color: #00f")
-    console.log("\n\n")
-
     // VH fix for mobile
     let vh = window.innerHeight * 0.01;
     document.documentElement.style.setProperty("--vh", `${vh}px`);
-    // window.addEventListener(
-    //   "resize",
-    //   debounce(() => {
-    //     let vh = window.innerHeight * 0.01;
-    //     document.documentElement.style.setProperty("--vh", `${vh}px`);
-    //   }),
-    //   10
-    // );
-
-    // var i = 0;
-    // window.addEventListener("keydown", (ev) => {
-    //   if (ev.keyCode === 39) i++;
-    //   if (ev.keyCode === 37) i--;
-    //   if (i < 0) i = 0;
-    //   if (i > 7) i = 7;
-    //   if (ev.keyCode === 37 || ev.keyCode === 39) this.setTheme(i);
-    //   // if (ev.keyCode === 13) {
-    //   //   this.openAlert();
-    //   // }
-    // });
-    // this.setTheme(4);
   },
   methods: {
     openAlert() {
-      this.$root.confirm({message: "May I ask you a question, please?", options: ["yes", "no", "again" ,"something else"]}).then(x => {
-        console.log(x);
-      }).catch(x => {
-        console.error(x);
-      })
+      this.$root
+        .confirm({
+          message: "May I ask you a question, please?",
+          options: ["yes", "no", "again", "something else"],
+        })
+        .then((x) => {
+          console.log(x);
+        })
+        .catch((x) => {
+          console.error(x);
+        });
     },
     setTheme(i) {
       each(document.body.classList, (x) => {

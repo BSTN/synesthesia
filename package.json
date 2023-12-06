@@ -6,10 +6,11 @@
   "license": "MIT",
   "private": false,
   "scripts": {
-    "dev": "NODE_ENV=development gulp dev",
+    "dev": "docker compose -f docker-compose.dev.yml up -d && docker attach syn-nginx",
+    "stop": "docker compose down",
+    "appdev": "NODE_ENV=development gulp dev",
     "build": "NODE_ENV=production gulp build",
-    "uploaddev": "NODE_ENV=production DB_PREFIX=dev LIVE_BASE=/dev/ SSH_PATH=htdocs/dev/ gulp buildandupload",
-    "uploadlive": "NODE_ENV=production DB_PREFIX=live LIVE_BASE=/live/ SSH_PATH=htdocs/live/ gulp buildandupload"
+    "run": "docker compose up -f docker-compose.yml"
   },
   "postcss": {
     "plugins": {

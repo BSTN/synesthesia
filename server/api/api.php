@@ -1,6 +1,6 @@
 <?php
 
-require_once dirname(__DIR__) .  "/vendor/autoload.php";
+require_once dirname(__DIR__) . "/vendor/autoload.php";
 
 use Michelf\Markdown;
 use Symfony\Component\Yaml\Yaml;
@@ -15,7 +15,7 @@ try {
     $dbc = new PDO(
         'mysql:host=' . MYSQL_HOST . ';
         dbname=' . MYSQL_DBNAME,
-        MYSQL_USERNAME,
+        MYSQL_USER,
         MYSQL_PASSWORD
     );
     $dbc->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
@@ -147,13 +147,14 @@ if ($PATH === "/getshared") {
 
     $finished = explode(",", $fetch['finishedtests']);
     $UID = $fetch['UID'];
-    
+
     /* get test data */
     $results = array();
     // filter function
-    function filter($v) {
+    function filter($v)
+    {
         $newobj;
-        foreach($v as $k => $vv) {
+        foreach ($v as $k => $vv) {
             if (!in_array($k, ["IP","UID","USERID","ID","created","modified"])) {
                 $newobj[$k] = $vv;
             }
@@ -173,7 +174,6 @@ if ($PATH === "/getshared") {
         if (!$fetched) {
             $results[$testname] = false;
         } else {
-            
             $filtered = array_map("filter", $fetched);
             $results[$testname] = $filtered;
         }
@@ -352,139 +352,6 @@ if ($PATH === "/store") {
 
 
     pjson($data);
-}
-
-if ($PATH === "/update") {
-
-    // check password
-    if (!array_key_exists("passwd", $_POST)) {
-        $message = "";
-        include_once("update.php");
-        exit();
-    }
-
-    if (brute_check()) {
-        errormessage("Login failed, too many attempts. Locked out for 10 minutes.", 'update.php');
-    }
-
-    // always sleep a bit
-    sleep(1);
-    
-    // check password & username
-    if ($_POST['name'] !== explode(":", PASS)[0] || !password_verify($_POST['passwd'], explode(":", PASS)[1])) {
-        brute_fail();
-        errormessage("Login failed, please check your username and password.", 'update.php');
-    }
-    
-    // vars
-    $gitname = GITNAME;
-    $repository = GITREPOSITORY;
-    
-    // $dest = dirname(__DIR__) . "/testdata";
-    $dest = CONFIGPATH;
-    $desttemp = TEMPUPDATEPATH;
-
-    // derivative vars
-    $desttempzip = $desttemp . "/temp.zip";
-    $desttempunzip = $desttemp . "/unzip";
-    $desttempjson = $desttemp . "/info.json";
-    $destjson = $dest . "/info.json";
-
-    // download data
-    if (!is_dir($desttemp)) {
-        errormessage('Directory does not exist', 'update.php');
-    }
-    if (!@file_put_contents($desttempzip, fopen("https://github.com/$gitname/$repository/archive/master.zip", "r"))) {
-        errormessage('Could not download or write git zip file.', 'update.php');
-    };
-    
-    // get latest commit
-    $opts = ['http' => ['method' => 'GET', 'header' => ['User-Agent: PHP']]];
-    $context = stream_context_create($opts);
-    if (!$content = @file_get_contents("https://api.github.com/repos/$gitname/$repository/commits/master", false, $context)) {
-        errormessage('Could not download meta data.', 'update.php');
-    };
-    if (!@file_put_contents($desttempjson, $content)) {
-        errormessage("Could not write meta data.", 'update.php');
-    }
-
-    // unzip folder
-    $zip = new ZipArchive;
-    $res = $zip->open($desttempzip);
-    if ($res === true) {
-        $zip->extractTo($desttempunzip);
-        // chown($desttempunzip, 'synesthesie');
-        // chgrp($desttempunzip, 'synesthesie');
-        $zip->close();
-    } else {
-        errormessage('Could not unzip file.', 'update.php');
-    };
-
-    // get git folder
-    $scan = scandir($desttempunzip);
-    $gitfolder = $desttempunzip . "/" . array_values(array_diff($scan, array('.', '..')))[0];
-    
-    // check if files are readable
-    try {
-        $raw = @file_get_contents($gitfolder . '/config.yml');
-        if (!$raw) {
-            errormessage('Could not read config.yml', 'update.php');
-        }
-        Yaml::parse($raw);
-    } catch (ParseException $exception) {
-        error('Unable to parse the YAML string in "config.yml": ' . $exception->getMessage());
-    }
-    try {
-        $raw = @file_get_contents($gitfolder . '/translations.yml');
-        if (!$raw) {
-            errormessage('Could not read translations.yml', 'update.php');
-        }
-        Yaml::parse($raw);
-    } catch (ParseException $exception) {
-        errormessage('Unable to parse the YAML string in "translations.yml": ' . $exception->getMessage(), 'update.php');
-    }
-    $tests = array();
-    foreach (glob($gitfolder . "/tests/*.yml") as $filename) {
-        try {
-            $raw = @file_get_contents($filename);
-            if (!$raw) {
-                errormessage("Could not read $filename", 'update.php');
-            }
-            Yaml::parse($raw);
-        } catch (ParseException $exception) {
-            errormessage("Unable to parse the YAML string in '$filename': " . $exception->getMessage(), 'update.php');
-        }
-    }
-
-    // move unzipped folder to data folder
-    if (is_dir($dest)) {
-        if (!@rrmdir($dest)) {
-            errormessage('Could not remove destination folder.', 'update.php');
-        }
-    }
-
-    foreach (
-        $iterator = new \RecursiveIteratorIterator(
-        new \RecursiveDirectoryIterator($gitfolder, \RecursiveDirectoryIterator::SKIP_DOTS),
-        \RecursiveIteratorIterator::SELF_FIRST) as $item
-        ) {
-        if ($item->isDir()) {
-            mkdir($dest . DIRECTORY_SEPARATOR . $iterator->getSubPathName());
-        } else {
-            copy($item, $dest . DIRECTORY_SEPARATOR . $iterator->getSubPathName());
-        }
-    }
-    // if (!copy($gitfolder, $dest)) {
-    //     errormessage('failed', 'update.php');
-    // }
-    // if (!@rename($gitfolder, $dest)) {
-    //     errormessage('Could not move zip folder to destination.', 'update.php');
-    // };
-    if (!@rename($desttempjson, $destjson)) {
-        errormessage('Could not move info.json to destination.', 'update.php');
-    };
-
-    errormessage('Done!', 'update.php');
 }
 
 error("Sorry, path does not exist.");

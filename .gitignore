@@ -3,6 +3,8 @@ dev
 live
 .env
 server/vendor
+server/js
+mariadb
 .DS_STORE
 **/*.otf
 **/*.woff
