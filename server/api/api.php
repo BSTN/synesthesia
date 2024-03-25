@@ -14,13 +14,16 @@ require_once "../config.php";
 try {
     $dbc = new PDO(
         'mysql:host=' . MYSQL_HOST . ';
+        port=' . MYSQL_PORT . ';
         dbname=' . MYSQL_DBNAME,
         MYSQL_USER,
         MYSQL_PASSWORD
     );
     $dbc->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 } catch (PDOException $e) {
-    error("Could not connect to database.");
+    echo "Could not connect to database:\n $e";
+    error_log("Could not connect to database:\n $e");
+    exit();
 }
 
 require_once "api-functions.php";
@@ -60,22 +63,17 @@ if ($PATH === "/download") {
     }
 }
 
+
+
 if ($PATH === "/setup") {
     $mysqlversion = intval($dbc->query('select version()')->fetchColumn());
-    $change = $mysqlversion > 5 ? true : false;
     $sql = file_get_contents(dirname(__DIR__) . "/setup/setup.sql");
-    $sql = preg_replace("/CREATE TABLE `/i", "CREATE TABLE " . '`' . DB_PREFIX, $sql);
-    if ($change) {
-        // change for mysql 8
-        $sql = preg_replace("/DEFAULT\ 0/i", "DEFAULT CURRENT_TIMESTAMP", $sql);
-    }
-    $sql = "USE " . MYSQL_DBNAME . ";" . $sql;
+    $sql = preg_replace("/CREATE TABLE `/i", "CREATE TABLE `" . DB_PREFIX, $sql);
     try {
         $dbc->exec($sql);
     } catch (PDOException $Exception) {
         error($Exception);
     };
-    // echo $sql;
     echo "done.";
     exit();
 }
@@ -197,6 +195,17 @@ if ($PATH === "/getshared") {
     }
 
     pjson($results);
+}
+
+if ($PATH === "/update") {
+    exec('cd /var/www/html/synesthesia_config && git pull', $output, $retval);
+    if ($retval === 0 && $output[0] === 'Already up to date.') {
+        exec('cd /var/www/html/synesthesia_config/ && git branch --show-current', $output2);
+        echo "Git branch \"" . $output2[0] . "\" is active and up to date.";
+    } else {
+        print_r($output);
+    }
+    exit();
 }
 
 if ($PATH === "/store") {

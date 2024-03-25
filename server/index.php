@@ -56,7 +56,7 @@ foreach (glob(CONFIGPATH . "/texts/*.md") as $filename) {
 
     <script src="<?= SRCV ?>"></script>
     <script src="<?= SRC ?>"></script>
-
+    
 </body>
 
 </html>

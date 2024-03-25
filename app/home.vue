@@ -6,25 +6,13 @@
         <languages />
       </template>
       <template #right>
-        <router-link to="/results">{{$t('myresults')}}</router-link>
+        <router-link to="/results">{{ $t('myresults') }}</router-link>
       </template>
     </topbar>
     <div id="content">
       <transition name="homeflip" mode="out-in">
-        <md
-          v-if="!$store.state.func.start"
-          id="hometext"
-          key="1"
-          class="section"
-          md="home"
-        />
-        <md
-          v-else-if="$store.state.func.start"
-          id="overview"
-          key="2"
-          class="textpage"
-          md="tests"
-        >
+        <md v-if="!$store.state.func.start" id="hometext" key="1" class="section" md="home" />
+        <md v-else-if="$store.state.func.start" id="overview" key="2" class="textpage" md="tests">
           overview
         </md>
       </transition>
@@ -64,7 +52,7 @@ export default {
   min-height: calc(var(--vh, 1vh) * 100);
   border-width: 0;
 
-  > button {
+  >button {
     position: fixed;
     z-index: 9999;
 
@@ -81,7 +69,7 @@ export default {
     padding: 1rem 1.75rem;
     font-family: "Victor";
     position: relative;
-      z-index: 2;
+    z-index: 2;
 
     @media (max-width: 600px) {
       padding: 1rem;
@@ -164,7 +152,7 @@ export default {
         padding: 2rem 0;
         columns: 1;
 
-        > div {
+        >div {
           max-width: 24rem;
           margin: 0 auto;
         }
@@ -188,8 +176,9 @@ export default {
 #toresults {
   text-align: center;
   padding: 4rem 1rem;
-  display:block;
+  display: block;
   border-top: 2px solid @fg;
+
   a {
     text-decoration: none;
   }

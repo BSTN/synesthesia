@@ -7,20 +7,20 @@ import vueSlider from "vue-slider-component";
 import VRuntimeTemplate from "v-runtime-template";
 import storePlugin from "./utils/storePlugin";
 import { i18n } from "./utils/i18n";
-import router from './router'
-import { isEmpty } from 'lodash'
-import queryParams from './utils/query-params'
+import router from "./router";
+import { isEmpty } from "lodash";
+import queryParams from "./utils/query-params";
 
 Vue.prototype.$axios = axios;
 Vue.prototype.$cache = {};
 
 // configuration base (data)
-Vue.prototype.$configbase = document.body.dataset.configbase || false
+Vue.prototype.$configbase = document.body.dataset.configbase || false;
 
 // load info
-Vue.prototype.$info = JSON.parse(
-  document.getElementById("bootload-info").innerText
-);
+// Vue.prototype.$info = JSON.parse(
+//   document.getElementById("bootload-info").innerText
+// );
 
 // load config
 Vue.prototype.$config = JSON.parse(

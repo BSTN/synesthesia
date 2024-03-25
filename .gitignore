@@ -3,9 +3,7 @@ dev
 live
 .env
 server/vendor
-server/js
 mariadb
 .DS_STORE
-**/*.otf
-**/*.woff
 todo.md
+server/synesthesia_config

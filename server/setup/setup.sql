@@ -1,8 +1,8 @@
 SET NAMES utf8;
 SET time_zone = '+00:00';
 
-CREATE TABLE `profile` (
-  `created` timestamp NOT NULL DEFAULT 0,
+CREATE TABLE IF NOT EXISTS `profile` (
+  `created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `modified` timestamp DEFAULT NOW() ON UPDATE NOW(),
   `UID` varchar(64) NOT NULL PRIMARY KEY,
   `IP` varchar(256) DEFAULT NULL,
@@ -12,12 +12,12 @@ CREATE TABLE `profile` (
   `USERID` varchar(256) DEFAULT NULL,
   `SHARED` varchar(32) DEFAULT NULL,
   CONSTRAINT UIDUNIQUE UNIQUE(UID)
-) ENGINE=InnoDB DEFAULT CHARSET=UTF8MB4;
+);
 
 
-CREATE TABLE `questions` (
+CREATE TABLE IF NOT EXISTS `questions` (
   `ID` INT AUTO_INCREMENT PRIMARY KEY,
-  `created` timestamp NOT NULL DEFAULT 0,
+  `created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `modified` timestamp DEFAULT NOW() ON UPDATE NOW(),
   `IP` varchar(256) DEFAULT NULL,
   `UID` varchar(64) NOT NULL,
@@ -30,21 +30,21 @@ CREATE TABLE `questions` (
   `position` varchar(512) DEFAULT NULL,
   `timing` bigint DEFAULT NULL,
   `qnr` int DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=UTF8MB4;
+);
 
-CREATE TABLE `extra` (
-  `created` timestamp NOT NULL DEFAULT 0,
+CREATE TABLE IF NOT EXISTS `extra` (
+  `created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `modified` timestamp DEFAULT NOW() ON UPDATE NOW(),
   `IP` varchar(256) DEFAULT NULL,
   `UID` varchar(64) NOT NULL PRIMARY KEY,
   `data` text DEFAULT NULL,
   CONSTRAINT UIDUNIQUE UNIQUE(UID)
-) ENGINE=InnoDB DEFAULT CHARSET=UTF8MB4;
+);
 
-CREATE TABLE `access` (
-  `created` timestamp NOT NULL DEFAULT 0,
+CREATE TABLE IF NOT EXISTS `access` (
+  `created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `modified` timestamp DEFAULT NOW() ON UPDATE NOW(),
   `IP` varchar(128) NOT NULL PRIMARY KEY,
   `NUM` INT,
   CONSTRAINT IPUNIQUE UNIQUE(IP)
-) ENGINE=InnoDB DEFAULT CHARSET=UTF8MB4;
+);

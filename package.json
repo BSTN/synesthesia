@@ -1,16 +1,17 @@
 {
   "name": "synesthesia",
-  "version": "1.0.0",
-  "main": "app/index.js",
+  "version": "2.0.0",
   "author": "BSTN",
   "license": "MIT",
   "private": false,
   "scripts": {
-    "dev": "docker compose -f docker-compose.dev.yml up -d && docker attach syn-nginx",
+    "dev": "docker compose -f docker-compose.dev.yml up -d && docker attach syn-app",
+    "stopdev": "docker compose -f docker-compose.dev.yml down",
+    "appdev": "NODE_ENV=development webpack-dev-server",
+    "build": "docker exec -it syn-app yarn webpack",
+    "start": "docker compose -f docker-compose.yml up",
     "stop": "docker compose down",
-    "appdev": "NODE_ENV=development gulp dev",
-    "build": "NODE_ENV=production gulp build",
-    "run": "docker compose up -f docker-compose.yml"
+    "webpack": "NODE_ENV=production webpack"
   },
   "postcss": {
     "plugins": {
@@ -30,10 +31,6 @@
     "css-loader": "^3.5.3",
     "dotenv": "^8.2.0",
     "file-loader": "^6.0.0",
-    "gulp": "^4.0.2",
-    "gulp-rsync": "^0.0.9",
-    "gulp-template": "^5.0.0",
-    "gulp-util": "^3.0.8",
     "html-loader": "^1.1.0",
     "less": "^3.11.1",
     "less-loader": "^6.1.0",
@@ -57,9 +54,8 @@
     "vue-style-loader": "^4.1.2",
     "vue-template-compiler": "^2.6.11",
     "vuex": "^3.4.0",
-    "webpack": "^4.43.0",
-    "webpack-cli": "^3.3.11",
-    "webpack-stream": "^5.2.1"
+    "webpack": "4.47.0",
+    "webpack-cli": "^3.3.11"
   },
   "devDependencies": {
     "eslint": "^7.13.0",

@@ -5,7 +5,11 @@
     </transition>
     <div id="loaded" v-if="!loading">
       <div id="pretest" v-if="showPretest" class="textpage">
-        <div v-for="(item,k) in config.pretest" :key="k" v-if="k === pretestCount">
+        <div
+          v-for="(item, k) in config.pretest"
+          :key="k"
+          v-if="k === pretestCount"
+        >
           <md :md="item"></md>
         </div>
       </div>
@@ -13,7 +17,11 @@
         <testframe @done="done()"></testframe>
       </div>
       <div id="posttest" v-if="showPosttest" class="textpage">
-        <div v-for="(item,k) in config.posttest" :key="k" v-if="k === posttestCount">
+        <div
+          v-for="(item, k) in config.posttest"
+          :key="k"
+          v-if="k === posttestCount"
+        >
           <md :md="item"></md>
         </div>
       </div>
@@ -27,19 +35,19 @@ export default {
     return {
       loading: true,
       finished: false,
-      results: false
+      results: false,
     };
   },
   computed: {
     ...mapGetters({
       testdata: "tests/testdata",
-      q: "tests/q"
+      q: "tests/q",
     }),
     config() {
       return this.$tests[this.$route.params.testname];
     },
-    testname () {
-      return this.$route.params.testname
+    testname() {
+      return this.$route.params.testname;
     },
     showTestframe() {
       if (this.testdata.pretest)
@@ -80,34 +88,42 @@ export default {
           return true;
       }
       return false;
-    }
+    },
   },
-  async beforeRouteEnter (to, from, next) {
-    if (from.name === 'results' || from.name === 'likert') {
-      next("/")
+  async beforeRouteEnter(to, from, next) {
+    if (from.name === "results" || from.name === "likert") {
+      next("/");
     } else {
-      next()
+      next();
     }
   },
   methods: {
     next() {},
     async done() {
-      let data = await this.$store.dispatch("tests/nextPage").catch(err => {
+      let data = await this.$store.dispatch("tests/nextPage").catch((err) => {
         console.warn("Error going to nextpage:", err);
       });
-      if (data === 'done' && this.config.likert) {
-        this.$router.push({name: 'likert', params: {testname: this.$route.params.testname}})
-      } else if (data === 'done') {
-        this.$router.push({name: 'results', params: {testname: this.$route.params.testname}})
+      if (data === "done" && this.config.likert) {
+        this.$router.push({
+          name: "likert",
+          params: { testname: this.$route.params.testname },
+        });
+      } else if (data === "done") {
+        this.$router.push({
+          name: "results",
+          params: { testname: this.$route.params.testname },
+        });
       }
-    }
+    },
   },
   watch: {
     "testdata.pageCount": function() {
       window.scrollTo(0, 0);
-    }
+    },
   },
   async mounted() {
+    console.log("mounted!");
+
     /* check if this test exists */
     if (
       !this.$route.params.testname ||
@@ -115,21 +131,25 @@ export default {
       !(this.$route.params.testname in this.$store.state.tests.tests)
     ) {
       await this.$root.alert({
-        message: this.$t('sorrynotatest')
+        message: this.$t("sorrynotatest"),
       });
       this.$router.push({ path: "/" });
     } else {
       this.$store.commit("tests/setActive", this.testname);
     }
     /* get uid */
-    if (this.$store.state.profile.UID === null && (this.$store.state.profile.USERID || this.$config.storeall)) {
+    if (
+      this.$store.state.profile.UID === null &&
+      (this.$store.state.profile.USERID || this.$config.storeall)
+    ) {
       let x = false;
       try {
         // request server
         // add USERID
-        const postdata = {}
-        postdata.language = this.$store.state.profile.language
-        if (this.$store.state.profile.USERID) postdata.USERID = this.$store.state.profile.USERID
+        const postdata = {};
+        postdata.language = this.$store.state.profile.language;
+        if (this.$store.state.profile.USERID)
+          postdata.USERID = this.$store.state.profile.USERID;
         x = await this.$axios.post("./api/create", postdata);
       } catch (err) {
         await this.$root.alert({ message: "Error testpage #1." });
@@ -144,21 +164,32 @@ export default {
       }
     }
     /* ask for touchscreen if not yet set */
-    if (this.$store.state.profile.USERID && this.$store.state.profile.touchscreen === null) {
-      const touchscreen = await this.$root.choose({message:this.$t('touchscreen'), options: this.$t('touchscreenoptions')}).catch(err => {
-        console.log('nothing chosen?');
-      })
-      await this.$store.dispatch('profile/set',{touchscreen})
+    if (
+      this.$store.state.profile.USERID &&
+      this.$store.state.profile.touchscreen === null
+    ) {
+      const touchscreen = await this.$root
+        .choose({
+          message: this.$t("touchscreen"),
+          options: this.$t("touchscreenoptions"),
+        })
+        .catch((err) => {
+          console.log("nothing chosen?");
+        });
+      await this.$store.dispatch("profile/set", { touchscreen });
     }
 
     /* redirect if finished */
-    const finished = await this.$store.dispatch('tests/isFinished', this.testname)
+    const finished = await this.$store.dispatch(
+      "tests/isFinished",
+      this.testname
+    );
     if (finished) {
-      this.done()
+      this.done();
     }
     /* LOADING */
     this.loading = false;
-  }
+  },
 };
 </script>
 <style lang="less" scoped>
