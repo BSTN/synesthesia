@@ -7,3 +7,4 @@ server/vendor
 **/*.otf
 **/*.woff
 todo.md
+/mariadb
