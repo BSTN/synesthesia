@@ -18,7 +18,7 @@ variables:
   # More Information on Kaniko Caching:
   # https://cloud.google.com/build/docs/kaniko-cache
   KANIKO_CACHE_ARGS: >
-    --cache=true
+    --cache=false
     --cache-copy-layers=false
     --cache-ttl=24h
     --cache-repo=$HARBOR_DESTINATION/kaniko-cache
