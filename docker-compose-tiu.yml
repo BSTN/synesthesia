@@ -7,7 +7,7 @@ services:
     links:
       - php-fpm
   php-fpm:
-    image: php-fpm-1
+    image: php-fpm
     environment:
       MYSQL_USER: ${MYSQL_USER}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}

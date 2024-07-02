@@ -1,4 +1,4 @@
-FROM php:8.2-fpm-alpine as php-fpm
+FROM php:8.2-fpm-alpine as syn-php-fpm
 
 # Workaround for DNS lookup error
 RUN echo "nameserver 137.56.247.12" > /etc/resolv.conf
