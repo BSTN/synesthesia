@@ -9,7 +9,6 @@
 # Define the stages
 stages:
   - build
-
 # Variables, specific to this CI/CD job. Global stuff and sensitive variables should be defined
 # in gitlab (they can be masked or made specific to branches there if needed)
 variables:
@@ -18,7 +17,7 @@ variables:
   # More Information on Kaniko Caching:
   # https://cloud.google.com/build/docs/kaniko-cache
   KANIKO_CACHE_ARGS: >
-    --cache=false
+    --cache=true
     --cache-copy-layers=false
     --cache-ttl=24h
     --cache-repo=$HARBOR_DESTINATION/kaniko-cache
