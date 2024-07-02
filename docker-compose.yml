@@ -11,11 +11,9 @@ services:
     links:
       - php-fpm
   php-fpm:
+    image: harbor.uvt.nl/synesthesia/php-fm:cicd
     container_name: php-fpm-live
     command: sh -c "composer install && git config --system --add safe.directory '/var/www/html/synesthesia_config' && git -C "synesthesia_config" pull || git clone https://github.com/BSTN/synesthesia_config && git -C "synesthesia_config" checkout ${SYNCONFIGBRANCH} && php-fpm"
-    build:
-      dockerfile: php-dockerfile
-      context: "."
     volumes:
       - ./server:/var/www/html
     environment:
