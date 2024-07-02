@@ -6,9 +6,11 @@
 # HARBOR_PASSWORD = [MASKED]
 # HARBOR_URL = "harbor.uvt.nl"
 # HARBOR_PROJECT = "synesthesia"
+
 # Define the stages
 stages:
   - build
+
 # Variables, specific to this CI/CD job. Global stuff and sensitive variables should be defined
 # in gitlab (they can be masked or made specific to branches there if needed)
 variables:
@@ -17,7 +19,7 @@ variables:
   # More Information on Kaniko Caching:
   # https://cloud.google.com/build/docs/kaniko-cache
   KANIKO_CACHE_ARGS: >
-    --cache=false
+    --cache=true
     --cache-copy-layers=false
     --cache-ttl=24h
     --cache-repo=$HARBOR_DESTINATION/kaniko-cache
@@ -27,7 +29,7 @@ variables:
   tags:
     - drs-private
 
-build-app-image:
+build-images:
   stage: build
   extends: .runner
   image:
@@ -50,7 +52,7 @@ build-app-image:
           --dockerfile $CI_PROJECT_DIR/Dockerfile \
           --target syn-php-fpm \
           --destination $HARBOR_DESTINATION/syn-php-fpm:$CI_COMMIT_BRANCH
-          
+
       /kaniko/executor $KANIKO_CACHE_ARGS \
           --context $CI_PROJECT_DIR \
           --dockerfile $CI_PROJECT_DIR/Dockerfile \

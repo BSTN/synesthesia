@@ -1,4 +1,6 @@
-FROM php:8.2-fpm-alpine as syn-php-fpm
+FROM docker.io/php:8.2-fpm-alpine as syn-php-fpm
+
+RUN cat /etc/resolv.conf
 
 # Workaround for DNS lookup error
 RUN echo "nameserver 137.56.247.12" > /etc/resolv.conf
@@ -15,9 +17,11 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 COPY server /var/www/html
 
 RUN composer install
+
 RUN git clone --depth=1 https://github.com/BSTN/synesthesia_config -b kinderen && rm -rf synesthesia_config/.git
 
-FROM node:14-alpine as yarn
+
+FROM docker.io/node:14-alpine as yarn
 
 COPY package.json /app/package.json
 
@@ -31,11 +35,11 @@ COPY server /app/server
 
 RUN yarn webpack
 
-FROM nginx:latest as syn-nginx
+
+FROM docker.io/nginx:latest as syn-nginx
 
 COPY nginx/nginx.conf /etc/nginx/conf.d/default.conf
 
 COPY server /var/www/html
 
 COPY --from=yarn /app/server/js /var/www/html/js
-
