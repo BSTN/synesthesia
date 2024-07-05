@@ -12,12 +12,12 @@ services:
       MYSQL_HOST: ${MYSQL_HOST}
       MYSQL_PORT: ${MYSQL_PORT}
   #The next container is only for dev/test purposes with no existing db available
-  db:
-    image: mariadb:latest
-    ports:
-      - ${MYSQL_PORT}:${MYSQL_PORT}
-    environment:
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-      MYSQL_DATABASE: ${MYSQL_DATABASE}
-      MYSQL_USER: ${MYSQL_USER}
-      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+  #db:
+  #  image: mariadb:latest
+  #  ports:
+  #    - ${MYSQL_PORT}:${MYSQL_PORT}
+  #  environment:
+  #    MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+  #    MYSQL_DATABASE: ${MYSQL_DATABASE}
+  #    MYSQL_USER: ${MYSQL_USER}
+  #    MYSQL_PASSWORD: ${MYSQL_PASSWORD}
