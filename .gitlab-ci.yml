@@ -36,6 +36,7 @@ build-images:
     # needs the :debug version because only that version has /bin/sh
     name: gcr.io/kaniko-project/executor:debug
     entrypoint: [""]
+  retry: 2
   script:
     - |
       # This script is executed in busybox, which means available commands

@@ -1,14 +1,14 @@
-FROM docker.io/php:8.2-fpm-alpine as syn-php-fpm
+FROM docker.io/php:8.2-fpm as syn-php-fpm
 
-RUN cat /etc/resolv.conf
+# Install dependencies for the PHP modules
+RUN set -ex; \
+    export UCF_FORCE_CONFFOLD=1 DEBIAN_FRONTEND=noninteractive; \
+    apt-get update; \
+    apt-get -o Dpkg::Options::=--force-confold -Vqy dist-upgrade; \
+    apt-get -o Dpkg::Options::=--force-confold -Vqy --no-install-recommends install libzip-dev; \
+    find /var/*/apt -type f -delete
 
-# Workaround for DNS lookup error
-RUN echo "nameserver 137.56.247.12" > /etc/resolv.conf
-
-# Installing dependencies for the PHP modules
-RUN apk update && apk add zip libzip-dev git
-
-# Installing additional PHP modules
+# Install additional PHP modules
 RUN docker-php-ext-install mysqli pdo pdo_mysql zip
 
 # Install Composer so it's available
@@ -18,10 +18,10 @@ COPY server /var/www/html
 
 RUN composer install
 
-RUN git clone --depth=1 https://github.com/BSTN/synesthesia_config -b kinderen && rm -rf synesthesia_config/.git
+RUN curl -sSL https://github.com/BSTN/synesthesia_config/archive/kinderen.tar.gz | tar xz --transform 's,^[^/]*,synesthesia_config,'
 
 
-FROM docker.io/node:14-alpine as yarn
+FROM docker.io/node:14 as yarn
 
 COPY package.json /app/package.json
 
