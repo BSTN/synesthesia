@@ -1,0 +1,61 @@
+# Pipeline used to create the required containers to install and configure
+# a ps-screening environment.
+#
+# Variables set in GitLab repository configuration --> CI/CD (check the tool for actuals):
+# HARBOR_USERNAME = robot$synesthesia+gitlab
+# HARBOR_PASSWORD = [MASKED]
+# HARBOR_URL = "harbor.uvt.nl"
+# HARBOR_PROJECT = "synesthesia"
+
+# Define the stages
+stages:
+  - build
+
+# Variables, specific to this CI/CD job. Global stuff and sensitive variables should be defined
+# in gitlab (they can be masked or made specific to branches there if needed)
+variables:
+  # CI_DEBUG_SERVICES: "true"
+  HARBOR_DESTINATION: harbor.uvt.nl/$HARBOR_PROJECT
+  # More Information on Kaniko Caching:
+  # https://cloud.google.com/build/docs/kaniko-cache
+  KANIKO_CACHE_ARGS: >
+    --cache=true
+    --cache-copy-layers=false
+    --cache-ttl=24h
+    --cache-repo=$HARBOR_DESTINATION/kaniko-cache
+    --registry-mirror=regcache.uvt.nl
+
+.runner:
+  tags:
+    - drs-private
+
+build-images:
+  stage: build
+  extends: .runner
+  image:
+    # needs the :debug version because only that version has /bin/sh
+    name: gcr.io/kaniko-project/executor:debug
+    entrypoint: [""]
+  retry: 2
+  script:
+    - |
+      # This script is executed in busybox, which means available commands
+      # may be less full-featured than you are used to.
+
+      set -ex
+
+      cat <<EOT >/kaniko/.docker/config.json
+      {"auths":{"$HARBOR_URL":{"auth":"$(echo -n "$HARBOR_USERNAME:$HARBOR_PASSWORD" | base64 | tr -cd 'A-Za-z0-9+/=')"}}}
+      EOT
+
+      /kaniko/executor $KANIKO_CACHE_ARGS \
+          --context $CI_PROJECT_DIR \
+          --dockerfile $CI_PROJECT_DIR/Dockerfile \
+          --target syn-php-fpm \
+          --destination $HARBOR_DESTINATION/syn-php-fpm:$CI_COMMIT_BRANCH
+
+      /kaniko/executor $KANIKO_CACHE_ARGS \
+          --context $CI_PROJECT_DIR \
+          --dockerfile $CI_PROJECT_DIR/Dockerfile \
+          --target syn-nginx \
+          --destination $HARBOR_DESTINATION/syn-nginx:$CI_COMMIT_BRANCH
