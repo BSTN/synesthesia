@@ -1,16 +1,24 @@
 services:
   nginx:
-    image: harbor.uvt.nl/synesthesia/syn-nginx:cicd
+    build:
+      context: .
+      target: syn-nginx
+    image: syn-nginx
+    pull_policy: build
     ports:
       - 80:80
   php-fpm:
-    image: harbor.uvt.nl/synesthesia/syn-php-fpm:cicd
+    build:
+      context: .
+      target: syn-php-fpm
     environment:
       MYSQL_USER: ${MYSQL_USER}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
       MYSQL_DBNAME: ${MYSQL_DBNAME}
       MYSQL_HOST: ${MYSQL_HOST}
       MYSQL_PORT: ${MYSQL_PORT}
+    image: syn-php-fpm
+    pull_policy: build
   #The next container is only for dev/test purposes with no existing db available
   #db:
   #  image: mariadb:latest
