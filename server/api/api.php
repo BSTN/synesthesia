@@ -13,11 +13,11 @@ require_once "../config.php";
  */
 try {
     $dbc = new PDO(
-        'mysql:host=' . MYSQL_HOST . ';
-        port=' . MYSQL_PORT . ';
-        dbname=' . MYSQL_DBNAME,
-        MYSQL_USER,
-        MYSQL_PASSWORD
+        'pgsql:host=' . POSTGRES_HOST . ';
+        port=' . POSTGRES_PORT . ';
+        dbname=' . POSTGRES_DB,
+        POSTGRES_USER,
+        POSTGRES_PASSWORD
     );
     $dbc->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 } catch (PDOException $e) {
@@ -66,7 +66,7 @@ if ($PATH === "/download") {
 
 
 if ($PATH === "/setup") {
-    $mysqlversion = intval($dbc->query('select version()')->fetchColumn());
+    $pgVersion = intval($dbc->query('SHOW server_version')->fetchColumn());
     $sql = file_get_contents(dirname(__DIR__) . "/setup/setup.sql");
     $sql = preg_replace("/CREATE TABLE `/i", "CREATE TABLE `" . DB_PREFIX, $sql);
     try {
@@ -99,13 +99,21 @@ if ($PATH === "/create") {
     }
 
     $prep = $dbc->prepare(
-        "INSERT INTO " . DB_PREFIX . "profile SET 
-            created=NOW(),
-            IP=SHA2(:IP,256), 
-            language=:language, 
-            UID=:UID,
-            USERID=:USERID,
-            SHARED=:SHARED"
+        "INSERT INTO " . DB_PREFIX . "profile (
+            created,
+            IP,
+            language,
+            UID,
+            USERID,
+            SHARED
+        ) VALUES (
+            NOW(),
+            digest(:IP, 'sha256'),
+            :language,
+            :UID,
+            :USERID,
+            :SHARED
+        )"
     );
     $prep->execute($insertdata);
 
@@ -266,21 +274,28 @@ if ($PATH === "/store") {
          */
 
         $prep = $dbc->prepare(cleanUpQuery(
-            "INSERT INTO " . DB_PREFIX . "profile SET 
-                created=NOW(),
-                IP=SHA2(:IP,256), 
-                language=:language, 
-                UID=:UID,
-                finishedtests=:finishedtests,
-                touchscreen=:touchscreen
-            ON DUPLICATE KEY UPDATE
-                IP=SHA2(:IP,256), 
-                language=:language, 
-                UID=:UID,
-                finishedtests=:finishedtests,
-                touchscreen=:touchscreen
-            ;"
+            "INSERT INTO " . DB_PREFIX . "profile (
+                created,
+                IP,
+                language,
+                UID,
+                finishedtests,
+                touchscreen
+            ) VALUES (
+                NOW(),
+                digest(:IP, 'sha256'),
+                :language,
+                :UID,
+                :finishedtests,
+                :touchscreen
+            )
+            ON CONFLICT (UID) DO UPDATE SET
+                IP = EXCLUDED.IP,
+                language = EXCLUDED.language,
+                finishedtests = EXCLUDED.finishedtests,
+                touchscreen = EXCLUDED.touchscreen"
         ));
+
         try {
             $prep->execute($insertdata);
         } catch (PDOException $Exception) {
@@ -289,19 +304,33 @@ if ($PATH === "/store") {
         }
     } elseif ($postdata['table'] === 'questions') {
         $prep = $dbc->prepare(cleanUpQuery(
-            "INSERT INTO " . DB_PREFIX . "questions SET
-                created=NOW(), 
-                IP=SHA2(:IP,256), 
-                UID=:UID,
-                testname=:testname,
-                setname=:setname,
-                symbol=:symbol,
-                value=:value,
-                clicks=:clicks,
-                clicksslider=:clicksslider,
-                timing=:timing,
-                position=:position,
-                qnr=:qnr;"
+            "INSERT INTO " . DB_PREFIX . "questions (
+                created,
+                IP,
+                UID,
+                testname,
+                setname,
+                symbol,
+                value,
+                clicks,
+                clicksslider,
+                timing,
+                position,
+                qnr
+            ) VALUES (
+                NOW(),
+                digest(:IP, 'sha256'),
+                :UID,
+                :testname,
+                :setname,
+                :symbol,
+                :value,
+                :clicks,
+                :clicksslider,
+                :timing,
+                :position,
+                :qnr
+            )"
         ));
 
         try {
@@ -338,16 +367,21 @@ if ($PATH === "/store") {
         $data = json_encode($data);
 
         $prep = $dbc->prepare(cleanUpQuery(
-            "SET @current := (SELECT data FROM " . DB_PREFIX .
-                "extra WHERE UID=:UID);
-            INSERT INTO " . DB_PREFIX . "extra SET
-              created=NOW(), 
-              IP=SHA2(:IP,256), 
-              UID=:UID,
-              data=:data
-            ON DUPLICATE KEY UPDATE
-              IP=SHA2(:IP,256),
-              data=:data;"
+            "INSERT INTO " . DB_PREFIX . "extra (
+                created,
+                IP,
+                UID,
+                data
+            ) VALUES (
+                NOW(),
+                digest(:IP, 'sha256'),
+                :UID,
+                :data
+            )
+            ON CONFLICT (UID) DO UPDATE SET
+                IP = EXCLUDED.IP,
+                data = EXCLUDED.data
+            RETURNING *"
         ));
 
         try {
