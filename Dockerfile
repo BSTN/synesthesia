@@ -1,4 +1,4 @@
-FROM docker.io/php:8.2-fpm as syn-php-fpm
+FROM docker.io/php:8.2-fpm AS syn-php-fpm
 
 # Install dependencies for the PHP modules
 RUN set -ex; \
@@ -21,7 +21,7 @@ RUN composer install
 RUN curl -sSL https://github.com/BSTN/synesthesia_config/archive/kinderen.tar.gz | tar xz --transform 's,^[^/]*,synesthesia_config,'
 
 
-FROM docker.io/node:14 as yarn
+FROM docker.io/node:14 AS yarn
 
 COPY package.json /app/package.json
 
@@ -36,7 +36,7 @@ COPY server /app/server
 RUN yarn webpack
 
 
-FROM docker.io/nginx:latest as syn-nginx
+FROM docker.io/nginx:latest AS syn-nginx
 
 COPY nginx/nginx.conf /etc/nginx/conf.d/default.conf
 
