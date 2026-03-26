@@ -15,9 +15,7 @@ The API will create the SQLite database automatically at first request. You can 
 
 ## Backups
 
-Data export no longer uses `/download`.
-
-Backups are now pushed to SURFdrive over WebDAV:
+Backups are pushed to SURFdrive over WebDAV:
 
 - automatic backup:
   - checked on normal page loads
@@ -50,7 +48,7 @@ The app can refresh `synesthesia_config` directly from GitHub:
 
 Update workflow:
 
-1. clone `BSTN/synesthesia_config` `master` into a temporary directory
+1. download the GitHub archive for `BSTN/synesthesia_config` `master`
 2. validate YAML and expected file structure there
 3. only replace the live `synesthesia_config` directory if validation passes
 
@@ -60,6 +58,21 @@ Optional env overrides:
 
 - `CONFIG_REPO_URL`
 - `CONFIG_REPO_BRANCH`
+- `CONFIG_REPO_ARCHIVE_URL`
+
+## Diagnostics
+
+Runtime diagnostics are available at:
+
+- `GET /diagnostics`
+- `GET /api/diagnostics`
+
+This reports:
+
+- PHP version / environment
+- whether `curl`, `ZipArchive`, `pdo_sqlite`, and `sqlite3` are available
+- whether config/data/temp paths are present and writable
+- whether GitHub archive download is reachable from the host
 
 ## Production/shared hosting
 
@@ -95,6 +108,4 @@ Optional env overrides:
 
 ## Notes
 
-- The old Docker, Nginx, and MariaDB setup has been removed.
-- `/download` has been removed.
 - Fonts still depend on the configuration/assets already used by the app.

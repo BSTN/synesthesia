@@ -3,11 +3,74 @@
 use Symfony\Component\Yaml\Yaml;
 use Symfony\Component\Yaml\Exception\ParseException;
 
-function update_shell_exec($command, &$output = null, &$exitCode = null)
+function download_config_archive($targetZipPath)
 {
-    $output = array();
-    exec($command . ' 2>&1', $output, $exitCode);
-    return $exitCode === 0;
+    if (!function_exists('curl_init')) {
+        throw new RuntimeException('cURL extension is required for config updates.');
+    }
+
+    $ch = curl_init(CONFIG_REPO_ARCHIVE_URL);
+    $fp = fopen($targetZipPath, 'w');
+    if ($fp === false) {
+        throw new RuntimeException('Could not create temporary archive file.');
+    }
+
+    curl_setopt_array($ch, array(
+        CURLOPT_FILE => $fp,
+        CURLOPT_FOLLOWLOCATION => true,
+        CURLOPT_TIMEOUT => 120,
+        CURLOPT_SSL_VERIFYPEER => true,
+        CURLOPT_SSL_VERIFYHOST => 2,
+        CURLOPT_FAILONERROR => false,
+        CURLOPT_USERAGENT => 'synesthesia-config-updater/1.0',
+    ));
+
+    $success = curl_exec($ch);
+    $status = curl_getinfo($ch, CURLINFO_RESPONSE_CODE);
+    $error = curl_error($ch);
+    curl_close($ch);
+    fclose($fp);
+
+    if ($success === false) {
+        @unlink($targetZipPath);
+        throw new RuntimeException('Archive download failed: ' . $error);
+    }
+
+    if ($status < 200 || $status >= 300) {
+        @unlink($targetZipPath);
+        throw new RuntimeException('Archive download failed with HTTP ' . $status . '.');
+    }
+}
+
+function extract_config_archive($zipPath, $extractPath)
+{
+    if (!class_exists('ZipArchive')) {
+        throw new RuntimeException('ZipArchive extension is required for config updates.');
+    }
+
+    $zip = new ZipArchive();
+    if ($zip->open($zipPath) !== true) {
+        throw new RuntimeException('Could not open downloaded archive.');
+    }
+
+    ensure_directory($extractPath);
+    if (!$zip->extractTo($extractPath)) {
+        $zip->close();
+        throw new RuntimeException('Could not extract downloaded archive.');
+    }
+    $zip->close();
+}
+
+function find_extracted_config_root($extractPath)
+{
+    $entries = glob(join_paths($extractPath, '*'));
+    foreach ($entries as $entry) {
+        if (is_dir($entry) && is_file(join_paths($entry, 'config.yml')) && is_dir(join_paths($entry, 'tests'))) {
+            return $entry;
+        }
+    }
+
+    throw new RuntimeException('Extracted archive did not contain the expected config repository structure.');
 }
 
 function config_validation_error($file, $message)
@@ -172,33 +235,22 @@ function replace_directory_atomically($sourcePath, $targetPath)
 
 function perform_config_update()
 {
-    if (!function_exists('exec')) {
-        throw new RuntimeException('PHP exec() is required for the update workflow.');
-    }
-
     ensure_directory(TEMP_PATH);
     $workRoot = join_paths(TEMP_PATH, 'config-update-' . bin2hex(random_bytes(6)));
-    $clonePath = join_paths($workRoot, 'synesthesia_config');
+    $archivePath = join_paths($workRoot, 'config.zip');
+    $extractPath = join_paths($workRoot, 'extracted');
     ensure_directory($workRoot);
 
     try {
-        $cloneCommand = sprintf(
-            'git clone --depth 1 --branch %s %s %s',
-            escapeshellarg(CONFIG_REPO_BRANCH),
-            escapeshellarg(CONFIG_REPO_URL),
-            escapeshellarg($clonePath)
-        );
-
-        update_shell_exec($cloneCommand, $cloneOutput, $cloneExitCode);
-        if ($cloneExitCode !== 0) {
-            throw new RuntimeException("Git clone failed:\n" . implode("\n", $cloneOutput));
-        }
+        download_config_archive($archivePath);
+        extract_config_archive($archivePath, $extractPath);
+        $clonePath = find_extracted_config_root($extractPath);
 
         $errors = validate_config_repository($clonePath);
         if ($errors) {
             return array(
                 'status' => 'validation_failed',
-                'repository' => CONFIG_REPO_URL,
+                'repository' => CONFIG_REPO_ARCHIVE_URL,
                 'branch' => CONFIG_REPO_BRANCH,
                 'errors' => $errors,
             );
@@ -208,14 +260,17 @@ function perform_config_update()
 
         return array(
             'status' => 'success',
-            'repository' => CONFIG_REPO_URL,
+            'repository' => CONFIG_REPO_ARCHIVE_URL,
             'branch' => CONFIG_REPO_BRANCH,
             'path' => CONFIGPATH,
             'message' => 'Configuration repository updated successfully.',
         );
     } finally {
-        if (is_dir($clonePath)) {
-            rrmdir($clonePath);
+        if (isset($archivePath) && is_file($archivePath)) {
+            unlink($archivePath);
+        }
+        if (isset($extractPath) && is_dir($extractPath)) {
+            rrmdir($extractPath);
         }
         if (is_dir($workRoot)) {
             rrmdir($workRoot);

@@ -77,9 +77,13 @@ Main endpoints:
 - `/backup`
   - alias for the same immediate backup trigger
 - `/api/update`
-  - clones `BSTN/synesthesia_config` from GitHub, validates it, then replaces the live config directory
+  - downloads the GitHub archive for `BSTN/synesthesia_config`, validates it, then replaces the live config directory
 - `/update`
   - alias for the same config update trigger
+- `/api/diagnostics`
+  - reports runtime capabilities needed for deployment
+- `/diagnostics`
+  - alias for the same diagnostics report
 - `/api/create`
   - creates a profile row and returns `UID` and `SHARED`
 - `/api/store`
@@ -248,7 +252,8 @@ If app behavior seems driven by missing copy, translations, or test definitions,
 ### Config update behavior
 
 - `/update` and `/api/update` use a staged workflow:
-  - clone repo to temp dir
+  - download repo archive to temp dir
+  - extract archive
   - validate structure and YAML parsing
   - replace live config only on success
 - validation currently checks:
@@ -262,6 +267,7 @@ If app behavior seems driven by missing copy, translations, or test definitions,
 - these can be overridden via:
   - `CONFIG_REPO_URL`
   - `CONFIG_REPO_BRANCH`
+  - `CONFIG_REPO_ARCHIVE_URL`
 
 ### Production asset URLs
 
@@ -293,6 +299,7 @@ Vite is configured with relative asset output because built files are served fro
 - [server/api/api.php](/Users/bok/node/work/synesthesia/synesthesia/server/api/api.php)
 - [server/api/backup.php](/Users/bok/node/work/synesthesia/synesthesia/server/api/backup.php)
 - [server/api/update.php](/Users/bok/node/work/synesthesia/synesthesia/server/api/update.php)
+- [server/api/diagnostics.php](/Users/bok/node/work/synesthesia/synesthesia/server/api/diagnostics.php)
 - [server/api/db.php](/Users/bok/node/work/synesthesia/synesthesia/server/api/db.php)
 - [app/index.js](/Users/bok/node/work/synesthesia/synesthesia/app/index.js)
 - [app/router.js](/Users/bok/node/work/synesthesia/synesthesia/app/router.js)

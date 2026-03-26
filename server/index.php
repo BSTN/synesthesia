@@ -16,6 +16,11 @@ if ($PATH === '/update') {
     exit();
 }
 
+if ($PATH === '/diagnostics') {
+    require __DIR__ . '/api/api.php';
+    exit();
+}
+
 if (!file_exists(SQLITE_PATH)) {
     $dbc = db();
     db_setup_schema($dbc);

@@ -48,6 +48,10 @@ if ($PATH === "/backup") {
     }
 }
 
+if ($PATH === "/diagnostics") {
+    pjson(diagnostics_report());
+}
+
 if ($PATH === "/create") {
     $input = file_get_contents('php://input');
     if (!$input) {

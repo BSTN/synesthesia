@@ -91,6 +91,7 @@ define('SURFDRIVE_USERNAME', env_value('SURFDRIVE_USERNAME'));
 define('SURFDRIVE_PASSWORD', env_value('SURFDRIVE_PASSWORD'));
 define('CONFIG_REPO_URL', env_value('CONFIG_REPO_URL', 'https://github.com/BSTN/synesthesia_config.git'));
 define('CONFIG_REPO_BRANCH', env_value('CONFIG_REPO_BRANCH', 'master'));
+define('CONFIG_REPO_ARCHIVE_URL', env_value('CONFIG_REPO_ARCHIVE_URL', 'https://github.com/BSTN/synesthesia_config/archive/refs/heads/' . rawurlencode(CONFIG_REPO_BRANCH) . '.zip'));
 
 if (PRODUCTION) {
     ini_set('display_errors', '0');

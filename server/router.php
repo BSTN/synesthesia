@@ -17,6 +17,11 @@ if ($path === '/update') {
     return true;
 }
 
+if ($path === '/diagnostics') {
+    require __DIR__ . '/api/api.php';
+    return true;
+}
+
 if (strpos($path, '/api') === 0) {
     require __DIR__ . '/api/api.php';
     return true;
