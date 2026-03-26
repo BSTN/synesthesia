@@ -86,26 +86,26 @@ export default {
       sharedName: "",
       add: false,
       loadfile: false,
-      loadfiledata: false,
+      loadfiledata: false
     };
   },
   computed: {
     ...mapGetters({
-      downloadstring: "profile/downloadString",
+      downloadstring: "profile/downloadString"
     }),
     profiles() {
       return this.$store.state.shared.profiles;
-    },
+    }
   },
   watch: {
-    open: (val) => {
+    open: val => {
       if (val) {
         document.body.classList.add("scrollblock");
       } else {
         document.body.classList.remove("scrollblock");
       }
     },
-    add: function (val) {
+    add: function(val) {
       if (val) {
         this.loadfile = false;
         this.sharedName = "";
@@ -118,7 +118,7 @@ export default {
             );
         });
       }
-    },
+    }
   },
   methods: {
     close() {
@@ -130,11 +130,9 @@ export default {
     async remove(id) {
       const check = await this.$root
         .confirm({
-          message: "Are you sure you want to delete this profile?",
+          message: "Are you sure you want to delete this profile?"
         })
-        .catch((err) => {
-          console.log("Canceling delete profile");
-        });
+        .catch(() => false);
       if (check) {
         this.$store.dispatch("shared/remove", id);
       }
@@ -150,11 +148,10 @@ export default {
       if (this.loadfile) {
         let profile = {};
         let newkey = new Date().getTime() + "fileupload";
-        console.log("newkey", newkey);
         profile[newkey] = {
           name: this.sharedName,
           timestamp: new Date().getTime(),
-          data: this.loadfiledata,
+          data: this.loadfiledata
         };
         await this.$store.dispatch("shared/setProfile", profile);
         this.$store.commit("shared/setActive", newkey);
@@ -164,15 +161,15 @@ export default {
       // if sharedcode already exists
       if (this.sharedCode in this.$store.state.shared.profiles) {
         await this.$root.alert({
-          message: this.$t("profilealreadyexists"),
+          message: this.$t("profilealreadyexists")
         });
         return false;
       }
       const { data } = await this.$axios
         .post("./api/getshared", {
-          code: this.sharedCode,
+          code: this.sharedCode
         })
-        .catch((e) => {
+        .catch(e => {
           console.warn(e);
         });
       if (data) {
@@ -181,7 +178,7 @@ export default {
         profile[this.sharedCode] = {
           name: this.sharedName,
           timestamp: new Date().getTime(),
-          data: data,
+          data: data
         };
         await this.$store.dispatch("shared/setProfile", profile);
         this.$store.commit("shared/setActive", this.sharedCode);
@@ -190,17 +187,17 @@ export default {
     onFileUploadChange() {
       const self = this;
       var reader = new FileReader();
-      reader.onload = function (event) {
+      reader.onload = function(event) {
         var obj = JSON.parse(event.target.result);
         self.loadfile = true;
         self.loadfiledata = obj;
       };
       reader.readAsText(event.target.files[0]);
-    },
+    }
   },
   mounted() {
     // this.$refs.uploadfile.addEventListener('change', onChange);
-  },
+  }
 };
 </script>
 <style lang="less" scoped>

@@ -76,10 +76,10 @@ function normalize_path($path, $base)
 
 load_env_file(dirname(__DIR__) . '/.env');
 
-define('PRODUCTION', env_value('development', 'false') !== "true");
+define('APP_ENV', env_value('APP_ENV', 'production'));
+define('PRODUCTION', APP_ENV === 'production');
 define('BASE', rtrim(env_value('BASE', '/'), '/').'/');
 define('CONFIGBASE', env_value('CONFIGBASE', '/synesthesia_config'));
-define('APP_ENV', PRODUCTION ? 'production' : 'development');
 define('APP_ORIGIN', rtrim(env_value('APP_ORIGIN', 'http://localhost:' . env_value('NODEDEVPORT', '2222')), '/'));
 define('CONFIGPATH', normalize_path(env_value('CONFIGPATH', '../synesthesia_config'), dirname(__DIR__)));
 define('DATA_PATH', normalize_path(env_value('DATA_PATH', 'var'), dirname(__DIR__)));

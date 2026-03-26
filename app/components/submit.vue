@@ -11,14 +11,13 @@ export default {
     return {
       loading: false,
       message: false,
-      timer: false,
+      timer: false
     };
   },
   computed: {
     disabled() {
       if (!this.enabled) return false;
       let extravalues = this.enabled.split(",");
-      let check = false;
       for (let key in extravalues) {
         if (
           !(extravalues[key] in this.$store.state.extra) ||
@@ -26,9 +25,8 @@ export default {
         )
           return true;
       }
-      console.log("disabled:", check);
-      return check;
-    },
+      return false;
+    }
   },
   methods: {
     async submit() {
@@ -37,13 +35,15 @@ export default {
         await this.$axios
           .post("./api/store", {
             table: "extra",
-            data: { values: JSON.parse(JSON.stringify(this.$store.state.extra)) },
-            UID: this.$store.state.profile.UID,
+            data: {
+              values: JSON.parse(JSON.stringify(this.$store.state.extra))
+            },
+            UID: this.$store.state.profile.UID
           })
-          .then((x) => {
+          .then(x => {
             this.loading = false;
           })
-          .catch((err) => {
+          .catch(err => {
             this.loading = false;
             this.message = "Could not store data, please try again.";
             // make this global message
@@ -54,10 +54,10 @@ export default {
             return false;
           });
       }
-      if (this.to === 'nextPage') this.$store.dispatch('tests/nextPage');
+      if (this.to === "nextPage") this.$store.dispatch("tests/nextPage");
       else this.$router.push({ path: this.to });
-    },
-  },
+    }
+  }
 };
 </script>
 <style lang="less" scoped>

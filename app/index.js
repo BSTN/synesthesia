@@ -3,7 +3,6 @@ import Vuex from "vuex";
 import VueRouter from "vue-router";
 import App from "./index.vue";
 import axios from "axios";
-import vueSlider from "vue-slider-component/dist/vue-slider-component.common.js";
 import VRuntimeTemplate from "v-runtime-template";
 import storePlugin from "./utils/storePlugin";
 import { i18n } from "./utils/i18n";
@@ -31,7 +30,6 @@ Vue.prototype.$tests = JSON.parse(
   document.getElementById("bootload-tests").innerText
 );
 
-Vue.component("VueSlider", vueSlider);
 Vue.component("Vrt", VRuntimeTemplate);
 
 Vue.component("Mdc", {
@@ -42,11 +40,11 @@ Vue.component("Mdc", {
 // Vue.component('loadimg', loadimg)
 
 // import all components
-const components = import.meta.glob("./components/**/*.vue", { eager: true });
-Object.entries(components).forEach(([key, module]) => {
+const components = import.meta.glob("./components/**/*.vue");
+Object.entries(components).forEach(([key, loader]) => {
   let newkey = key.replace(/^\.\/components\//, "").replace(/\.vue$/g, "");
   newkey = newkey.replace(/\//g, "-");
-  Vue.component(newkey, module.default);
+  Vue.component(newkey, () => loader().then(module => module.default));
 });
 
 // import all directives

@@ -45,7 +45,7 @@
 </template>
 <script>
 import { mapGetters } from "vuex";
-import { now, filter } from "lodash";
+import now from "lodash/now";
 export default {
   data() {
     return {
@@ -104,11 +104,6 @@ export default {
         let data = JSON.parse(JSON.stringify(this.q));
         data.testname = this.testname;
         data.setname = this.setname;
-        console.log({
-          table: "questions",
-          UID: this.$store.state.profile.UID,
-          data: data
-        });
         let err = await this.$axios
           .post("./api/store", {
             table: "questions",

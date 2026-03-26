@@ -48,9 +48,15 @@
 </template>
 <script>
 import color from "color";
-import { clamp } from "lodash";
+import clamp from "lodash/clamp";
 import { mapGetters } from "vuex";
 export default {
+  components: {
+    VueSlider: () =>
+      import("vue-slider-component/dist/vue-slider-component.common.js").then(
+        module => module.default
+      )
+  },
   data() {
     return {
       lightness: 0.5,

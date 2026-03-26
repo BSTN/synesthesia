@@ -28,8 +28,6 @@
     "less": "^3.11.1",
     "lodash": "^4.17.15",
     "marked": "^1.1.0",
-    "moment": "^2.29.1",
-    "paper": "^0.12.8",
     "postcss": "^8.5.3",
     "stylelint-config-standard": "^20.0.0",
     "v-runtime-template": "^1.10.0",

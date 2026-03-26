@@ -9,8 +9,8 @@
 <script>
 // don't scroll to top on history back
 window.history.scrollRestoration = "manual";
-import { each, sample, debounce, isEmpty } from "lodash";
-import moment from "moment";
+import each from "lodash/each";
+import sample from "lodash/sample";
 export default {
   watch: {
     $route() {
@@ -38,19 +38,6 @@ export default {
     document.documentElement.style.setProperty("--vh", `${vh}px`);
   },
   methods: {
-    openAlert() {
-      this.$root
-        .confirm({
-          message: "May I ask you a question, please?",
-          options: ["yes", "no", "again", "something else"]
-        })
-        .then(x => {
-          console.log(x);
-        })
-        .catch(x => {
-          console.error(x);
-        });
-    },
     setTheme(i) {
       each(document.body.classList, x => {
         if (x.match(/^theme/)) document.body.classList.remove(x);

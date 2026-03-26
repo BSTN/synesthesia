@@ -68,7 +68,7 @@
   </div>
 </template>
 <script>
-import { each } from "lodash";
+import each from "lodash/each";
 import score from "../utils/score";
 export default {
   props: ["testname", "symbol", "type", "user", "data"],

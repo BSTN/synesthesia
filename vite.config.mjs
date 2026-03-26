@@ -30,9 +30,16 @@ export default defineConfig({
     outDir: "server/dist",
     emptyOutDir: true,
     manifest: true,
+    chunkSizeWarningLimit: 700,
     rollupOptions: {
       input: {
         app: path.resolve(__dirname, "./app/index.js")
+      },
+      output: {
+        manualChunks: {
+          vue: ["vue", "vuex", "vue-router", "vue-i18n"],
+          slider: ["vue-slider-component/dist/vue-slider-component.common.js"]
+        }
       }
     }
   }

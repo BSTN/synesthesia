@@ -35,13 +35,13 @@ export default {
     return {
       loading: true,
       finished: false,
-      results: false,
+      results: false
     };
   },
   computed: {
     ...mapGetters({
       testdata: "tests/testdata",
-      q: "tests/q",
+      q: "tests/q"
     }),
     config() {
       return this.$tests[this.$route.params.testname];
@@ -88,7 +88,7 @@ export default {
           return true;
       }
       return false;
-    },
+    }
   },
   async beforeRouteEnter(to, from, next) {
     if (from.name === "results" || from.name === "likert") {
@@ -100,30 +100,28 @@ export default {
   methods: {
     next() {},
     async done() {
-      let data = await this.$store.dispatch("tests/nextPage").catch((err) => {
+      let data = await this.$store.dispatch("tests/nextPage").catch(err => {
         console.warn("Error going to nextpage:", err);
       });
       if (data === "done" && this.config.likert) {
         this.$router.push({
           name: "likert",
-          params: { testname: this.$route.params.testname },
+          params: { testname: this.$route.params.testname }
         });
       } else if (data === "done") {
         this.$router.push({
           name: "results",
-          params: { testname: this.$route.params.testname },
+          params: { testname: this.$route.params.testname }
         });
       }
-    },
+    }
   },
   watch: {
     "testdata.pageCount": function() {
       window.scrollTo(0, 0);
-    },
+    }
   },
   async mounted() {
-    console.log("mounted!");
-
     /* check if this test exists */
     if (
       !this.$route.params.testname ||
@@ -131,7 +129,7 @@ export default {
       !(this.$route.params.testname in this.$store.state.tests.tests)
     ) {
       await this.$root.alert({
-        message: this.$t("sorrynotatest"),
+        message: this.$t("sorrynotatest")
       });
       this.$router.push({ path: "/" });
     } else {
@@ -171,11 +169,9 @@ export default {
       const touchscreen = await this.$root
         .choose({
           message: this.$t("touchscreen"),
-          options: this.$t("touchscreenoptions"),
+          options: this.$t("touchscreenoptions")
         })
-        .catch((err) => {
-          console.log("nothing chosen?");
-        });
+        .catch(() => false);
       await this.$store.dispatch("profile/set", { touchscreen });
     }
 
@@ -189,7 +185,7 @@ export default {
     }
     /* LOADING */
     this.loading = false;
-  },
+  }
 };
 </script>
 <style lang="less" scoped>

@@ -3,15 +3,15 @@
     <compare :open.sync="compare"></compare>
     <topbar>
       <template #left>
-        <router-link to="/">{{$t('home')}}</router-link>
+        <router-link to="/">{{ $t("home") }}</router-link>
       </template>
       <template #right>
         <button @click="compare = true">{{ $t("compare") }}</button>
-        <button @click="print">{{$t('print')}}</button>
+        <button @click="print">{{ $t("print") }}</button>
       </template>
     </topbar>
     <div id="name" v-if="$store.state.func.name">
-      {{$store.state.func.name}}
+      {{ $store.state.func.name }}
     </div>
     <!-- <pre>{{score}}</pre> -->
     <div id="wrap">
@@ -22,37 +22,71 @@
           id="tab"
           :class="{ active: tab.id === currentTab }"
           @click="currentTab = tab.id"
-        >{{ tab.name[$store.state.profile.language] }}</button>
+        >
+          {{ tab.name[$store.state.profile.language] }}
+        </button>
       </div>
       <!-- <pre>{{score}}</pre> -->
 
       <div id="dothetest" v-if="isNaN(score.total) || score.total === null">
         <router-link :to="'/test/' + currentTab">
-          {{$t('notdone')}}
+          {{ $t("notdone") }}
         </router-link>
       </div>
 
       <div id="mainresults">
-        <div id="description" v-if="((!isNaN(score.total) && score.total !== null) || activeSharedProfile)">
+        <div
+          id="description"
+          v-if="
+            (!isNaN(score.total) && score.total !== null) || activeSharedProfile
+          "
+        >
           <!-- <md :md="$tests[testname].results"></md> -->
-          <div id="md" v-if="testinfo.resulttext">{{ testinfo.resulttext[this.$store.state.profile.language] }}</div>
-          <label v-if="!isNaN(score.total) && score.total !== null">{{$t('yourscorethistest')}}</label>
-          <score :testname="testname" type="total" :data="score" v-if="!isNaN(score.total) && score.total !== null"></score>
-          <label v-if="activeSharedProfile">{{$t("sharedscorethistest", {name: activeSharedProfile.name})}}</label>
-          <score class='shared' v-if="activeSharedProfile" :testname="testname" type="total" :data="sharedScore"></score>
+          <div id="md" v-if="testinfo.resulttext">
+            {{ testinfo.resulttext[this.$store.state.profile.language] }}
+          </div>
+          <label v-if="!isNaN(score.total) && score.total !== null">{{
+            $t("yourscorethistest")
+          }}</label>
+          <score
+            :testname="testname"
+            type="total"
+            :data="score"
+            v-if="!isNaN(score.total) && score.total !== null"
+          ></score>
+          <label v-if="activeSharedProfile">{{
+            $t("sharedscorethistest", { name: activeSharedProfile.name })
+          }}</label>
+          <score
+            class="shared"
+            v-if="activeSharedProfile"
+            :testname="testname"
+            type="total"
+            :data="sharedScore"
+          ></score>
         </div>
-        <div id="description" v-if="testinfo.likert && (likertScore || likertSharedScore)">
+        <div
+          id="description"
+          v-if="testinfo.likert && (likertScore || likertSharedScore)"
+        >
           <div id="md" v-if="testinfo.likert">{{ $t("likert") }}</div>
-          <label v-if="likertScore">{{$t('yourscorelikerttest')}}</label>
+          <label v-if="likertScore">{{ $t("yourscorelikerttest") }}</label>
           <score type="likert" :data="likertScore" v-if="likertScore"></score>
-          <label v-if="activeSharedProfile">{{$t('sharedscorelikerttest', {name: activeSharedProfile.name})}}</label>
-          <score class='shared' v-if="likertSharedScore" type="likert" :data="likertSharedScore"></score>
+          <label v-if="activeSharedProfile">{{
+            $t("sharedscorelikerttest", { name: activeSharedProfile.name })
+          }}</label>
+          <score
+            class="shared"
+            v-if="likertSharedScore"
+            type="likert"
+            :data="likertSharedScore"
+          ></score>
         </div>
       </div>
 
       <div id="detailed">
         <div id="resultlist" v-if="!isNaN(score.total) && score.total !== null">
-          <label>{{$t('yourscoreperitem')}}</label>
+          <label>{{ $t("yourscoreperitem") }}</label>
           <score
             v-for="(s, symbol) in score.symbols"
             :key="testname + symbol"
@@ -60,8 +94,12 @@
             :testname="testname"
           />
         </div>
-        <div id="resultlist" v-if="!isNaN(sharedScore.total) && sharedScore.total !== null">
-          <label>{{$t('sharedscoreperitem', {name: activeSharedProfile.name})}}
+        <div
+          id="resultlist"
+          v-if="!isNaN(sharedScore.total) && sharedScore.total !== null"
+        >
+          <label
+            >{{ $t("sharedscoreperitem", { name: activeSharedProfile.name }) }}
           </label>
           <score
             v-for="(s, symbol) in sharedScore.symbols"
@@ -76,9 +114,9 @@
 </template>
 
 <script>
-import score from './utils/score'
-import { each } from 'lodash';
-import { mapGetters } from 'vuex';
+import score from "./utils/score";
+import each from "lodash/each";
+import { mapGetters } from "vuex";
 export default {
   data() {
     return {
@@ -95,52 +133,77 @@ export default {
     ...mapGetters({
       activeSharedProfile: "shared/active"
     }),
-    sharedData () {
-      if (this.$store.state.shared.active && (this.$store.state.shared.active in this.$store.state.shared.profiles)) {
-        return this.$store.state.shared.profiles[this.$store.state.shared.active]
+    sharedData() {
+      if (
+        this.$store.state.shared.active &&
+        this.$store.state.shared.active in this.$store.state.shared.profiles
+      ) {
+        return this.$store.state.shared.profiles[
+          this.$store.state.shared.active
+        ];
       }
-      return false
+      return false;
     },
-    testinfo () {
-      return this.$tests[this.currentTab]
+    testinfo() {
+      return this.$tests[this.currentTab];
     },
-    testnameLang () {
-      return this.$tests[this.testname].name[this.$store.state.profile.language]
+    testnameLang() {
+      return this.$tests[this.testname].name[
+        this.$store.state.profile.language
+      ];
     },
-    testresults () {
+    testresults() {
       return {
         value: 20
-      }
+      };
     },
-    likertresults () {
-      let result = 0
-      for(let i in this.$store.state.extra) {
-        if(!isNaN(this.$store.state.extra[i])) {
-          result = result + this.$store.state.extra[i]
+    likertresults() {
+      let result = 0;
+      for (let i in this.$store.state.extra) {
+        if (!isNaN(this.$store.state.extra[i])) {
+          result = result + this.$store.state.extra[i];
         }
       }
-      return result / 34 * 100
+      return (result / 34) * 100;
     },
-    likertScore () {
-      return score.likert(this.currentTab, this.$store.state.extra)
+    likertScore() {
+      return score.likert(this.currentTab, this.$store.state.extra);
     },
-    likertSharedScore () {
-      if (!this.sharedData || !this.sharedData.data) return false
-      return score.likert(this.currentTab, this.sharedData.data['_extra'])
+    likertSharedScore() {
+      if (!this.sharedData || !this.sharedData.data) return false;
+      return score.likert(this.currentTab, this.sharedData.data["_extra"]);
     },
-    score () {
-      let questions = this.$store.state.tests.tests[this.testname].questions
-      return score.all(this.$tests[this.testname], questions)
+    score() {
+      let questions = this.$store.state.tests.tests[this.testname].questions;
+      return score.all(this.$tests[this.testname], questions);
     },
-    sharedScore () {
-      if (!this.$store.state.shared.profiles[this.$store.state.shared.active]) { return false }
-      if (!this.$store.state.shared.profiles[this.$store.state.shared.active].data) { return false }
-      if (!this.$store.state.shared.profiles[this.$store.state.shared.active].data[this.testname]) { return false }
-      if (!this.$store.state.shared.profiles[this.$store.state.shared.active].data[this.testname].questions) { return false }
-      const questions = this.$store.state.shared.profiles[this.$store.state.shared.active].data[this.testname].questions
-      if (!questions) return false
+    sharedScore() {
+      if (!this.$store.state.shared.profiles[this.$store.state.shared.active]) {
+        return false;
+      }
+      if (
+        !this.$store.state.shared.profiles[this.$store.state.shared.active].data
+      ) {
+        return false;
+      }
+      if (
+        !this.$store.state.shared.profiles[this.$store.state.shared.active]
+          .data[this.testname]
+      ) {
+        return false;
+      }
+      if (
+        !this.$store.state.shared.profiles[this.$store.state.shared.active]
+          .data[this.testname].questions
+      ) {
+        return false;
+      }
+      const questions = this.$store.state.shared.profiles[
+        this.$store.state.shared.active
+      ].data[this.testname].questions;
+      if (!questions) return false;
       // return questions
-      return score.all(this.$tests[this.testname], questions)
+      return score.all(this.$tests[this.testname], questions);
     },
     symbols() {
       let symbols = [];
@@ -152,14 +215,14 @@ export default {
     tabs() {
       // todo: move this to config? -- oops double, see mounted...
       let template = document.getElementById(`templatetests`);
-      let tabs = {}
+      let tabs = {};
       if (template) {
-        template = template.innerHTML
-        let dom = new DOMParser().parseFromString(template, 'text/html');
-        let new_element = dom.querySelector('tests');
-        let list = new_element.getAttribute('list').split(',')
-        for(let i in list) {
-          tabs[list[i]] = this.$tests[list[i]]
+        template = template.innerHTML;
+        let dom = new DOMParser().parseFromString(template, "text/html");
+        let new_element = dom.querySelector("tests");
+        let list = new_element.getAttribute("list").split(",");
+        for (let i in list) {
+          tabs[list[i]] = this.$tests[list[i]];
         }
       }
       return tabs;
@@ -172,27 +235,27 @@ export default {
       }
     });
     if (this.$route.params.testname) {
-      this.currentTab = this.$route.params.testname
+      this.currentTab = this.$route.params.testname;
     }
-    
+
     // set testlist  --------- bit complicated, but this way you can have a different list for every language
 
-    let name = "tests"
+    let name = "tests";
     if (this.$store.state.profile.language !== this.$config.defaultLanguage) {
-        name = name + "." + this.$store.state.profile.language;
-      }
+      name = name + "." + this.$store.state.profile.language;
+    }
     let template = document.getElementById(`template${name}`);
     if (template) {
-      let txt = template.innerHTML
-      let found = txt.match(/(?<=<tests list=\")(.*?)(?=\")/g)
+      let txt = template.innerHTML;
+      let found = txt.match(/(?<=<tests list=\")(.*?)(?=\")/g);
       if (found[0]) {
-        let list = found[0].split(',')
+        let list = found[0].split(",");
         this.tablist = list.map(x => {
           return {
             id: x,
             name: this.$tests[x].name
-          }
-        })
+          };
+        });
       }
     }
 
@@ -205,14 +268,20 @@ export default {
   },
   methods: {
     print() {
-      this.$root.input({inputvalue: this.$store.state.func.name + '', label: this.$t('yourname')}).then(async x => {
-        await this.$store.commit('func/setName', x.inputvalue);
-        setTimeout(() => {
-          window.print();
-        }, 500)
-      }).catch(x => {
-        // do nothing on cancel name input
-      });
+      this.$root
+        .input({
+          inputvalue: this.$store.state.func.name + "",
+          label: this.$t("yourname")
+        })
+        .then(async x => {
+          await this.$store.commit("func/setName", x.inputvalue);
+          setTimeout(() => {
+            window.print();
+          }, 500);
+        })
+        .catch(x => {
+          // do nothing on cancel name input
+        });
     },
     download() {
       window.open(
@@ -262,7 +331,7 @@ export default {
 #name {
   font-size: 2rem;
   text-align: center;
-  display:none;
+  display: none;
   padding: 0.5em;
   @media print {
     display: block;
@@ -287,13 +356,13 @@ export default {
     position: relative;
     padding: 0.5em 1em 0.4em;
     display: inline-block;
-    margin: 0 .5em 0.5em;
+    margin: 0 0.5em 0.5em;
     opacity: 0.5;
     border-radius: 0.25em;
     border: 1px solid @fg;
     color: @fg;
 
-    color:@fg;
+    color: @fg;
     background: @bg;
 
     &:last-child {
@@ -304,7 +373,7 @@ export default {
 
     &:hover,
     &.active {
-      color:@bg;
+      color: @bg;
       background: @fg;
       // background: @fg;
       // color: @bg;
@@ -313,10 +382,10 @@ export default {
       // border-bottom: 2px solid @fg;
     }
     @media print {
-      display:none;
+      display: none;
       &.active {
         margin: 0 auto;
-        display:block;
+        display: block;
         background: 0;
         border: 1px solid @fg;
       }
@@ -338,7 +407,7 @@ export default {
     background: @fg;
     color: @bg;
     a {
-      color:inherit;
+      color: inherit;
     }
   }
 }
@@ -349,10 +418,10 @@ export default {
   max-width: 40rem;
   margin: 0 auto;
   label {
-    margin-bottom:0.5rem;
+    margin-bottom: 0.5rem;
   }
   @media print {
-    display:block;
+    display: block;
     text-align: center;
     max-width: 100%;
   }
@@ -383,7 +452,7 @@ export default {
     max-width: 70%;
   }
   @media print {
-    display:inline-block;
+    display: inline-block;
     text-align: left;
     margin: 0 2rem !important;
   }
@@ -402,7 +471,7 @@ export default {
 #detailed {
   display: flex;
   @media (max-width: 50rem) {
-    display:block;
+    display: block;
   }
 }
 #resultlist {

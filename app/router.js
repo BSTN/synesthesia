@@ -1,43 +1,43 @@
 import VueRouter from "vue-router";
-import home from "./home.vue";
-import testpage from "./testpage.vue";
-import textpage from "./textpage.vue";
-import results from "./results.vue";
-import likert from "./likert.vue";
+const home = () => import("./home.vue");
+const testpage = () => import("./testpage.vue");
+const textpage = () => import("./textpage.vue");
+const results = () => import("./results.vue");
+const likert = () => import("./likert.vue");
 
 const routes = [];
 
 routes.push({
   path: "/",
-  component: home,
+  component: home
 });
 
 routes.push({
   path: "/results",
   name: "results",
-  component: results,
+  component: results
 });
 
 routes.push({
   path: "/extra",
   name: "likert",
   component: likert
-})
+});
 
 routes.push({
   path: "/test/:testname",
-  component: testpage,
+  component: testpage
 });
 
 routes.push({
   path: "/:textname",
-  component: textpage,
+  component: textpage
 });
 
 // set routes
 const router = new VueRouter({
   routes: routes,
-  mode: "history",
+  mode: "history"
 });
 
-export default router
+export default router;

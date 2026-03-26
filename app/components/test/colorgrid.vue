@@ -14,13 +14,15 @@
           id="nocolor"
           @click="setNocolor()"
           v-active="q.value === 'nocolor'"
-        >{{ $t("nocolor") }}</button>
+        >
+          {{ $t("nocolor") }}
+        </button>
       </div>
     </div>
   </div>
 </template>
 <script>
-import { shuffle } from "lodash";
+import shuffle from "lodash/shuffle";
 import { mapGetters } from "vuex";
 const colors = [
   "fcd731",
@@ -163,7 +165,7 @@ export default {
     }
   }
   #nocolor {
-    font-size: .75rem;
+    font-size: 0.75rem;
   }
 }
 </style>

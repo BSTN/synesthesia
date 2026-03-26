@@ -11,19 +11,19 @@
   </div>
 </template>
 <script>
-import { each } from "lodash";
+import each from "lodash/each";
 import { mapGetters } from "vuex";
 export default {
   computed: {
     ...mapGetters({
-      extra: "extra/all",
+      extra: "extra/all"
     }),
     textname() {
       return this.$route.params.textname || false;
     },
     url() {
       return this.$route.path;
-    },
+    }
   },
   methods: {
     check() {
@@ -36,14 +36,12 @@ export default {
           else el.classList.remove("show");
         });
       }
-    },
+    }
   },
   mounted() {
     window.addEventListener("scroll", this.check);
     setTimeout(this.check, 500);
-  },
+  }
 };
 </script>
-<style lang="less" scoped>
-
-</style>
+<style lang="less" scoped></style>

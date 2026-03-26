@@ -41,7 +41,7 @@
   </div>
 </template>
 <script>
-import { each } from "lodash";
+import each from "lodash/each";
 import color from "color";
 export default {
   props: ["symbol", "testname"],

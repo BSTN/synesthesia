@@ -100,6 +100,9 @@ This reports:
 `APP_ORIGIN`
 - Vite dev server origin, used only in development.
 
+`APP_ENV`
+- Application environment, default `production`. Use `development` locally.
+
 `DATA_PATH`, `SQLITE_PATH`, `TEMP_PATH`
 - Writable filesystem paths for the SQLite database and temp/export files.
 

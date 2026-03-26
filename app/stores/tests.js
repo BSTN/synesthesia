@@ -1,9 +1,10 @@
 import Vue from "vue";
 import color from "color";
-import { each, clone, cloneDeep } from "lodash";
-import router from 'vue-router'
+import each from "lodash/each";
+import clone from "lodash/clone";
+import cloneDeep from "lodash/cloneDeep";
 
-const TESTS = JSON.parse(document.getElementById("bootload-tests").innerText)
+const TESTS = JSON.parse(document.getElementById("bootload-tests").innerText);
 
 // defaults
 const emptyTest = {
@@ -15,7 +16,7 @@ const emptyTest = {
   totalPages: 0,
   testing: false,
   finished: false,
-  setname: null,
+  setname: null
 };
 const emptyItem = {
   symbol: null,
@@ -24,13 +25,13 @@ const emptyItem = {
   clicksslider: 0,
   position: null,
   timing: null,
-  qnr: null,
+  qnr: null
 };
 
 // store
 export const state = () => ({
   tests: {},
-  active: null,
+  active: null
 });
 
 export const mutations = {
@@ -62,8 +63,8 @@ export const mutations = {
         Object.assign(notempty, item)
       );
     });
-    Vue.set( state.tests[content.name], "pretest", content.pretest );
-    Vue.set( state.tests[content.name], "posttest", content.posttest );
+    Vue.set(state.tests[content.name], "pretest", content.pretest);
+    Vue.set(state.tests[content.name], "posttest", content.posttest);
   },
   appendQuestion(state, content) {
     var notempty = cloneDeep(emptyItem);
@@ -108,23 +109,47 @@ export const actions = {
     if (store.state.active === null) return false;
     store.commit("setValue", {
       name: store.state.active,
-      values: content,
+      values: content
     });
   },
   fill(store, testname) {
     each(store.state.tests, (test, testname) => {
-      each(test.questions, (q) => {
-        const type = TESTS[testname].type
-        if (type === 'imagesound') {
-          q.value = Math.random() > 0.5 ? q.symbol.im1 : q.symbol.im2
-        } else if (TESTS[testname].type === 'grapheme' && TESTS[testname].selector === 'colorgrid'){
-          const colors = ["fcd731","d80916","915311","a1d255","e26c22","92173d","136825","4db2fc","083d8a","6b3497","0e6b78","f373aa","ffffff","cbcbcb","595959","000000"]
-          q.value = colors[Math.round(Math.random() * (colors.length - 1))]
+      each(test.questions, q => {
+        const type = TESTS[testname].type;
+        if (type === "imagesound") {
+          q.value = Math.random() > 0.5 ? q.symbol.im1 : q.symbol.im2;
+        } else if (
+          TESTS[testname].type === "grapheme" &&
+          TESTS[testname].selector === "colorgrid"
+        ) {
+          const colors = [
+            "fcd731",
+            "d80916",
+            "915311",
+            "a1d255",
+            "e26c22",
+            "92173d",
+            "136825",
+            "4db2fc",
+            "083d8a",
+            "6b3497",
+            "0e6b78",
+            "f373aa",
+            "ffffff",
+            "cbcbcb",
+            "595959",
+            "000000"
+          ];
+          q.value = colors[Math.round(Math.random() * (colors.length - 1))];
         } else {
           if (Math.random() > 0.9) q.value = "nocolor";
           else
             q.value = color
-              .rgb(Math.random() * 256, Math.random() * 256, Math.random() * 256)
+              .rgb(
+                Math.random() * 256,
+                Math.random() * 256,
+                Math.random() * 256
+              )
               .hex()
               .replace("#", "");
         }
@@ -132,32 +157,33 @@ export const actions = {
     });
   },
   isFinished(store, testname) {
-    let finished
+    let finished;
     each(store.state.tests[testname].questions, (q, k) => {
       if (finished === undefined && q.value !== null) {
-        finished = true
+        finished = true;
       }
       if (q.value === null) {
-        finished = false
+        finished = false;
       }
-    })
-    if (finished === undefined) return false
-    return finished
+    });
+    if (finished === undefined) return false;
+    return finished;
   },
   async nextPage(store) {
-    const currentTest = store.state.tests[store.state.active]
+    const currentTest = store.state.tests[store.state.active];
     // set totalpages again
-    let pretestlength = currentTest.pretest ? currentTest.pretest.length : 0
-    let posttestlength = currentTest.posttest ? currentTest.posttest.length : 0
-    currentTest.totalPages = pretestlength + 1 + posttestlength
+    let pretestlength = currentTest.pretest ? currentTest.pretest.length : 0;
+    let posttestlength = currentTest.posttest ? currentTest.posttest.length : 0;
+    currentTest.totalPages = pretestlength + 1 + posttestlength;
     // add page to pageCount
-    if (currentTest.pageCount < currentTest.totalPages) currentTest.pageCount++
+    if (currentTest.pageCount < currentTest.totalPages) currentTest.pageCount++;
     if (currentTest.pageCount === currentTest.totalPages) {
-      await store.dispatch("profile/finished", store.state.active, { root: true })
+      await store.dispatch("profile/finished", store.state.active, {
+        root: true
+      });
       await store.dispatch("profile/upload", {}, { root: true });
-      return "done"
+      return "done";
     }
-    
   }
 };
 
@@ -172,5 +198,5 @@ export const getters = {
     return state.tests[state.active].questions[
       state.tests[state.active].position
     ];
-  },
+  }
 };

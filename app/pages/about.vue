@@ -7,7 +7,7 @@
   </div>
 </template>
 <script>
-import { each } from "lodash";
+import each from "lodash/each";
 export default {
   methods: {
     check() {
@@ -18,12 +18,12 @@ export default {
         if (el.offsetTop < bottom) el.classList.add("show");
         else el.classList.remove("show");
       });
-    },
+    }
   },
   mounted() {
     window.addEventListener("scroll", this.check);
     setTimeout(this.check, 500);
-  },
+  }
 };
 </script>
 <style lang="less" scoped>

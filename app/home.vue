@@ -1,18 +1,29 @@
 <template>
   <div id="home">
-    <paperjs v-if="$config.animation" />
     <topbar>
       <template #left>
         <languages />
       </template>
       <template #right>
-        <router-link to="/results">{{ $t('myresults') }}</router-link>
+        <router-link to="/results">{{ $t("myresults") }}</router-link>
       </template>
     </topbar>
     <div id="content">
       <transition name="homeflip" mode="out-in">
-        <md v-if="!$store.state.func.start" id="hometext" key="1" class="section" md="home" />
-        <md v-else-if="$store.state.func.start" id="overview" key="2" class="textpage" md="tests">
+        <md
+          v-if="!$store.state.func.start"
+          id="hometext"
+          key="1"
+          class="section"
+          md="home"
+        />
+        <md
+          v-else-if="$store.state.func.start"
+          id="overview"
+          key="2"
+          class="textpage"
+          md="tests"
+        >
           overview
         </md>
       </transition>
@@ -52,7 +63,7 @@ export default {
   min-height: calc(var(--vh, 1vh) * 100);
   border-width: 0;
 
-  >button {
+  > button {
     position: fixed;
     z-index: 9999;
 
@@ -152,7 +163,7 @@ export default {
         padding: 2rem 0;
         columns: 1;
 
-        >div {
+        > div {
           max-width: 24rem;
           margin: 0 auto;
         }
