@@ -76,6 +76,10 @@ Main endpoints:
   - pushes CSV backups to SURFdrive immediately
 - `/backup`
   - alias for the same immediate backup trigger
+- `/api/update`
+  - clones `BSTN/synesthesia_config` from GitHub, validates it, then replaces the live config directory
+- `/update`
+  - alias for the same config update trigger
 - `/api/create`
   - creates a profile row and returns `UID` and `SHARED`
 - `/api/store`
@@ -241,6 +245,24 @@ Use `__DIR__`-based includes in PHP. Relative includes based on current working 
 
 If app behavior seems driven by missing copy, translations, or test definitions, inspect `synesthesia_config` paths and contents first instead of changing app code blindly.
 
+### Config update behavior
+
+- `/update` and `/api/update` use a staged workflow:
+  - clone repo to temp dir
+  - validate structure and YAML parsing
+  - replace live config only on success
+- validation currently checks:
+  - `config.yml`
+  - `translations.yml`
+  - `tests/*.yml`
+  - readability of `texts/*.md`
+- update source defaults:
+  - repo: `https://github.com/BSTN/synesthesia_config.git`
+  - branch: `master`
+- these can be overridden via:
+  - `CONFIG_REPO_URL`
+  - `CONFIG_REPO_BRANCH`
+
 ### Production asset URLs
 
 Vite is configured with relative asset output because built files are served from `/dist/...`, not the web root.
@@ -270,6 +292,7 @@ Vite is configured with relative asset output because built files are served fro
 - [server/config.php](/Users/bok/node/work/synesthesia/synesthesia/server/config.php)
 - [server/api/api.php](/Users/bok/node/work/synesthesia/synesthesia/server/api/api.php)
 - [server/api/backup.php](/Users/bok/node/work/synesthesia/synesthesia/server/api/backup.php)
+- [server/api/update.php](/Users/bok/node/work/synesthesia/synesthesia/server/api/update.php)
 - [server/api/db.php](/Users/bok/node/work/synesthesia/synesthesia/server/api/db.php)
 - [app/index.js](/Users/bok/node/work/synesthesia/synesthesia/app/index.js)
 - [app/router.js](/Users/bok/node/work/synesthesia/synesthesia/app/router.js)

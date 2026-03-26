@@ -12,6 +12,11 @@ if ($path === '/backup') {
     return true;
 }
 
+if ($path === '/update') {
+    require __DIR__ . '/api/api.php';
+    return true;
+}
+
 if (strpos($path, '/api') === 0) {
     require __DIR__ . '/api/api.php';
     return true;

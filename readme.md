@@ -41,6 +41,26 @@ Each successful backup uploads:
 - `profiles-latest.csv`
 - `questions-latest.csv`
 
+## Config update
+
+The app can refresh `synesthesia_config` directly from GitHub:
+
+- `GET /update`
+- `GET /api/update`
+
+Update workflow:
+
+1. clone `BSTN/synesthesia_config` `master` into a temporary directory
+2. validate YAML and expected file structure there
+3. only replace the live `synesthesia_config` directory if validation passes
+
+Validation errors are returned with file-specific messages.
+
+Optional env overrides:
+
+- `CONFIG_REPO_URL`
+- `CONFIG_REPO_BRANCH`
+
 ## Production/shared hosting
 
 - Use `server/` as the web root if your hosting panel allows it.

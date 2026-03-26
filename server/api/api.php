@@ -124,9 +124,20 @@ if ($PATH === "/getshared") {
 }
 
 if ($PATH === "/update") {
-    http_response_code(501);
-    echo "Config repository auto-update has been removed. Deploy updated config files via git or your hosting control panel.";
-    exit();
+    try {
+        $result = perform_config_update();
+        if (($result['status'] ?? null) === 'validation_failed') {
+            http_response_code(422);
+        }
+        pjson($result);
+    } catch (Throwable $e) {
+        error_log('Config update failed: ' . $e->getMessage());
+        http_response_code(500);
+        pjson(array(
+            'status' => 'failed',
+            'message' => 'Configuration update failed. Check server logs.',
+        ));
+    }
 }
 
 if ($PATH === "/store") {

@@ -89,6 +89,8 @@ define('DB_PREFIX', env_value('DB_PREFIX', ''));
 define('SURFDRIVE_WEBDAV_URL', env_value('SURFDRIVE_WEBDAV_URL'));
 define('SURFDRIVE_USERNAME', env_value('SURFDRIVE_USERNAME'));
 define('SURFDRIVE_PASSWORD', env_value('SURFDRIVE_PASSWORD'));
+define('CONFIG_REPO_URL', env_value('CONFIG_REPO_URL', 'https://github.com/BSTN/synesthesia_config.git'));
+define('CONFIG_REPO_BRANCH', env_value('CONFIG_REPO_BRANCH', 'master'));
 
 if (PRODUCTION) {
     ini_set('display_errors', '0');
