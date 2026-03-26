@@ -43,6 +43,7 @@ function db_setup_schema(PDO $dbc)
     $questions = db_table('questions');
     $extra = db_table('extra');
     $access = db_table('access');
+    $meta = db_table('app_meta');
 
     $statements = array(
         "CREATE TABLE IF NOT EXISTS $profile (
@@ -84,6 +85,10 @@ function db_setup_schema(PDO $dbc)
             created TEXT NOT NULL,
             modified TEXT NOT NULL,
             NUM INTEGER NOT NULL DEFAULT 0
+        )",
+        "CREATE TABLE IF NOT EXISTS $meta (
+            meta_key TEXT PRIMARY KEY,
+            meta_value TEXT NOT NULL
         )",
         "CREATE INDEX IF NOT EXISTS idx_{$questions}_uid ON $questions (UID)",
         "CREATE INDEX IF NOT EXISTS idx_{$questions}_testname ON $questions (testname)",
@@ -195,4 +200,29 @@ function db_table_columns(PDO $dbc, $table)
     }
 
     return $columns;
+}
+
+function db_get_meta(PDO $dbc, $key, $default = null)
+{
+    $table = db_table('app_meta');
+    $stmt = $dbc->prepare("SELECT meta_value FROM $table WHERE meta_key = :meta_key");
+    $stmt->execute(array(':meta_key' => $key));
+    $value = $stmt->fetchColumn();
+    return $value === false ? $default : $value;
+}
+
+function db_set_meta(PDO $dbc, $key, $value)
+{
+    $table = db_table('app_meta');
+    $stmt = $dbc->prepare(
+        "INSERT INTO $table (meta_key, meta_value)
+        VALUES (:meta_key, :meta_value)
+        ON CONFLICT(meta_key) DO UPDATE SET meta_value = excluded.meta_value"
+    );
+    $stmt->execute(array(':meta_key' => $key, ':meta_value' => (string) $value));
+}
+
+function db_mark_data_changed(PDO $dbc)
+{
+    db_set_meta($dbc, 'last_data_change_at', db_now());
 }

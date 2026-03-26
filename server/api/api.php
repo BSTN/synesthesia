@@ -18,36 +18,6 @@ try {
     exit();
 }
 
-if ($PATH === "/download") {
-    if (array_key_exists("passwd", $_POST)) {
-        if (brute_check()) {
-            error_log("Download: too many attempts.");
-            $message = "Login failed, too many attempts. Locked out for 10 minutes.";
-            include_once("download.php");
-            exit();
-        }
-
-        sleep(1);
-        $credentials = explode(":", PASS ?: "", 2);
-        if (count($credentials) === 2 && $_POST['name'] === $credentials[0] && password_verify($_POST['passwd'], $credentials[1])) {
-            brute_reset();
-            error_log("Download success.");
-            export_to_csv();
-            exit();
-        }
-
-        brute_fail();
-        error_log("Download login failed.");
-        $message = "Login failed, please try again.";
-        include_once("download.php");
-        exit();
-    }
-
-    $message = "";
-    include_once("download.php");
-    exit();
-}
-
 if ($PATH === "/setup") {
     try {
         db_setup_schema($dbc);
@@ -56,6 +26,15 @@ if ($PATH === "/setup") {
     }
     echo "done.";
     exit();
+}
+
+if ($PATH === "/backup") {
+    try {
+        $result = run_surfdrive_backup(true);
+        pjson($result);
+    } catch (Throwable $e) {
+        error('Backup failed: ' . $e->getMessage());
+    }
 }
 
 if ($PATH === "/create") {
@@ -79,6 +58,7 @@ if ($PATH === "/create") {
     );
 
     db_upsert_profile($dbc, $record);
+    db_mark_data_changed($dbc);
     pjson(array("UID" => $record['UID'], "SHARED" => $record['SHARED']));
 }
 
@@ -173,6 +153,7 @@ if ($PATH === "/store") {
             'USERID' => $data['USERID'] ?? null,
             'SHARED' => null,
         ));
+        db_mark_data_changed($dbc);
     } elseif ($postdata['table'] === 'questions') {
         db_insert_question($dbc, array(
             'created' => $now,
@@ -189,6 +170,7 @@ if ($PATH === "/store") {
             'timing' => $data['timing'] ?? null,
             'qnr' => $data['qnr'] ?? null,
         ));
+        db_mark_data_changed($dbc);
     } elseif ($postdata['table'] === 'extra') {
         $profileTable = db_table("profile");
         $prep = $dbc->prepare("SELECT UID FROM $profileTable WHERE UID = :UID");
@@ -207,6 +189,7 @@ if ($PATH === "/store") {
             'IP' => $hashedIp,
             'data' => json_encode($merged),
         ));
+        db_mark_data_changed($dbc);
 
         pjson("done");
     } else {

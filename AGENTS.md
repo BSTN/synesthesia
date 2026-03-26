@@ -72,6 +72,10 @@ Main endpoints:
 
 - `/api/setup`
   - ensures schema exists
+- `/api/backup`
+  - pushes CSV backups to SURFdrive immediately
+- `/backup`
+  - alias for the same immediate backup trigger
 - `/api/create`
   - creates a profile row and returns `UID` and `SHARED`
 - `/api/store`
@@ -81,9 +85,6 @@ Main endpoints:
     - `extra`
 - `/api/getshared`
   - returns shared result data by share code
-- `/api/download`
-  - exports CSV/ZIP after password check
-
 `/api/update` is intentionally disabled and returns `501`.
 
 ## Data Model
@@ -98,7 +99,10 @@ SQLite tables are created in [server/api/db.php](/Users/bok/node/work/synesthesi
 - `extra`
   - one row per UID, JSON payload for extra/likert data
 - `access`
-  - brute-force protection for download login attempts
+  - legacy table from the old download flow; no longer part of the active feature set
+- `app_meta`
+  - key/value metadata used for backup state
+  - tracks last data change and backup timestamps/status
 
 IP addresses are stored as SHA-256 hashes, not plain text.
 
@@ -241,6 +245,21 @@ If app behavior seems driven by missing copy, translations, or test definitions,
 
 Vite is configured with relative asset output because built files are served from `/dist/...`, not the web root.
 
+### Backup behavior
+
+- Backups are pushed to SURFdrive WebDAV, not downloaded manually.
+- Automatic backup is opportunistic:
+  - it is checked during normal page loads
+  - it runs only when data changed since the last successful backup
+  - without traffic, no automatic backup will run
+- Immediate manual trigger:
+  - `/backup`
+  - `/api/backup`
+- Required env vars:
+  - `SURFDRIVE_WEBDAV_URL`
+  - `SURFDRIVE_USERNAME`
+  - `SURFDRIVE_PASSWORD`
+
 ## Useful Files
 
 - [vite.config.mjs](/Users/bok/node/work/synesthesia/synesthesia/vite.config.mjs)
@@ -250,6 +269,7 @@ Vite is configured with relative asset output because built files are served fro
 - [server/router.php](/Users/bok/node/work/synesthesia/synesthesia/server/router.php)
 - [server/config.php](/Users/bok/node/work/synesthesia/synesthesia/server/config.php)
 - [server/api/api.php](/Users/bok/node/work/synesthesia/synesthesia/server/api/api.php)
+- [server/api/backup.php](/Users/bok/node/work/synesthesia/synesthesia/server/api/backup.php)
 - [server/api/db.php](/Users/bok/node/work/synesthesia/synesthesia/server/api/db.php)
 - [app/index.js](/Users/bok/node/work/synesthesia/synesthesia/app/index.js)
 - [app/router.js](/Users/bok/node/work/synesthesia/synesthesia/app/router.js)

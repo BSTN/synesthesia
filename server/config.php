@@ -85,8 +85,10 @@ define('CONFIGPATH', normalize_path(env_value('CONFIGPATH', '../synesthesia_conf
 define('DATA_PATH', normalize_path(env_value('DATA_PATH', 'var'), dirname(__DIR__)));
 define('SQLITE_PATH', normalize_path(env_value('SQLITE_PATH', join_paths('var', 'synesthesia.sqlite')), dirname(__DIR__)));
 define('TEMP_PATH', normalize_path(env_value('TEMP_PATH', join_paths('var', 'tmp')), dirname(__DIR__)));
-define('PASS', env_value('PASS'));
 define('DB_PREFIX', env_value('DB_PREFIX', ''));
+define('SURFDRIVE_WEBDAV_URL', env_value('SURFDRIVE_WEBDAV_URL'));
+define('SURFDRIVE_USERNAME', env_value('SURFDRIVE_USERNAME'));
+define('SURFDRIVE_PASSWORD', env_value('SURFDRIVE_PASSWORD'));
 
 if (PRODUCTION) {
     ini_set('display_errors', '0');

@@ -13,6 +13,34 @@ Vue 2 + PHP application for synesthesia research tests, built with Vite and stor
 
 The API will create the SQLite database automatically at first request. You can also hit `/api/setup`.
 
+## Backups
+
+Data export no longer uses `/download`.
+
+Backups are now pushed to SURFdrive over WebDAV:
+
+- automatic backup:
+  - checked on normal page loads
+  - runs only when data changed since the last successful backup
+  - retries at most once per hour if a previous automatic attempt failed
+- manual backup:
+  - `GET /backup`
+  - `GET /api/backup`
+
+Required env vars:
+
+- `SURFDRIVE_WEBDAV_URL`
+  - full target WebDAV folder URL
+- `SURFDRIVE_USERNAME`
+- `SURFDRIVE_PASSWORD`
+
+Each successful backup uploads:
+
+- a timestamped `profiles-*.csv`
+- a timestamped `questions-*.csv`
+- `profiles-latest.csv`
+- `questions-latest.csv`
+
 ## Production/shared hosting
 
 - Use `server/` as the web root if your hosting panel allows it.
@@ -20,11 +48,12 @@ The API will create the SQLite database automatically at first request. You can 
 - Run `composer install --no-dev` in `server/`.
 - Ensure the directory configured by `DATA_PATH` is writable by PHP.
 - Keep `synesthesia_config` deployed next to this repository and point `CONFIGPATH` to it.
+- Ensure PHP has:
+  - `pdo_sqlite`
+  - `sqlite3`
+  - `curl`
 
 ## Environment variables
-
-`PASS`
-- Download credentials in the form `username:password_hash`.
 
 `BASE`
 - Base path for the application, default `/`.
@@ -33,15 +62,19 @@ The API will create the SQLite database automatically at first request. You can 
 - Public path to the config repository, default `/synesthesia_config`.
 
 `CONFIGPATH`
-- Filesystem path to the config repository, default `synesthesia_config` next to this repo.
+- Filesystem path to the config repository, default `../synesthesia_config`.
 
 `APP_ORIGIN`
 - Vite dev server origin, used only in development.
 
 `DATA_PATH`, `SQLITE_PATH`, `TEMP_PATH`
-- Writable filesystem paths for the SQLite database and exports.
+- Writable filesystem paths for the SQLite database and temp/export files.
+
+`SURFDRIVE_WEBDAV_URL`, `SURFDRIVE_USERNAME`, `SURFDRIVE_PASSWORD`
+- WebDAV destination and credentials used by backup sync.
 
 ## Notes
 
 - The old Docker, Nginx, and MariaDB setup has been removed.
+- `/download` has been removed.
 - Fonts still depend on the configuration/assets already used by the app.

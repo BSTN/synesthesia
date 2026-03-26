@@ -2,10 +2,17 @@
 include __DIR__ . '/config.php';
 include __DIR__ . '/api/api-functions.php';
 
+if ($PATH === '/backup') {
+    require __DIR__ . '/api/api.php';
+    exit();
+}
+
 if (!file_exists(SQLITE_PATH)) {
     $dbc = db();
     db_setup_schema($dbc);
 }
+
+maybe_run_automatic_backup();
 ?>
 <!doctype html>
 <html>

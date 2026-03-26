@@ -4,6 +4,7 @@ $PATH = getPath();
 
 require_once __DIR__ . "/db.php";
 require_once __DIR__ . "/export.php";
+require_once __DIR__ . "/backup.php";
 
 function getPath()
 {
@@ -98,47 +99,6 @@ function validate_ip($ip)
 function unwrap($text)
 {
     return preg_replace("/<p><(.[\s\S]*?)><\/p>/", "<$1>", $text);
-}
-
-function brute_check()
-{
-    $dbc = db();
-    $ip = get_ip_address();
-    $table = db_table("access");
-    $window = gmdate('Y-m-d H:i:s', time() - 600);
-    $prep = $dbc->prepare(
-        "SELECT 1 FROM $table
-        WHERE IP = :IP
-        AND NUM > 9
-        AND modified > :window"
-    );
-    $prep->execute(array(':IP' => $ip, ':window' => $window));
-    return (bool) $prep->fetchColumn();
-}
-
-function brute_fail()
-{
-    $dbc = db();
-    $ip = get_ip_address();
-    $table = db_table("access");
-    $now = db_now();
-    $prep = $dbc->prepare(
-        "INSERT INTO $table (IP, created, modified, NUM)
-        VALUES (:IP, :created, :modified, 1)
-        ON CONFLICT(IP) DO UPDATE SET
-            modified = excluded.modified,
-            NUM = CASE WHEN $table.NUM >= 10 THEN 0 ELSE $table.NUM + 1 END"
-    );
-    $prep->execute(array(':IP' => $ip, ':created' => $now, ':modified' => $now));
-}
-
-function brute_reset()
-{
-    $dbc = db();
-    $ip = get_ip_address();
-    $table = db_table("access");
-    $prep = $dbc->prepare("DELETE FROM $table WHERE IP = :IP");
-    $prep->execute(array(':IP' => $ip));
 }
 
 function rrmdir($src)
