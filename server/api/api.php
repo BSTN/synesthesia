@@ -19,6 +19,12 @@ try {
 }
 
 if ($PATH === "/setup") {
+    if (PRODUCTION) {
+        http_response_code(404);
+        echo "Not found.";
+        exit();
+    }
+
     try {
         db_setup_schema($dbc);
     } catch (PDOException $exception) {
@@ -33,7 +39,12 @@ if ($PATH === "/backup") {
         $result = run_surfdrive_backup(true);
         pjson($result);
     } catch (Throwable $e) {
-        error('Backup failed: ' . $e->getMessage());
+        error_log('Backup failed: ' . $e->getMessage());
+        http_response_code(500);
+        pjson(array(
+            'status' => 'failed',
+            'message' => 'Backup failed. Check server logs.',
+        ));
     }
 }
 
