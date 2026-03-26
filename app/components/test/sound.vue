@@ -1,10 +1,6 @@
 <template>
-  <div
-    id="sound"
-    :style="{background: background}"
-    @click="playAudio()"
-  >
-    <div id="icons" :class='{playing}'>
+  <div id="sound" :style="{ background: background }" @click="playAudio()">
+    <div id="icons" :class="{ playing }">
       <svg
         v-if="playing"
         width="500px"
@@ -68,8 +64,7 @@
   </div>
 </template>
 <script>
-import { join } from 'path'
-import globalAudio from '../../utils/audio'
+import globalAudio from "../../utils/audio";
 export default {
   props: ["background", "file", "autoplay", "isolate"],
   data() {
@@ -77,48 +72,49 @@ export default {
       playing: false,
       error: false,
       audio: false
-    }
+    };
   },
   watch: {
-    "file": function () {
+    file: function() {
       this.loadAudio();
     }
   },
-  mounted(){
+  mounted() {
     this.loadAudio();
   },
   methods: {
-    loadAudio () {
+    loadAudio() {
       let self = this;
       if (!this.$configbase) {
-        console.warn('No path for github files defined ($configbase)')
-        this.error = "Could not load file."
-        return
+        console.warn("No path for github files defined ($configbase)");
+        this.error = "Could not load file.";
+        return;
       }
       if (!this.file) {
-        console.warn('No inputfile defined.')
-        this.error = "Could not load file."
-        return
+        console.warn("No inputfile defined.");
+        this.error = "Could not load file.";
+        return;
       }
       // define audiofile
-      const audiofile = join(this.$configbase, 'audio', this.file)
+      const base = (this.$configbase || "").replace(/\/$/, "");
+      const audiofile = `${base}/audio/${this.file}`;
       // define audio object
-      this.audio = this.isolate !== undefined ? new Audio() : globalAudio
+      this.audio = this.isolate !== undefined ? new Audio() : globalAudio;
 
-      this.audio.autoplay = this.autoplay !== undefined
-      if (this.audio.src !== audiofile) this.audio.src = audiofile
-      this.audio.addEventListener('playing', function () {
+      this.audio.autoplay = this.autoplay !== undefined;
+      if (this.audio.src !== audiofile) this.audio.src = audiofile;
+      this.audio.addEventListener("playing", function() {
         self.playing = true;
-      })
-      this.audio.addEventListener('ended', function () {
+      });
+      this.audio.addEventListener("ended", function() {
         self.playing = false;
-      })
+      });
     },
-    playAudio () {
+    playAudio() {
       this.audio.play();
     }
   }
-}
+};
 </script>
 <style lang="less" scoped>
 #sound {
@@ -152,8 +148,7 @@ export default {
     border: 0.2rem solid transparent;
     background: rgba(#000, 0.1);
     overflow: hidden;
-    box-shadow:
-      0.025rem -0.025rem 0.05rem rgba(#000, 0.4),
+    box-shadow: 0.025rem -0.025rem 0.05rem rgba(#000, 0.4),
       inset 0.05rem -0.05rem 0.05rem rgba(#000, 0.4),
       inset -0.05rem 0.05rem 0.05rem rgba(#fff, 0.1),
       -0.05rem 0.05rem 0.05rem rgba(#fff, 0.1);
@@ -174,8 +169,7 @@ export default {
       height: 100%;
       background: #fafafa;
       border-radius: 100%;
-      box-shadow:
-        0.05rem -0.05rem 0.05rem rgba(#000, 0.3),
+      box-shadow: 0.05rem -0.05rem 0.05rem rgba(#000, 0.3),
         inset 0.05rem -0.05rem 0.05rem rgba(#000, 0.3),
         inset -0.05rem 0.05rem 0.05rem rgba(#fff, 0.7),
         -0.05rem 0.05rem 0.05rem rgba(#fff, 0.7);
@@ -196,12 +190,12 @@ export default {
       }
     }
 
-    &:hover, &.playing {
+    &:hover,
+    &.playing {
       @c: #555;
 
       background: @c;
-      box-shadow:
-        0.025rem -0.025rem 0.05rem rgba(#000, 0.3),
+      box-shadow: 0.025rem -0.025rem 0.05rem rgba(#000, 0.3),
         inset 0.025rem -0.025rem 0.05rem rgba(#000, 0.3),
         inset 0 0 0.25rem rgba(#000, 0.8),
         inset -0.05rem 0.05rem 0.05rem rgba(#fff, 0.1),

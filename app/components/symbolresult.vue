@@ -43,7 +43,6 @@
 <script>
 import { each } from "lodash";
 import color from "color";
-import { join } from "path";
 export default {
   props: ["symbol", "testname"],
   computed: {
@@ -88,9 +87,10 @@ export default {
     },
     images() {
       if (this.testConfig.type !== "imagesound") return false;
+      const base = (this.$configbase || "").replace(/\/$/, "");
       return [
-        join(this.$configbase, "images", this.symbol.im1),
-        join(this.$configbase, "images", this.symbol.im2)
+        `${base}/images/${this.symbol.im1}`,
+        `${base}/images/${this.symbol.im2}`
       ];
     },
     distance() {

@@ -69,7 +69,6 @@
 </template>
 <script>
 import { each } from "lodash";
-import { join } from "path";
 import score from "../utils/score";
 export default {
   props: ["testname", "symbol", "type", "user", "data"],
@@ -256,9 +255,10 @@ export default {
         return false;
       }
       if (this.$tests[this.testname].type !== "imagesound") return false;
+      const base = (this.$configbase || "").replace(/\/$/, "");
       return [
-        join(this.$configbase, "images", this.data.symbol.im1),
-        join(this.$configbase, "images", this.data.symbol.im2),
+        `${base}/images/${this.data.symbol.im1}`,
+        `${base}/images/${this.data.symbol.im2}`
       ];
     },
     // colours
@@ -273,26 +273,26 @@ export default {
     },
     values() {
       if (!this.data || !this.data.data) return false;
-      return this.data.data.map((x) => x.value);
+      return this.data.data.map(x => x.value);
     },
     valuesFiltered() {
-      return this.values.filter((x) => x !== "nocolor");
+      return this.values.filter(x => x !== "nocolor");
     },
     valuesFilteredDisplay() {
       // return this.values.filter(x => x !== "nocolor");
       if (!this.values) return false;
-      return this.values.map((x) => {
+      return this.values.map(x => {
         if (x === "nocolor")
           return { backgroundImage: `url("./assets/nocolor.png")` };
         return { background: `#${x}` };
       });
-    },
+    }
   },
   methods: {
     distance() {
       return score.distance(this.testType, this.values);
-    },
-  },
+    }
+  }
 };
 </script>
 <style lang="less" scoped>

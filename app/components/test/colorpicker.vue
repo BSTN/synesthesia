@@ -11,7 +11,7 @@
           ref="huebg"
           :style="{
             opacity: lightnessOpacity,
-            backgroundPosition: huebgpos,
+            backgroundPosition: huebgpos
           }"
         ></div>
         <div
@@ -19,7 +19,7 @@
           :style="{
             left: posx * 100 + '%',
             top: posy * 100 + '%',
-            borderColor: selectorColor,
+            borderColor: selectorColor
           }"
         ></div>
       </div>
@@ -95,14 +95,14 @@ export default {
         stepStyle: void 0,
         stepActiveStyle: void 0,
         labelStyle: void 0,
-        labelActiveStyle: void 0,
-      },
+        labelActiveStyle: void 0
+      }
     };
   },
   computed: {
     ...mapGetters({
       testdata: "tests/testdata",
-      q: "tests/q",
+      q: "tests/q"
     }),
     lightnessBackgroundColor() {
       let L = parseInt(this.lightness * 256);
@@ -123,13 +123,13 @@ export default {
       let w = 0;
       if (this.$refs["huebg"]) w = this.$refs["huebg"].clientWidth;
       return `${this.offset * w}px 0px`;
-    },
+    }
   },
   watch: {
     "q.qnr": function(val) {
       this.lightness = 0.5;
       this.randomPos();
-    },
+    }
   },
   methods: {
     randomPos() {
@@ -149,7 +149,7 @@ export default {
     },
     async toggleNocolor() {
       await this.$store.dispatch("tests/setValue", {
-        clicks: this.q.clicks + 1,
+        clicks: this.q.clicks + 1
       });
       if (this.q.color !== "nocolor") {
         await this.$store.dispatch("tests/setValue", { value: "nocolor" });
@@ -167,21 +167,21 @@ export default {
     },
     addSliderClick() {
       this.$store.dispatch("tests/setValue", {
-        clicksslider: parseInt(this.q.clicksslider) + 1,
+        clicksslider: parseInt(this.q.clicksslider) + 1
       });
     },
     changeSlider(val) {
       this.setColor(val);
       this.addSliderClick();
-    },
+    }
   },
   mounted() {
     let hueel = this.$refs.hue;
     let mousedown = false;
-    const huepos = async (ev) => {
+    const huepos = async ev => {
       if (ev.type === "mousedown") {
         await this.$store.dispatch("tests/setValue", {
-          clicks: this.clicks + 1,
+          clicks: this.clicks + 1
         });
         mousedown = true;
       }
@@ -194,7 +194,7 @@ export default {
         this.posx = clamp((ev.clientX - coor.x) / coor.width, 0, 1);
         this.posy = clamp((ev.clientY - coor.y) / coor.height, 0, 1);
         await this.$store.dispatch("tests/setValue", {
-          position: `${this.posx},${this.posy}`,
+          position: `${this.posx},${this.posy}`
         });
         let hex = color
           .hsl(
@@ -212,7 +212,7 @@ export default {
     // window.addEventListener("mousemove", huepos);
     // hueel.addEventListener("mouseup", huepos);
     this.randomPos();
-  },
+  }
 };
 </script>
 <style lang="less" scoped>
@@ -227,7 +227,7 @@ export default {
     position: relative;
     max-height: 2rem;
     overflow: hidden;
-    cursor:pointer;
+    cursor: pointer;
     #hueframe {
       position: absolute;
       top: 0;
@@ -241,7 +241,7 @@ export default {
         top: 0;
         width: 100%;
         height: 100%;
-        background-image: url("~assets/hue.png");
+        background-image: url("assets/hue.png");
         background-size: 100% 100%;
         background-position: left 30px top 0;
         background-repeat: repeat;
@@ -286,7 +286,7 @@ export default {
   #nocolor {
     // min-height: 2.5rem;
     text-align: center;
-    font-size: .75rem;
+    font-size: 0.75rem;
     button {
       background: #d6d6d6;
       padding: 0.5em 1em;

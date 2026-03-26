@@ -1,26 +1,47 @@
 # Synesthesia tests
 
-Docker setup production of the synesthesia tests.
+Vue 2 + PHP application for synesthesia research tests, built with Vite and stored in SQLite.
 
-## Environment variables:
+## Local development
 
-```
-SYNCONFIGBRANCH=kinderen
+1. Install JS dependencies with `yarn install`.
+2. Install PHP dependencies with `composer install` in `server/`.
+3. Copy `.env.example` to `.env` and adjust paths if needed.
+4. Start Vite with `yarn dev`.
+5. Start PHP with `yarn dev:php`.
+6. Open `http://localhost:8000`.
 
-MYSQL_USER=
-MYSQL_PASSWORD=
-MYSQL_DBNAME=
-MYSQL_HOST=
-MYSQL_PORT=
-NGINXPORT=
-```
+The API will create the SQLite database automatically at first request. You can also hit `/api/setup`.
 
-## Start:
+## Production/shared hosting
 
-!Important 
+- Use `server/` as the web root if your hosting panel allows it.
+- Run `yarn build` before deployment so `server/dist/` contains the frontend assets.
+- Run `composer install --no-dev` in `server/`.
+- Ensure the directory configured by `DATA_PATH` is writable by PHP.
+- Keep `synesthesia_config` deployed next to this repository and point `CONFIGPATH` to it.
 
-run /api/setup to initialise database
+## Environment variables
 
-## Fonts
+`PASS`
+- Download credentials in the form `username:password_hash`.
 
-Roboto Mono (Google Fonts) is used for the graphemes, see [https://github.com/google/fonts](https://github.com/google/fonts) for more information.
+`BASE`
+- Base path for the application, default `/`.
+
+`CONFIGBASE`
+- Public path to the config repository, default `/synesthesia_config`.
+
+`CONFIGPATH`
+- Filesystem path to the config repository, default `synesthesia_config` next to this repo.
+
+`APP_ORIGIN`
+- Vite dev server origin, used only in development.
+
+`DATA_PATH`, `SQLITE_PATH`, `TEMP_PATH`
+- Writable filesystem paths for the SQLite database and exports.
+
+## Notes
+
+- The old Docker, Nginx, and MariaDB setup has been removed.
+- Fonts still depend on the configuration/assets already used by the app.

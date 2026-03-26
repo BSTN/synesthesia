@@ -11,14 +11,13 @@
 window.history.scrollRestoration = "manual";
 import { each, sample, debounce, isEmpty } from "lodash";
 import moment from "moment";
-const chalk = require("chalk");
 export default {
   watch: {
     $route() {
       setTimeout(() => {
         window.scrollTo(0, 0);
       }, 250);
-    },
+    }
   },
   created() {
     // pick a set randomly and prepare store with questions
@@ -29,7 +28,7 @@ export default {
         setname: setname,
         questions: v.sets[setname],
         pretest: v.pretest,
-        posttest: v.posttest,
+        posttest: v.posttest
       });
     });
   },
@@ -43,23 +42,23 @@ export default {
       this.$root
         .confirm({
           message: "May I ask you a question, please?",
-          options: ["yes", "no", "again", "something else"],
+          options: ["yes", "no", "again", "something else"]
         })
-        .then((x) => {
+        .then(x => {
           console.log(x);
         })
-        .catch((x) => {
+        .catch(x => {
           console.error(x);
         });
     },
     setTheme(i) {
-      each(document.body.classList, (x) => {
+      each(document.body.classList, x => {
         if (x.match(/^theme/)) document.body.classList.remove(x);
       });
       document.body.classList.add("theme" + i);
       document.body.dispatchEvent(new CustomEvent("changetheme"));
-    },
-  },
+    }
+  }
 };
 </script>
 <style lang="less">

@@ -46,19 +46,18 @@
 <script>
 import { mapGetters } from "vuex";
 import { now, filter } from "lodash";
-import { join } from "path";
 export default {
   data() {
     return {
       startTime: false,
       audio: false,
-      playing: false,
+      playing: false
     };
   },
   computed: {
     ...mapGetters({
       testdata: "tests/testdata",
-      q: "tests/q",
+      q: "tests/q"
     }),
     config() {
       return this.$tests[this.$route.params.testname];
@@ -93,7 +92,7 @@ export default {
       return this.q.symbol.match(/^t\:/)
         ? this.$t(this.q.symbol.replace(/^t\:/, ""))
         : this.q.symbol;
-    },
+    }
   },
   methods: {
     async next() {
@@ -108,15 +107,15 @@ export default {
         console.log({
           table: "questions",
           UID: this.$store.state.profile.UID,
-          data: data,
+          data: data
         });
         let err = await this.$axios
           .post("./api/store", {
             table: "questions",
             UID: this.$store.state.profile.UID,
-            data: data,
+            data: data
           })
-          .catch((err) => {
+          .catch(err => {
             return { error: "Could not store data", err: err.response.data };
           });
 
@@ -138,15 +137,15 @@ export default {
     },
     async storeTime() {
       await this.$store.dispatch("tests/setValue", {
-        timing: now() - this.startTime,
+        timing: now() - this.startTime
       });
-    },
+    }
   },
   watch: {
     "q.qnr": function() {
       // reset timer
       this.startTime = now();
-    },
+    }
   },
   mounted() {
     const self = this;
@@ -159,7 +158,7 @@ export default {
     this.$on("hook:beforeDestroy", () => {
       window.removeEventListener("keydown", keydown);
     });
-  },
+  }
 };
 </script>
 <style lang="less" scoped>

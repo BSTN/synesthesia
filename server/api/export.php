@@ -2,105 +2,88 @@
 
 function export_to_csv()
 {
-    global $dbc;
+    $dbc = db();
 
-    // create dir/files if not exists
-    $profilePath = joinPaths(TEMP_PATH, "/profiles-" . date("Y.m.d-H.i.s") . ".csv");
-    $questionsPath = joinPaths(TEMP_PATH, "/questions-" . date("Y.m.d-H.i.s") . ".csv");
-    if (!file_exists(TEMP_PATH)) {
-        mkdir(TEMP_PATH, 0755, true);
-    }
+    ensure_directory(TEMP_PATH);
 
-    // first collect all extra columns (from extra data JSON)
+    $timestamp = date("Y.m.d-H.i.s");
+    $profilePath = join_paths(TEMP_PATH, "profiles-$timestamp.csv");
+    $questionsPath = join_paths(TEMP_PATH, "questions-$timestamp.csv");
+
     $extraColumns = get_extra_columns();
-
-    // load all profile columns
     $profileColumns = get_profile_columns();
-
-    // merge profile columns with extracolumns
     $allProfileColumns = array_merge($profileColumns, $extraColumns);
 
-    // file handle
-    $profileFile = fopen($profilePath, 'w') or die('Could not open profiles file.');
-
-    // write column names
+    $profileFile = fopen($profilePath, 'w');
+    if ($profileFile === false) {
+        die('Could not open profiles file.');
+    }
     fputcsv($profileFile, $allProfileColumns);
 
-    // export profile data to csv file
-    $profiletable = DB_PREFIX . "profile";
-    $extratable = DB_PREFIX . "extra";
-    $query = "SELECT $profiletable.created as created, 
-            $extratable.modified as modified, 
-            $profiletable.UID as UID, 
-            $profiletable.IP as IP, 
-            $profiletable.language as language, 
-            $profiletable.finishedtests as finishedtests, 
-            $profiletable.USERID as USERID, 
-            $profiletable.SHARED as SHARED, 
-            $extratable.data as data 
-            FROM $profiletable LEFT JOIN $extratable 
-            ON $profiletable.UID = $extratable.UID;";
-    $res = $dbc->query($query);
-    // for every row:
-    // echo "<pre>";
-    while ($row = $res->fetch(PDO::FETCH_NAMED)) {
-        $array = [];
-        foreach ($row as $name => $value) {
-            // extra table data
-            if ($name === 'data') {
-                $JSON = (array) json_decode($value);
-                foreach ($extraColumns as $c) {
-                    if (key_exists($c, $JSON)) {
-                        $array[] = $JSON[$c];
-                    } else {
-                        $array[] = "";
-                    };
-                };
-            } else {
-                $array[] = $value;
-            }
-        }
-        // print_r($array);
-        fputcsv($profileFile, $array);
-    }
-    // echo "</pre>";
-    fclose($profileFile);
+    $profiletable = db_table("profile");
+    $extratable = db_table("extra");
+    $query = "SELECT
+        $profiletable.created AS created,
+        $profiletable.modified AS modified,
+        $profiletable.UID AS UID,
+        $profiletable.IP AS IP,
+        $profiletable.language AS language,
+        $profiletable.finishedtests AS finishedtests,
+        $profiletable.touchscreen AS touchscreen,
+        $profiletable.USERID AS USERID,
+        $profiletable.SHARED AS SHARED,
+        $extratable.data AS data
+        FROM $profiletable
+        LEFT JOIN $extratable ON $profiletable.UID = $extratable.UID";
 
-
-    // fetch questions
-    $questionsColumns = get_questions_columns();
-
-    // file handle
-    $questionsFile = fopen($questionsPath, 'w') or die('Could not open questions file.');
-
-    // write column names
-    fputcsv($questionsFile, $questionsColumns);
-
-    // fetch and write data
-    $query = "SELECT * FROM " . DB_PREFIX . "questions;";
     $res = $dbc->query($query);
     while ($row = $res->fetch(PDO::FETCH_ASSOC)) {
-        fputcsv($questionsFile, array_values($row));
+        $array = array();
+        foreach ($profileColumns as $column) {
+            $array[] = $row[$column] ?? "";
+        }
+
+        $json = json_decode($row['data'] ?? "", true);
+        $json = is_array($json) ? $json : array();
+        foreach ($extraColumns as $column) {
+            $array[] = array_key_exists($column, $json) ? $json[$column] : "";
+        }
+
+        fputcsv($profileFile, $array);
+    }
+    fclose($profileFile);
+
+    $questionsColumns = get_questions_columns();
+    $questionsFile = fopen($questionsPath, 'w');
+    if ($questionsFile === false) {
+        die('Could not open questions file.');
+    }
+    fputcsv($questionsFile, $questionsColumns);
+
+    $questionstable = db_table("questions");
+    $res = $dbc->query("SELECT * FROM $questionstable");
+    while ($row = $res->fetch(PDO::FETCH_ASSOC)) {
+        $line = array();
+        foreach ($questionsColumns as $column) {
+            $line[] = $row[$column] ?? "";
+        }
+        fputcsv($questionsFile, $line);
     }
     fclose($questionsFile);
 
-    // zip both files and download
-
     $files = array($profilePath, $questionsPath);
-    $zipPath = joinPaths(TEMP_PATH, 'bundled-' . date("Y.m.d—H.i.s") . ".zip");
+    $zipPath = join_paths(TEMP_PATH, 'bundled-' . date("Y.m.d-H.i.s") . ".zip");
     $zip = new ZipArchive();
-    $zip->open($zipPath, ZipArchive::CREATE);
+    $zip->open($zipPath, ZipArchive::CREATE | ZipArchive::OVERWRITE);
     foreach ($files as $file) {
         $zip->addFile($file, basename($file));
     }
     $zip->close();
 
     header('Content-Type: application/zip');
-    header('Content-disposition: attachment; filename=' . 'synesthesia-data-' . date("Y.m.d—H.i.s") . ".zip");
+    header('Content-disposition: attachment; filename=' . 'synesthesia-data-' . date("Y.m.d-H.i.s") . ".zip");
     header('Content-Length: ' . filesize($zipPath));
     readfile($zipPath);
-
-    // remove files from temporary folder
 
     unlink($profilePath);
     unlink($questionsPath);
@@ -109,57 +92,31 @@ function export_to_csv()
     exit();
 }
 
-
 function get_extra_columns()
 {
-    global $dbc;
-    $table = DB_PREFIX . "extra";
+    $dbc = db();
+    $table = db_table("extra");
     $prep = $dbc->prepare("SELECT data FROM $table");
-    try {
-        $prep->execute();
-    } catch (PDOException $Exception) {
-        error($Exception);
-    }
+    $prep->execute();
     $res = $prep->fetchAll(PDO::FETCH_COLUMN, 0);
-    // echo "<pre>" . print_r($res, true) . "</pre>";
     $extras = array();
     foreach ($res as $v) {
-        $JSON = json_decode($v);
-        if ($JSON) {
-            foreach ($JSON as $K => $value) {
-                $extras[$K] = $K;
+        $json = json_decode($v, true);
+        if (is_array($json)) {
+            foreach ($json as $key => $value) {
+                $extras[$key] = $key;
             }
         }
     }
-    $extras = array_keys($extras);
-    // echo "<pre>" . print_r($extras, true) . "</pre>";
-    return $extras;
+    return array_keys($extras);
 }
 
 function get_profile_columns()
 {
-    global $dbc;
-    $table = DB_PREFIX . "profile";
-    $prep = $dbc->prepare("SHOW COLUMNS FROM $table;");
-    try {
-        $prep->execute();
-    } catch (PDOException $Exception) {
-        error($Exception);
-    }
-    $columns = $prep->fetchAll(PDO::FETCH_COLUMN);
-    return $columns;
+    return db_table_columns(db(), db_table("profile"));
 }
 
 function get_questions_columns()
 {
-    global $dbc;
-    $table = DB_PREFIX . "questions";
-    $prep = $dbc->prepare("SHOW COLUMNS FROM $table;");
-    try {
-        $prep->execute();
-    } catch (PDOException $Exception) {
-        error($Exception);
-    }
-    $columns = $prep->fetchAll(PDO::FETCH_COLUMN);
-    return $columns;
+    return db_table_columns(db(), db_table("questions"));
 }
