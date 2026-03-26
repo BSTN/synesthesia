@@ -303,6 +303,7 @@ export default {
   border: 1px solid @fg;
   border-radius: 0.25em;
   width: 100%;
+  print-color-adjust: exact;
   -webkit-print-color-adjust: exact;
   @media print {
     border: 1px solid #ccc;

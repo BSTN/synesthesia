@@ -2,6 +2,10 @@
 include __DIR__ . '/config.php';
 include __DIR__ . '/api/api-functions.php';
 
+if (!isset($PATH)) {
+    $PATH = getPath();
+}
+
 if ($PATH === '/backup') {
     require __DIR__ . '/api/api.php';
     exit();

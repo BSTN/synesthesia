@@ -1,5 +1,7 @@
 <?php
 
+require_once __DIR__ . "/db.php";
+
 function export_csv_files()
 {
     $dbc = db();
