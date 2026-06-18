@@ -247,7 +247,7 @@ export default {
         top: 0;
         width: 100%;
         height: 100%;
-        background-image: url("assets/hue.png");
+        background-image: url("/assets/hue.png");
         background-size: 100% 100%;
         background-position: left 30px top 0;
         background-repeat: repeat;

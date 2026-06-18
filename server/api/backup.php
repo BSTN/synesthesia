@@ -2,6 +2,11 @@
 
 require_once __DIR__ . "/db.php";
 
+function backup_filename_prefix($name)
+{
+    return PRODUCTION ? $name : $name . '-dev';
+}
+
 function export_csv_files()
 {
     $dbc = db();
@@ -9,8 +14,8 @@ function export_csv_files()
     ensure_directory(TEMP_PATH);
 
     $timestamp = gmdate("Y.m.d-H.i.s");
-    $profilePath = join_paths(TEMP_PATH, "profiles-$timestamp.csv");
-    $questionsPath = join_paths(TEMP_PATH, "questions-$timestamp.csv");
+    $profilePath = join_paths(TEMP_PATH, backup_filename_prefix("profiles") . "-$timestamp.csv");
+    $questionsPath = join_paths(TEMP_PATH, backup_filename_prefix("questions") . "-$timestamp.csv");
 
     $extraColumns = get_extra_columns();
     $profileColumns = get_profile_columns();
@@ -89,6 +94,34 @@ function webdav_url($base, $name)
     return rtrim($base, '/') . '/' . implode('/', $encoded);
 }
 
+function resolve_redirect_url($currentUrl, $location)
+{
+    if ($location === null || $location === '') {
+        return $currentUrl;
+    }
+
+    if (preg_match('#^https?://#i', $location)) {
+        return $location;
+    }
+
+    $parts = parse_url($currentUrl);
+    if ($parts === false || !isset($parts['scheme'], $parts['host'])) {
+        return $location;
+    }
+
+    $scheme = $parts['scheme'];
+    $host = $parts['host'];
+    $port = isset($parts['port']) ? ':' . $parts['port'] : '';
+
+    if (strpos($location, '/') === 0) {
+        return $scheme . '://' . $host . $port . $location;
+    }
+
+    $path = $parts['path'] ?? '/';
+    $basePath = preg_replace('#/[^/]*$#', '/', $path);
+    return $scheme . '://' . $host . $port . $basePath . $location;
+}
+
 function webdav_request($method, $url, $body = null, $contentType = 'application/octet-stream')
 {
     if (!function_exists('curl_init')) {
@@ -98,39 +131,65 @@ function webdav_request($method, $url, $body = null, $contentType = 'application
         throw new RuntimeException('SURFdrive WebDAV credentials are not configured.');
     }
 
-    $ch = curl_init($url);
     $headers = array();
     if ($body !== null) {
         $headers[] = 'Content-Type: ' . $contentType;
         $headers[] = 'Content-Length: ' . strlen($body);
     }
 
-    curl_setopt_array($ch, array(
-        CURLOPT_USERPWD => SURFDRIVE_USERNAME . ':' . SURFDRIVE_PASSWORD,
-        CURLOPT_CUSTOMREQUEST => $method,
-        CURLOPT_RETURNTRANSFER => true,
-        CURLOPT_HTTPAUTH => CURLAUTH_BASIC,
-        CURLOPT_TIMEOUT => 120,
-        CURLOPT_HTTPHEADER => $headers,
-        CURLOPT_SSL_VERIFYPEER => true,
-        CURLOPT_SSL_VERIFYHOST => 2,
-    ));
+    $currentUrl = $url;
+    for ($redirects = 0; $redirects < 5; $redirects++) {
+        $responseHeaders = array();
+        $ch = curl_init($currentUrl);
+        curl_setopt_array($ch, array(
+            CURLOPT_USERPWD => SURFDRIVE_USERNAME . ':' . SURFDRIVE_PASSWORD,
+            CURLOPT_CUSTOMREQUEST => $method,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_HTTPAUTH => CURLAUTH_BASIC,
+            CURLOPT_TIMEOUT => 120,
+            CURLOPT_HTTPHEADER => $headers,
+            CURLOPT_SSL_VERIFYPEER => true,
+            CURLOPT_SSL_VERIFYHOST => 2,
+            CURLOPT_HEADERFUNCTION => function ($curl, $headerLine) use (&$responseHeaders) {
+                $length = strlen($headerLine);
+                $headerLine = trim($headerLine);
+                if ($headerLine === '' || strpos($headerLine, ':') === false) {
+                    return $length;
+                }
 
-    if ($body !== null) {
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $body);
-    }
+                list($name, $value) = explode(':', $headerLine, 2);
+                $responseHeaders[strtolower(trim($name))] = trim($value);
+                return $length;
+            },
+        ));
 
-    $response = curl_exec($ch);
-    if ($response === false) {
-        $error = curl_error($ch);
+        if ($body !== null) {
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $body);
+        }
+
+        $response = curl_exec($ch);
+        if ($response === false) {
+            $error = curl_error($ch);
+            curl_close($ch);
+            throw new RuntimeException('WebDAV request failed: ' . $error);
+        }
+
+        $status = curl_getinfo($ch, CURLINFO_RESPONSE_CODE);
         curl_close($ch);
-        throw new RuntimeException('WebDAV request failed: ' . $error);
+
+        if (in_array($status, array(301, 302, 307, 308), true) && isset($responseHeaders['location'])) {
+            $currentUrl = resolve_redirect_url($currentUrl, $responseHeaders['location']);
+            continue;
+        }
+
+        return array(
+            'status' => $status,
+            'body' => $response,
+            'url' => $currentUrl,
+        );
     }
 
-    $status = curl_getinfo($ch, CURLINFO_RESPONSE_CODE);
-    curl_close($ch);
-
-    return array('status' => $status, 'body' => $response);
+    throw new RuntimeException('WebDAV request failed: too many redirects.');
 }
 
 function surfdrive_put_file($remoteName, $localPath, $contentType = 'text/csv; charset=utf-8')
@@ -146,7 +205,7 @@ function surfdrive_put_file($remoteName, $localPath, $contentType = 'text/csv; c
 
     $result = webdav_request('PUT', webdav_url(SURFDRIVE_WEBDAV_URL, $remoteName), $body, $contentType);
     if ($result['status'] < 200 || $result['status'] >= 300) {
-        throw new RuntimeException('WebDAV PUT failed for ' . $remoteName . ' with HTTP ' . $result['status']);
+        throw new RuntimeException('WebDAV PUT failed for ' . $remoteName . ' with HTTP ' . $result['status'] . ' at ' . ($result['url'] ?? 'unknown URL'));
     }
 }
 
