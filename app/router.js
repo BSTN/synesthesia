@@ -37,7 +37,8 @@ routes.push({
 // set routes
 const router = new VueRouter({
   routes: routes,
-  mode: "history"
+  mode: "history",
+  base: document.querySelector("base").getAttribute("href") || "/"
 });
 
 export default router;

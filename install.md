@@ -1,231 +1,92 @@
 # TransIP Shared Hosting Installation
 
-This guide describes how to deploy the Synesthesia app to a TransIP shared hosting package.
+This guide deploys the app at `https://your-domain.nl/synesthesia/` with TransIP's document root set to `www/public`. Keep `.env` and SQLite data in `www`, outside the public document root.
 
 ## Requirements
 
-- PHP with these extensions enabled:
-  - `pdo_sqlite`
-  - `sqlite3`
-  - `curl`
-  - `zip` / `ZipArchive`
-- SFTP access to the TransIP hosting package.
-- A writable directory outside the public web root for SQLite data and temporary CSV exports.
-- A built frontend in `server/dist`.
-- Composer dependencies installed in `server/vendor`.
-- A deployed `synesthesia_config` directory containing:
-  - `config.yml`
-  - `translations.yml`
-  - `tests/*.yml`
-  - `texts/*.md`
+- PHP 8.2 or newer with `pdo_sqlite`, `sqlite3`, `curl`, and `zip` / `ZipArchive` enabled.
+- SFTP access to the hosting package.
+- Built frontend assets in `server/dist` and Composer dependencies in `server/vendor`.
+- A `synesthesia_config` directory with `config.yml`, `translations.yml`, `tests/*.yml`, `texts/*.md`, and any referenced audio/images.
 
-## Recommended Directory Layout
-
-Use `server/` as the public document root if the TransIP control panel allows this.
+## Directory Layout
 
 ```text
-private-or-parent-directory/
-  synesthesia_config/
-  synesthesia-data/
-    synesthesia.sqlite
+www/
+  .env
+  data/
+    synesthesia.sqlite       # created by the app on first request
     tmp/
-
-public-document-root/
-  .htaccess
-  index.php
-  config.php
-  robots.txt
-  api/
-  assets/
-  dist/
-  vendor/
+  public/                    # TransIP document root
+    synesthesia/             # https://your-domain.nl/synesthesia/
+      .htaccess
+      index.php
+      config.php
+      api/
+      assets/
+      dist/
+      vendor/
+      synesthesia_config/
 ```
 
-If TransIP does not allow changing the document root, upload the contents of `synesthesia/server/` into the public web directory.
+Upload the contents of `synesthesia/server/` to `www/public/synesthesia/`. Upload the configuration repository to `www/public/synesthesia/synesthesia_config/`, omitting its `.git` directory. The app loads YAML/Markdown from this folder, and the browser requests audio/images from it.
 
-Keep `synesthesia_config` and `synesthesia-data` outside the public web root when possible.
+In TransIP's control panel, set the domain's document root (website path) to `public`, so `www/public` is public and `www/.env` and `www/data` are not. If another site already uses the domain root, its public files must also live under `www/public` before changing that setting.
 
 ## Build Locally
 
-Run these commands on your local machine before uploading:
+Run these commands before uploading:
 
 ```bash
 cd /path/to/synesthesia
-npm install
-npm run build
+yarn install --frozen-lockfile
+yarn build
 
 cd server
 composer install --no-dev --optimize-autoloader
 ```
 
-The build command writes frontend assets to `server/dist`.
-
-The Composer command writes PHP dependencies to `server/vendor`.
-
-## Upload Files
-
-Upload these from `synesthesia/server/` to the public web root:
-
-```text
-.htaccess
-index.php
-config.php
-robots.txt
-api/
-assets/
-dist/
-vendor/
-```
-
-Upload the external configuration repository to:
-
-```text
-../synesthesia_config/
-```
-
-or another private path of your choice.
-
-Create a writable data directory:
-
-```text
-../synesthesia-data/
-../synesthesia-data/tmp/
-```
+Upload `server/.htaccess`, `index.php`, `config.php`, `robots.txt`, `api/`, `assets/`, `dist/`, and `vendor/`. Rebuild and re-upload `dist/` after frontend changes.
 
 ## Environment File
 
-Create `.env` in the same directory as `index.php` and `config.php` on the server.
-
-Example for deployment at the domain root:
-
-```env
-APP_ENV=production
-BASE=/
-CONFIGBASE=/synesthesia_config
-CONFIGPATH=../synesthesia_config
-DATA_PATH=../synesthesia-data
-SQLITE_PATH=../synesthesia-data/synesthesia.sqlite
-TEMP_PATH=../synesthesia-data/tmp
-
-SURFDRIVE_WEBDAV_URL=https://surfdrive.surf.nl/files/remote.php/nonshib-webdav/synesthesia
-SURFDRIVE_USERNAME=your-surfdrive-username
-SURFDRIVE_PASSWORD=your-surfdrive-password
-```
-
-If the app is deployed in a subdirectory, for example `https://example.nl/synesthesia/`, use:
+Create `www/.env` with these settings:
 
 ```env
 APP_ENV=production
 BASE=/synesthesia/
-CONFIGBASE=/synesthesia_config
-CONFIGPATH=../synesthesia_config
-DATA_PATH=../synesthesia-data
-SQLITE_PATH=../synesthesia-data/synesthesia.sqlite
-TEMP_PATH=../synesthesia-data/tmp
+CONFIGBASE=/synesthesia/synesthesia_config
+CONFIGPATH=synesthesia/synesthesia_config
+DATA_PATH=../data
+SQLITE_PATH=../data/synesthesia.sqlite
+TEMP_PATH=../data/tmp
+
+SURFDRIVE_WEBDAV_URL="your-full-WebDAV-folder-URL"
+SURFDRIVE_USERNAME="your-WebDAV-username"
+SURFDRIVE_PASSWORD="your-WebDAV-password"
 ```
 
-## Permissions
+The app reads `.env` one directory above `config.php` when present, or two directories above it otherwise. In this layout, `config.php` is in `www/public/synesthesia/`, so the second location is `www/.env`. Do not place another `.env` in `www/public/`, as it would take precedence.
 
-The PHP process must be able to write to:
+The `CONFIGPATH`, `SQLITE_PATH`, and `TEMP_PATH` values above are relative to `www/public/`. Create `www/data/tmp/` and make `www/data/` and `www/data/tmp/` writable by PHP.
 
-```text
-../synesthesia-data/
-../synesthesia-data/tmp/
-```
+## Verify the Installation
 
-The app creates the SQLite database automatically on first request if it does not already exist.
+1. Open `https://your-domain.nl/synesthesia/` and confirm styles, pages, and tests load.
+2. Open `https://your-domain.nl/synesthesia/api/diagnostics`. Check that the config path exists, SQLite and temp parents are writable, and the required PHP extensions are available.
+3. Navigate directly to `https://your-domain.nl/synesthesia/results` and then back to the home page. This verifies the router and Apache rewrite for the subpath.
+4. Complete a test and verify that `/synesthesia/api/create` and `/synesthesia/api/store` succeed. Confirm `www/data/synesthesia.sqlite` exists.
+5. Play audio and check images. Their URLs should start with `/synesthesia/synesthesia_config/`.
+6. If SURFdrive is configured, open `https://your-domain.nl/synesthesia/api/backup` and confirm a `success` response and new CSV files in SURFdrive.
+7. Confirm that `https://your-domain.nl/.env` and `https://your-domain.nl/data/synesthesia.sqlite` do not return file contents.
 
-## First Launch Checks
-
-Open:
-
-```text
-https://your-domain.nl/
-```
-
-Then open diagnostics:
-
-```text
-https://your-domain.nl/api/diagnostics
-```
-
-Check that diagnostics reports:
-
-- config path exists and is readable
-- SQLite parent directory is writable
-- temp directory is writable
-- `curl` is available
-- `ZipArchive` is available
-- `pdo_sqlite` is available
-- `sqlite3` is available
-
-Then complete a test submission in the browser and confirm that the SQLite database file appears at:
-
-```text
-../synesthesia-data/synesthesia.sqlite
-```
-
-## Backup Check
-
-If SURFdrive credentials are configured, trigger a manual backup:
-
-```text
-https://your-domain.nl/api/backup
-```
-
-A successful response should include:
-
-```json
-{
-  "status": "success"
-}
-```
-
-The backup uploads:
-
-- `profiles-*.csv`
-- `questions-*.csv`
-- `profiles-latest.csv`
-- `questions-latest.csv`
-
-## Config Update Check
-
-To refresh `synesthesia_config` from the configured GitHub archive:
-
-```text
-https://your-domain.nl/api/update
-```
-
-The update process:
-
-1. Downloads the configured archive.
-2. Extracts it to a temporary directory.
-3. Validates YAML and expected files.
-4. Replaces the live config directory only if validation succeeds.
+To refresh the configuration from the configured GitHub archive, use `https://your-domain.nl/synesthesia/api/update`. This replaces the live configuration folder after validation.
 
 ## Troubleshooting
 
-If the homepage returns a configuration error, check:
-
-- `CONFIGPATH` points to the correct filesystem path.
-- `config.yml` and `translations.yml` are readable.
-- `tests/` and `texts/` exist inside `synesthesia_config`.
-
-If API routes return 404, check:
-
-- `.htaccess` was uploaded.
-- Apache rewrite rules are enabled on the hosting package.
-- The public document root points to the uploaded `server/` contents.
-
-If data is not saved, check:
-
-- `SQLITE_PATH` points to a writable location.
-- The parent directory of `SQLITE_PATH` exists.
-- PHP has `pdo_sqlite` and `sqlite3`.
-
-If backups fail, check:
-
-- PHP has `curl`.
-- SURFdrive credentials are correct.
-- `TEMP_PATH` exists and is writable.
-- The WebDAV URL points to the target folder, not just the account root.
+- Blank page or missing JavaScript/CSS: check `APP_ENV=production`, upload the latest `server/dist/`, and inspect requests for `/synesthesia/dist/` in the browser's Network tab.
+- Homepage works but navigation fails: check `BASE=/synesthesia/`, upload the latest frontend build and `server/.htaccess`, and verify the website path is `www/public`.
+- API returns HTML or 404: upload the latest `server/index.php`, `server/api/`, and `.htaccess`; then test `/synesthesia/api/diagnostics` again.
+- Missing audio/images: check `CONFIGBASE=/synesthesia/synesthesia_config` and that the config directory contains the referenced files.
+- `surfdrive_configured` is `false`: check that `www/.env` exists, is readable by PHP, and contains all three `SURFDRIVE_` settings.
+- Database errors: check `SQLITE_PATH=../data/synesthesia.sqlite`, `pdo_sqlite`, and write access to `www/data`.

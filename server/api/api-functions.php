@@ -10,13 +10,18 @@ require_once __DIR__ . "/diagnostics.php";
 
 function getPath()
 {
-    $req = $_SERVER['REQUEST_URI'];
-    $currentlocation = rtrim(BASE, "/") . "/api";
-    $url = preg_replace("/" . preg_quote($currentlocation, "/") . "/", "", $req);
-    $url = parse_url($url, PHP_URL_PATH);
-    $url = rtrim($url, "/");
-    $url = strtolower($url);
-    return $url;
+    $path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH) ?: '/';
+    $base = rtrim(BASE, '/');
+
+    if ($base !== '' && ($path === $base || strpos($path, $base . '/') === 0)) {
+        $path = substr($path, strlen($base));
+    }
+
+    if ($path === '/api' || strpos($path, '/api/') === 0) {
+        $path = substr($path, 4);
+    }
+
+    return strtolower(rtrim($path, '/')) ?: '/';
 }
 
 function pjson($data)

@@ -74,7 +74,11 @@ function normalize_path($path, $base)
     return join_paths($base, $path);
 }
 
-load_env_file(dirname(__DIR__) . '/.env');
+$envPath = dirname(__DIR__) . '/.env';
+if (!is_file($envPath)) {
+    $envPath = dirname(__DIR__, 2) . '/.env';
+}
+load_env_file($envPath);
 
 define('APP_ENV', env_value('APP_ENV', 'production'));
 define('PRODUCTION', APP_ENV === 'production');

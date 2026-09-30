@@ -6,6 +6,13 @@ if (!isset($PATH)) {
     $PATH = getPath();
 }
 
+$requestPath = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH) ?: '/';
+$apiPath = rtrim(BASE, '/') . '/api';
+if ($requestPath === $apiPath || strpos($requestPath, $apiPath . '/') === 0) {
+    require __DIR__ . '/api/api.php';
+    exit();
+}
+
 if ($PATH === '/backup') {
     require __DIR__ . '/api/api.php';
     exit();
