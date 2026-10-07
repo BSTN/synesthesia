@@ -2,12 +2,10 @@
 
 require_once dirname(__DIR__) . "/vendor/autoload.php";
 
-use Michelf\Markdown;
-use Symfony\Component\Yaml\Yaml;
-use Symfony\Component\Yaml\Exception\ParseException;
-
 require_once __DIR__ . "/../config.php";
 require_once __DIR__ . "/api-functions.php";
+
+$PATH = getPath();
 
 try {
     $dbc = db();

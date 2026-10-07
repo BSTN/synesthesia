@@ -2,9 +2,7 @@
 include __DIR__ . '/config.php';
 include __DIR__ . '/api/api-functions.php';
 
-if (!isset($PATH)) {
-    $PATH = getPath();
-}
+$PATH = getPath();
 
 $requestPath = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH) ?: '/';
 $apiPath = rtrim(BASE, '/') . '/api';

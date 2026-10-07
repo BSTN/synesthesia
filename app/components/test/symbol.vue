@@ -43,7 +43,6 @@ export default {
     align-items: center;
     justify-content: center;
     border-radius: 0.25rem;
-    font-family: "Roboto Mono";
     #colorholder {
       position: absolute;
       left: 0;
@@ -61,6 +60,10 @@ export default {
       }
     }
     #sym {
+      &,
+      > div {
+        font-family: "Roboto Mono", monospace;
+      }
       z-index: 2;
       font-size: 4rem;
       display: flex;
